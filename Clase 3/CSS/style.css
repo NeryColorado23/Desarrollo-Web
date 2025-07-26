@@ -1,8 +1,15 @@
+/*variables*/
+:root{
+    --color-fondo:#f0f;
+    --borde-general:15px;
+}
+
+
 
 /*selectores por etiqueta*/
 
 p {
-        color:cadetblue
+        color:rgb(47, 138, 141)
 }
 
 /*comentarios*/
@@ -15,11 +22,45 @@ p {
     color: blue;
 }
 
-/*estilo en especifco segun jerarquia, div > p */
+/*estilo en especifco segun jerarquia en selectores y colores, div > p */
 div p{
-    color: brown;
+    color: #f50055;
+    font-size: 50px; /* tamaño absolutio*/
 }
-/*estilo en especifco segun jerarquia, div > h */
-div h4{
-    color:seagreen
+/*estilo en especifco segun jerarquia, div > h  de forma junta con coma*/
+div h5, div h6{
+    color:var(--color-fondo)
 }
+
+h4{
+    background-color: var(--color-fondo);
+    border-radius: var(--borde-general);
+    font-size: 1cm;
+    height: 50vw;
+/*  width: max(50vh, 200px); /*min o max*/
+    width: clamp(100px, 50vh, 200px);
+}
+
+div{
+    font-size: 0.5rcm;
+}
+
+
+/*pseudoclases*/
+div:hover{
+    background-color: #f50055;
+    width: 80vh;
+    height: 80vh;
+    transition: 3s;
+}
+
+/*pseudoelemento*/
+p::before{
+    content: "-";
+
+}
+div::before{
+    content: "**";
+
+}
+
