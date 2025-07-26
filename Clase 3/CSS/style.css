@@ -1,7 +1,25 @@
+
+/*selectores por etiqueta*/
+
 p {
-        color:aqua
+        color:cadetblue
 }
+
+/*comentarios*/
 
 #importante{
     color: blueviolet;
+}
+
+.no-importante{
+    color: blue;
+}
+
+/*estilo en especifco segun jerarquia, div > p */
+div p{
+    color: brown;
+}
+/*estilo en especifco segun jerarquia, div > h */
+div h4{
+    color:seagreen
 }
