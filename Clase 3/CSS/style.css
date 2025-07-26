@@ -64,3 +64,21 @@ div::before{
 
 }
 
+
+
+/*media querys, ayuda a tener paginas web responsibas*/
+/*siempre poner primero pantalla grande y luego pequeña*/
+
+@media(max-width:100px ){
+    body{
+        background-color: burlywood;
+    }
+    
+}
+
+@media(min-width:5px ){
+    body{
+        background-color:aquamarine;
+    }
+    
+}
