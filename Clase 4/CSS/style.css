@@ -1,8 +1,17 @@
 #caja{
-    background-color: #00ff00;
+    background-color: #ff9900;
     height: 50px;
     width: 50px;
+    padding: 10px;
+
+    border: #0022ff solid;
+    margin: auto;
+    text-align: center;
+
+
    /* padding: 50px 10px 30px 5px; /*Padding es relleno, si se usan dos parametros es alto x ancho */
+   
+   /*
    padding-top: 50px;
    padding-right: 10px;
    padding-bottom: 30px;
@@ -10,10 +19,32 @@
    border-color: #000;
    border-style: solid;
    border: 50 ; 
+   */
+
 /*   margin: 60px 20px; */
+   
+   /* 
    margin-top: 10px;
    margin-bottom: 30px;
    margin-left: 2px;
    margin-right: 60px;
+   position: relative;
    float: left;
+   */
+
+
+} 
+
+#contendor{
+  /*display: flex;  ordena elementos horizontal */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /*se puede crear tablas*/
+  
+
+}
+
+/*creamos clase*/
+.especial{
+    grid-column: span 3;
+
 }
