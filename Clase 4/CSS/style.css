@@ -6,7 +6,9 @@
    padding-top: 50px;
    padding-right: 10px;
    padding-bottom: 30px;
-   padding-left: 50px;
-   border: #000;
+   padding-left: 5px;
+   border-color: #000;
+   border-style: solid;
+   border: 50 ;
 
 }
