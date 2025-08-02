@@ -2,5 +2,11 @@
     background-color: #00ff00;
     height: 50px;
     width: 50px;
-    padding: 50px 10px 30px 5px; /*Padding es relleno, si se usan dos parametros es alto x ancho */
+   /* padding: 50px 10px 30px 5px; /*Padding es relleno, si se usan dos parametros es alto x ancho */
+   padding-top: 50px;
+   padding-right: 10px;
+   padding-bottom: 30px;
+   padding-left: 50px;
+   border: #000;
+
 }
