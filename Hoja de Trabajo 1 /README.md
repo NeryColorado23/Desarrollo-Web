@@ -24,8 +24,7 @@ El diseño fue realizado con CSS básico y se aplicaron las siguientes mejoras v
 
   
 # El enlace del sitio web publicado:
-   https://ephemeral-entremet-97ce82.netlify.app/
-
+https://willowy-biscuit-8997bb.netlify.app/
 
 # El nombre del estudiante que desarrolló la página web: 
    Desarrollado por Nery Otoniel Colorado Menchú, 9490-22-4867 
