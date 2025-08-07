@@ -1,3 +1,5 @@
+# HOJA DE TRABAJO 2 (BASADO EN HOJA DE TRABAJO 1)
+
 #Excursión a Nintendo World Japón
 
 Este proyecto es un sitio web informativo desarrollado únicamente con HTML y CSS básico. El proyecto es una pagina web HTML básica que valida una excursión hacia japon en nintendo world
