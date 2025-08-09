@@ -1,0 +1,8 @@
+/*clase 
+llamamos esto en js
+let div = document.querySelector("div");
+    div.classList.add("eliminar");
+*/
+.eliminar{
+    display:none;
+}

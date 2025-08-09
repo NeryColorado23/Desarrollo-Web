@@ -50,7 +50,24 @@ otroparrafo.outerHTML="<h1> outerHTML</h1>";
 //let texto = otroparrafo.innerText;
 //let texto = otroparrafo.textContent;
 
-console.log(texto);
+//console.log(texto);
 
 
 //generar eventos
+let boton_eliminar = document.getElementById("eliminar");
+boton_eliminar.addEventListener("click", function() { 
+    //console.log("FUNCIONA EVENTO BUTTON");
+    
+    //let div = document.querySelector("div");
+    //div.style.display="none";
+
+    //interactuar con clases desde css aqui en js (en este caso borra div)
+    //let div = document.querySelector("div");
+    //div.classList.add("eliminar");
+
+    //interactuar con clases desde css aqui en js (en este caso borra div pero aparece si se presiona otra vez)
+    let div = document.querySelector("div");
+    div.classList.toggle("eliminar");
+
+
+});
