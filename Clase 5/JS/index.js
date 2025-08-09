@@ -4,6 +4,7 @@ console.log(parrafo)
 parrafo.style.color="blue";
 console.log(parrafo)
 
+//cambiar por etiqueta h1
 let parrafos = document.getElementsByTagName("p")
 console.log(parrafos)
 
@@ -20,3 +21,6 @@ console.log(contenido)
 for(let i = 0; i < contenido.length; i++){
     contenido[i].style.background="green";
 }
+
+//texto
+
