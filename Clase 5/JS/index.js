@@ -1,7 +1,7 @@
 let parrafo = document.getElementById("parrafo");
 console.log(parrafo)
 
-parrafo.style.color="blue";
+parrafo.style.color="white";
 console.log(parrafo)
 
 //cambiar por etiqueta h1
@@ -22,5 +22,35 @@ for(let i = 0; i < contenido.length; i++){
     contenido[i].style.background="green";
 }
 
-//texto
+//cambio del primer elememto de p o dependiendo del selector que se desee
 
+//cambio por etiqueta, solo hace el primero
+//let otroparrafo = document.querySelector("div p");
+//otroparrafo.style.display="none";
+
+//cambio por id
+//let otroparrafo = document.querySelector("#parrafo");
+//otroparrafo.style.display="none";
+
+//cambio por etiqueta, hace todos los que coincidan con todos las etiquetas
+let otrosparrafos = document.querySelectorAll("div p");
+for(let i = 0; i < otrosparrafos.length; i++){
+    otrosparrafos[i].style.background="green";
+}
+
+
+//cambiar cosas de div p la primer linea
+let otroparrafo = document.querySelector("div p");
+otroparrafo.innerText="Cambio de texto";
+
+//otroparrafo.innerHTML="<h1> innerhtml</h1>";
+otroparrafo.outerHTML="<h1> outerHTML</h1>";
+
+//lo mismo
+//let texto = otroparrafo.innerText;
+//let texto = otroparrafo.textContent;
+
+console.log(texto);
+
+
+//generar eventos
