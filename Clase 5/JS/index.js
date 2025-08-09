@@ -6,3 +6,17 @@ console.log(parrafo)
 
 let parrafos = document.getElementsByTagName("p")
 console.log(parrafos)
+
+//cambio de parrafos por uno o por ciclos
+//parrafos[0].style.fontSize="50px";
+
+for(let i = 0; i < parrafos.length; i++){
+    parrafos[i].style.background="red";
+}
+
+//cambiar por clase h1
+let contenido = document.getElementsByClassName("contenido");
+console.log(contenido)
+for(let i = 0; i < contenido.length; i++){
+    contenido[i].style.background="green";
+}
