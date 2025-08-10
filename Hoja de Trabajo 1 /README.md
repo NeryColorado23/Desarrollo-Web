@@ -12,7 +12,7 @@ Se implementaron los siguientes componentes y mejoras:
 - **Estilos personalizados en CSS** para adaptar los colores y tipografía.
 
 ## Sitio web publicado
-[Enlace al sitio web](https://tu-enlace-publicado.github.io/)
+https://preeminent-jelly-67d468.netlify.app/
 
 **Datos:** 
 Nery Otoniel Colorado Menchú 9490-22-4867
