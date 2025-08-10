@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inicia sesión en CRM Pro - Sistema de gestión empresarial">
+    <meta name="keywords" content="login, crm, iniciar sesión, sistema">
+    <meta name="author" content="CRM Pro Team">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <title>Iniciar Sesión - CRM Pro</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/auth.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/css/main.css" as="style">
+    <link rel="preload" href="assets/js/auth.js" as="script">
+</head>
+<body class="auth-page login-page">
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <div class="loading-text">CRM Pro</div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Back to Home Button -->
+    <a href="index.html" class="back-home">
+        <i class="bi bi-arrow-left"></i>
+        <span>Volver al inicio</span>
+    </a>
+
+    <!-- Demo Mode Indicator -->
+    <div class="demo-indicator">
+        <i class="bi bi-code-square"></i> 
+        <span>Modo Demo</span>
+    </div>
+
+    <!-- Main Auth Container -->
+    <div class="auth-container">
+        <!-- Left Panel - Branding -->
+        <div class="auth-left">
+            <div class="branding-content">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h1 class="brand-title">CRM Pro</h1>
+                    <p class="brand-subtitle">
+                        La solución completa para gestionar tu negocio.<br>
+                        Proyectos, equipos y clientes en un solo lugar.
+                    </p>
+                </div>
+                
+                <div class="features-showcase">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h5>Rápido y Eficiente</h5>
+                            <p>Optimiza tu tiempo y recursos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-shaded"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h5>100% Seguro</h5>
+                            <p>Tus datos protegidos con encriptación</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h5>Crece con tu negocio</h5>
+                            <p>Escalable para cualquier tamaño</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer testimonial -->
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <i class="bi bi-quote"></i>
+                        <p>"CRM Pro transformó completamente nuestra productividad. Lo recomiendo 100%."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">JD</div>
+                            <div class="author-info">
+                                <strong>Juan Pérez</strong>
+                                <small>CEO, TechCorp</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Background Animation Elements -->
+            <div class="bg-animation">
+                <div class="floating-element element-1"></div>
+                <div class="floating-element element-2"></div>
+                <div class="floating-element element-3"></div>
+                <div class="floating-element element-4"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Login Form -->
+        <div class="auth-right">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2 class="form-title">Bienvenido de vuelta</h2>
+                    <p class="form-subtitle">
+                        Ingresa tus credenciales para acceder a tu cuenta CRM Pro
+                    </p>
+                </div>
+
+                <!-- Alert Messages -->
+                <div id="alertMessage" class="alert-message d-none" role="alert">
+                    <div class="alert-icon">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div class="alert-content">
+                        <span id="alertText"></span>
+                    </div>
+                    <button type="button" class="alert-close" onclick="hideAlert()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form" novalidate>
+                    <!-- Email Input -->
+                    <div class="input-group">
+                        <div class="form-floating">
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="email" 
+                                name="email"
+                                placeholder="correo@empresa.com" 
+                                required
+                                autocomplete="email"
+                                data-validation="email"
+                            >
+                            <label for="email">
+                                <i class="bi bi-envelope"></i>
+                                Correo electrónico
+                            </label>
+                        </div>
+                        <div class="field-feedback">
+                            <div class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle"></i>
+                                Por favor ingresa un correo válido.
+                            </div>
+                            <div class="valid-feedback">
+                                <i class="bi bi-check-circle"></i>
+                                Correo válido.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="input-group">
+                        <div class="form-floating password-field">
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                name="password"
+                                placeholder="Contraseña" 
+                                required 
+                                minlength="6"
+                                autocomplete="current-password"
+                                data-validation="password"
+                            >
+                            <label for="password">
+                                <i class="bi bi-lock"></i>
+                                Contraseña
+                            </label>
+                            <button type="button" class="password-toggle" onclick="togglePassword()" tabindex="-1">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="field-feedback">
+                            <div class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle"></i>
+                                La contraseña debe tener al menos 6 caracteres.
+                            </div>
+                            <div class="valid-feedback">
+                                <i class="bi bi-check-circle"></i>
+                                Contraseña válida.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Options -->
+                    <div class="form-options">
+                        <div class="remember-me">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                id="rememberMe"
+                                name="rememberMe"
+                            >
+                            <label class="form-check-label" for="rememberMe">
+                                Recordarme por 30 días
+                            </label>
+                        </div>
+                        
+                        <a href="forgot-password.html" class="forgot-password">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-auth btn-login" id="loginButton">
+                        <span class="button-text">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Iniciar Sesión
+                        </span>
+                        <div class="loading-spinner d-none"></div>
+                    </button>
+
+                    <!-- Security Info -->
+                    <div class="security-info">
+                        <i class="bi bi-shield-check"></i>
+                        <small>Conexión segura SSL. Tus datos están protegidos.</small>
+                    </div>
+                </form>
+
+                <!-- Demo Credentials -->
+                <div class="demo-credentials">
+                    <h6><i class="bi bi-info-circle"></i> Credenciales de prueba:</h6>
+                    <div class="credentials-info">
+                        <div class="credential-item">
+                            <strong>Email:</strong> 
+                            <code>admin@crmpro.com</code>
+                            <button class="copy-btn" onclick="copyToClipboard('admin@crmpro.com')" title="Copiar">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </div>
+                        <div class="credential-item">
+                            <strong>Contraseña:</strong> 
+                            <code>password123</code>
+                            <button class="copy-btn" onclick="copyToClipboard('password123')" title="Copiar">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="fillDemoCredentials()">
+                        <i class="bi bi-lightning"></i>
+                        Llenar datos automáticamente
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>¿Nuevo en CRM Pro?</span>
+                </div>
+
+                <!-- Registration Link -->
+                <div class="auth-switch">
+                    <p>¿No tienes una cuenta?</p>
+                    <a href="register.html" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-person-plus"></i>
+                        Crear cuenta gratuita
+                    </a>
+                </div>
+
+                <!-- Additional Links -->
+                <div class="additional-links">
+                    <a href="index.html">← Volver al inicio</a>
+                    <a href="support.html">¿Necesitas ayuda?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="auth-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 CRM Pro. Todos los derechos reservados.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacidad</a>
+                    <a href="terms.html">Términos</a>
+                    <a href="support.html">Soporte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    
+    <!-- Page-specific Scripts -->
+    <script>
+        // Page initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize login manager
+            window.loginManager = new LoginManager();
+            
+            // Hide loading screen
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 300);
+            }, 800);
+            
+            // Focus on email field
+            document.getElementById('email').focus();
+        });
+
+        // Utility functions
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'bi bi-eye';
+            }
+        }
+
+        function hideAlert() {
+            const alert = document.getElementById('alertMessage');
+            alert.classList.add('d-none');
+        }
+
+        function fillDemoCredentials() {
+            document.getElementById('email').value = 'admin@crmpro.com';
+            document.getElementById('password').value = 'password123';
+            
+            // Trigger validation
+            document.getElementById('email').dispatchEvent(new Event('blur'));
+            document.getElementById('password').dispatchEvent(new Event('blur'));
+            
+            // Show success message
+            showAlert('Credenciales de demo cargadas correctamente', 'success');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Show temporary feedback
+                const event = new CustomEvent('showToast', {
+                    detail: { message: 'Copiado al portapapeles', type: 'success' }
+                });
+                document.dispatchEvent(event);
+            }).catch(function() {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+
+        function showAlert(message, type = 'danger') {
+            const alertElement = document.getElementById('alertMessage');
+            const alertText = document.getElementById('alertText');
+            const alertIcon = alertElement.querySelector('.alert-icon i');
+            
+            // Update alert content
+            alertText.textContent = message;
+            alertElement.className = `alert-message alert-${type}`;
+            
+            // Update icon based on type
+            const iconMap = {
+                'success': 'bi bi-check-circle-fill',
+                'danger': 'bi bi-exclamation-triangle-fill',
+                'warning': 'bi bi-exclamation-triangle-fill',
+                'info': 'bi bi-info-circle-fill'
+            };
+            alertIcon.className = iconMap[type] || iconMap['danger'];
+            
+            // Show alert
+            alertElement.classList.remove('d-none');
+            
+            // Auto-hide success messages
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    alertElement.classList.add('d-none');
+                }, 4000);
+            }
+        }
+
+        // Handle URL parameters (like ?error=invalid_credentials)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            const error = urlParams.get('error');
+            const errorMessages = {
+                'invalid_credentials': 'Credenciales incorrectas. Por favor intenta de nuevo.',
+                'session_expired': 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.',
+                'access_denied': 'Acceso denegado. Verifica tus permisos.',
+                'account_locked': 'Cuenta bloqueada por múltiples intentos fallidos.'
+            };
+            
+            if (errorMessages[error]) {
+                setTimeout(() => {
+                    showAlert(errorMessages[error], 'danger');
+                }, 500);
+            }
+        }
+
+        // Handle success messages
+        if (urlParams.has('message')) {
+            const message = urlParams.get('message');
+            const successMessages = {
+                'registered': 'Cuenta creada exitosamente. Ya puedes iniciar sesión.',
+                'password_reset': 'Contraseña restablecida correctamente.',
+                'logout': 'Has cerrado sesión correctamente.'
+            };
+            
+            if (successMessages[message]) {
+                setTimeout(() => {
+                    showAlert(successMessages[message], 'success');
+                }, 500);
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Alt + D to fill demo credentials
+            if (e.altKey && e.key === 'd') {
+                e.preventDefault();
+                fillDemoCredentials();
+            }
+            
+            // Enter to submit form (if focus is on form elements)
+            if (e.key === 'Enter' && (e.target.matches('#email') || e.target.matches('#password'))) {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Add interactive cursor effect
+        document.addEventListener('mousemove', function(e) {
+            const authLeft = document.querySelector('.auth-left');
+            const rect = authLeft.getBoundingClientRect();
+            
+            if (e.clientX >= rect.left && e.clientX <= rect.right && 
+                e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                authLeft.style.background = `
+                    radial-gradient(circle at ${x}% ${y}%, 
+                    rgba(37, 99, 235, 0.8) 0%, 
+                    rgba(59, 130, 246, 0.6) 50%, 
+                    rgba(37, 99, 235, 0.9) 100%)
+                `;
+            }
+        });
+    </script>
+    
+    <!-- Security and Performance -->
+    <script>
+        // Security headers and CSRF protection would be handled here
+        // Performance monitoring
+        console.log('Login page loaded at:', new Date().toISOString());
+        
+        // Track page performance
+        window.addEventListener('load', function() {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            console.log('Page load time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
+        });
+    </script>
+</body>
+</html>

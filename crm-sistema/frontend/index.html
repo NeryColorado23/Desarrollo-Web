@@ -3,547 +3,630 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Pro - Iniciar Sesión</title>
+    <meta name="description" content="CRM Pro - La solución completa para gestionar tu negocio. Proyectos, equipos y clientes en un solo lugar.">
+    <meta name="keywords" content="CRM, gestión empresarial, proyectos, chat interno, seguimiento tiempo, email marketing">
+    <meta name="author" content="CRM Pro Team">
+    <meta name="robots" content="index, follow">
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #64748b;
-            --accent-color: #f8fafc;
-            --text-dark: #1e293b;
-            --border-light: #e2e8f0;
-            --shadow-light: rgba(0, 0, 0, 0.1);
-            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--gradient-bg);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px var(--shadow-light);
-            overflow: hidden;
-            width: 100%;
-            max-width: 1000px;
-            min-height: 600px;
-            display: flex;
-            position: relative;
-        }
-
-        .login-left {
-            flex: 1;
-            background: var(--gradient-bg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-left::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-        }
-
-        .brand-info {
-            text-align: center;
-            z-index: 2;
-            position: relative;
-        }
-
-        .brand-logo {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .brand-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .brand-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-
-        .login-right {
-            flex: 1;
-            padding: 60px 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .login-form-container {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .login-title {
-            color: var(--text-dark);
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .login-subtitle {
-            color: var(--secondary-color);
-            font-size: 1rem;
-        }
-
-        .form-floating {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .form-floating .form-control {
-            height: 60px;
-            border: 2px solid var(--border-light);
-            border-radius: 12px;
-            font-size: 1rem;
-            padding: 20px 15px 10px 15px;
-            background: var(--accent-color);
-            transition: all 0.3s ease;
-        }
-
-        .form-floating .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-            background: white;
-        }
-
-        .form-floating label {
-            color: var(--secondary-color);
-            font-weight: 500;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--secondary-color);
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .password-toggle:hover {
-            color: var(--primary-color);
-        }
-
-        .form-check {
-            margin-bottom: 2rem;
-        }
-
-        .form-check-input:checked {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .form-check-label {
-            color: var(--secondary-color);
-            font-size: 0.9rem;
-        }
-
-        .btn-login {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            height: 50px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-login:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .divider {
-            text-align: center;
-            margin: 2rem 0;
-            position: relative;
-        }
-
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--border-light);
-        }
-
-        .divider span {
-            background: white;
-            padding: 0 1rem;
-            color: var(--secondary-color);
-            font-size: 0.9rem;
-        }
-
-        .social-login {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn-social {
-            flex: 1;
-            height: 45px;
-            border: 2px solid var(--border-light);
-            border-radius: 10px;
-            background: white;
-            color: var(--secondary-color);
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-social:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            transform: translateY(-1px);
-        }
-
-        .forgot-password {
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        .forgot-password a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
-
-        .loading {
-            display: none;
-        }
-
-        .loading.show {
-            display: inline-block;
-        }
-
-        @media (max-width: 768px) {
-            .login-container {
-                flex-direction: column;
-                max-width: 400px;
-            }
-
-            .login-left {
-                padding: 30px 20px;
-            }
-
-            .brand-title {
-                font-size: 2rem;
-            }
-
-            .login-right {
-                padding: 40px 30px;
-            }
-        }
-
-        .alert {
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            border: none;
-            font-weight: 500;
-        }
-
-        .alert-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .alert-success {
-            background-color: rgba(25, 135, 84, 0.1);
-            color: #198754;
-        }
-    </style>
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="CRM Pro - Sistema de Gestión Empresarial">
+    <meta property="og:description" content="La solución completa para gestionar tu negocio. Proyectos, equipos y clientes en un solo lugar.">
+    <meta property="og:image" content="assets/images/og-image.jpg">
+    <meta property="og:url" content="https://crmpro.com">
+    <meta property="og:type" content="website">
+    
+    <title>CRM Pro - Sistema de Gestión Empresarial Completo</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/landing.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/css/main.css" as="style">
+    <link rel="preload" href="assets/js/main.js" as="script">
 </head>
-<body>
-    <div class="login-container">
-        <!-- Panel Izquierdo - Branding -->
-        <div class="login-left">
-            <div class="brand-info">
-                <div class="brand-logo">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h1 class="brand-title">CRM Pro</h1>
-                <p class="brand-subtitle">
-                    Gestiona tus proyectos, clientes y equipos en una sola plataforma. 
-                    Aumenta tu productividad y haz crecer tu negocio con nuestras herramientas profesionales.
-                </p>
+<body class="landing-page">
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="bi bi-graph-up"></i>
             </div>
-        </div>
-
-        <!-- Panel Derecho - Formulario -->
-        <div class="login-right">
-            <div class="login-form-container">
-                <div class="login-header">
-                    <h2 class="login-title">Iniciar Sesión</h2>
-                    <p class="login-subtitle">Accede a tu cuenta para continuar</p>
-                </div>
-
-                <!-- Mensajes de alerta -->
-                <div id="alertContainer"></div>
-
-                <form id="loginForm" novalidate>
-                    <div class="form-floating">
-                        <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com" required>
-                        <label for="email">Correo electrónico</label>
-                    </div>
-
-                    <div class="form-floating">
-                        <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
-                        <label for="password">Contraseña</label>
-                        <button type="button" class="password-toggle" onclick="togglePassword()">
-                            <i class="fas fa-eye" id="passwordIcon"></i>
-                        </button>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="remember">
-                        <label class="form-check-label" for="remember">
-                            Recordar mis datos
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-login w-100">
-                        <span class="login-text">Iniciar Sesión</span>
-                        <span class="loading">
-                            <i class="fas fa-spinner fa-spin"></i> Iniciando...
-                        </span>
-                    </button>
-                </form>
-
-                <div class="divider">
-                    <span>o continúa con</span>
-                </div>
-
-                <div class="social-login">
-                    <button class="btn btn-social" onclick="socialLogin('google')">
-                        <i class="fab fa-google me-2"></i> Google
-                    </button>
-                    <button class="btn btn-social" onclick="socialLogin('microsoft')">
-                        <i class="fab fa-microsoft me-2"></i> Office
-                    </button>
-                </div>
-
-                <div class="forgot-password">
-                    <a href="#" onclick="forgotPassword()">¿Olvidaste tu contraseña?</a>
-                </div>
-            </div>
+            <div class="loading-text">CRM Pro</div>
+            <div class="loading-spinner"></div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Variables globales
-        const loginForm = document.getElementById('loginForm');
-        const alertContainer = document.getElementById('alertContainer');
-
-        // Función para mostrar/ocultar contraseña
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const passwordIcon = document.getElementById('passwordIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                passwordIcon.classList.remove('fa-eye');
-                passwordIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                passwordIcon.classList.remove('fa-eye-slash');
-                passwordIcon.classList.add('fa-eye');
-            }
-        }
-
-        // Función para mostrar alertas
-        function showAlert(message, type = 'danger') {
-            alertContainer.innerHTML = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNavbar">
+        <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center" href="#home">
+                <div class="brand-logo me-2">
+                    <i class="bi bi-graph-up"></i>
                 </div>
-            `;
-        }
+                <span class="brand-text">CRM Pro</span>
+            </a>
 
-        // Función de validación
-        function validateForm() {
-            const email = document.getElementById('email');
-            const password = document.getElementById('password');
-            let isValid = true;
+            <!-- Mobile Menu Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-            // Validar email
-            if (!email.value.trim()) {
-                email.classList.add('is-invalid');
-                isValid = false;
-            } else if (!/\S+@\S+\.\S+/.test(email.value)) {
-                email.classList.add('is-invalid');
-                showAlert('Por favor, ingresa un correo electrónico válido');
-                isValid = false;
-            } else {
-                email.classList.remove('is-invalid');
-                email.classList.add('is-valid');
-            }
+            <!-- Navigation Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Características</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Precios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contacto</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-outline-primary" href="login.html">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-primary" href="register.html">Empezar Gratis</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-            // Validar contraseña
-            if (!password.value.trim()) {
-                password.classList.add('is-invalid');
-                isValid = false;
-            } else if (password.value.length < 6) {
-                password.classList.add('is-invalid');
-                showAlert('La contraseña debe tener al menos 6 caracteres');
-                isValid = false;
-            } else {
-                password.classList.remove('is-invalid');
-                password.classList.add('is-valid');
-            }
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-background">
+            <div class="hero-overlay"></div>
+            <div class="hero-animation">
+                <div class="floating-element element-1"></div>
+                <div class="floating-element element-2"></div>
+                <div class="floating-element element-3"></div>
+                <div class="floating-element element-4"></div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="hero-title">
+                            Gestiona tu negocio con
+                            <span class="text-primary">CRM Pro</span>
+                        </h1>
+                        <p class="hero-description">
+                            La plataforma todo-en-uno que necesitas para administrar proyectos, 
+                            equipos, tiempo y clientes. Aumenta tu productividad hasta un 40%.
+                        </p>
+                        
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">10K+</div>
+                                <div class="stat-label">Empresas confían en nosotros</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">99.9%</div>
+                                <div class="stat-label">Tiempo de actividad</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">Soporte técnico</div>
+                            </div>
+                        </div>
 
-            return isValid;
-        }
+                        <div class="hero-actions">
+                            <a href="register.html" class="btn btn-primary btn-lg me-3">
+                                <i class="bi bi-play-circle me-2"></i>
+                                Comenzar Gratis
+                            </a>
+                            <a href="#demo" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-play-btn me-2"></i>
+                                Ver Demo
+                            </a>
+                        </div>
 
-        // Función para manejar el login
-        async function handleLogin(email, password) {
-            try {
-                // Simulación de API call (aquí conectarás con tu backend)
-                await new Promise(resolve => setTimeout(resolve, 1500)); // Simular delay
+                        <div class="hero-features">
+                            <div class="feature-badge">
+                                <i class="bi bi-shield-check"></i>
+                                <span>100% Seguro</span>
+                            </div>
+                            <div class="feature-badge">
+                                <i class="bi bi-clock"></i>
+                                <span>Setup en 5 minutos</span>
+                            </div>
+                            <div class="feature-badge">
+                                <i class="bi bi-credit-card"></i>
+                                <span>Sin tarjeta de crédito</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
-                // Credenciales de prueba
-                if (email === 'admin@crmPro.com' && password === 'admin123') {
-                    showAlert('¡Login exitoso! Redirigiendo...', 'success');
-                    
-                    // Guardar datos de sesión
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userEmail', email);
-                    localStorage.setItem('loginTime', new Date().toISOString());
-                    
-                    // Redireccionar al dashboard
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 2000);
-                } else {
-                    throw new Error('Credenciales incorrectas');
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <div class="dashboard-preview">
+                            <div class="preview-header">
+                                <div class="preview-dots">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                </div>
+                                <div class="preview-title">Dashboard CRM Pro</div>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-sidebar">
+                                    <div class="sidebar-item active"></div>
+                                    <div class="sidebar-item"></div>
+                                    <div class="sidebar-item"></div>
+                                    <div class="sidebar-item"></div>
+                                </div>
+                                <div class="preview-main">
+                                    <div class="chart-area">
+                                        <div class="chart-bar" style="height: 60%"></div>
+                                        <div class="chart-bar" style="height: 80%"></div>
+                                        <div class="chart-bar" style="height: 40%"></div>
+                                        <div class="chart-bar" style="height: 90%"></div>
+                                        <div class="chart-bar" style="height: 70%"></div>
+                                    </div>
+                                    <div class="stats-grid">
+                                        <div class="stat-card"></div>
+                                        <div class="stat-card"></div>
+                                        <div class="stat-card"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section py-5">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="section-title">Todo lo que necesitas en una sola plataforma</h2>
+                    <p class="section-description">
+                        Descubre las características que hacen de CRM Pro la mejor opción para tu empresa
+                    </p>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="row g-4">
+                <!-- Project Management -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-kanban"></i>
+                        </div>
+                        <h4 class="feature-title">Gestión de Proyectos</h4>
+                        <p class="feature-description">
+                            Organiza, planifica y ejecuta proyectos con metodología Kanban y Gantt integrados.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check"></i> Tableros Kanban</li>
+                            <li><i class="bi bi-check"></i> Diagramas de Gantt</li>
+                            <li><i class="bi bi-check"></i> Asignación de tareas</li>
+                            <li><i class="bi bi-check"></i> Seguimiento de progreso</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Internal Chat -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-chat-dots"></i>
+                        </div>
+                        <h4 class="feature-title">Chat Interno</h4>
+                        <p class="feature-description">
+                            Comunicación instantánea con tu equipo, canales privados y públicos.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check"></i> Chat en tiempo real</li>
+                            <li><i class="bi bi-check"></i> Canales por proyecto</li>
+                            <li><i class="bi bi-check"></i> Mensajes privados</li>
+                            <li><i class="bi bi-check"></i> Compartir archivos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Time Tracking -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-stopwatch"></i>
+                        </div>
+                        <h4 class="feature-title">Seguimiento de Tiempo</h4>
+                        <p class="feature-description">
+                            Registra horas trabajadas, genera reportes y optimiza la productividad.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check"></i> Timer integrado</li>
+                            <li><i class="bi bi-check"></i> Reportes detallados</li>
+                            <li><i class="bi bi-check"></i> Facturación automática</li>
+                            <li><i class="bi bi-check"></i> Analytics de tiempo</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Email Marketing -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-envelope-heart"></i>
+                        </div>
+                        <h4 class="feature-title">Email Marketing</h4>
+                        <p class="feature-description">
+                            Campañas automatizadas, plantillas profesionales y seguimiento detallado.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check"></i> Plantillas responsive</li>
+                            <li><i class="bi bi-check"></i> Automatización</li>
+                            <li><i class="bi bi-check"></i> Segmentación avanzada</li>
+                            <li><i class="bi bi-check"></i> Analytics completos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- CRM -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h4 class="feature-title">Gestión de Clientes</h4>
+                        <p class="feature-description">
+                            Base de datos centralizada de clientes con historial completo de interacciones.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check"></i> Perfiles detallados</li>
+                            <li><i class="bi bi-check"></i> Historial completo</li>
+                            <li><i class="bi bi-check"></i> Pipeline de ventas</li>
+                            <li><i class="bi bi-check"></i> Seguimiento automático</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Analytics -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <h4 class="feature-title">Analytics Avanzado</h4>
+                        <p class="feature-description">
+                            Reportes inteligentes y métricas clave para tomar mejores decisiones.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="bi bi-check"></i> Dashboard ejecutivo</li>
+                            <li><i class="bi bi-check"></i> Reportes personalizados</li>
+                            <li><i class="bi bi-check"></i> KPIs en tiempo real</li>
+                            <li><i class="bi bi-check"></i> Predicciones IA</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section py-5 bg-light">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="section-title">Planes que se adaptan a tu negocio</h2>
+                    <p class="section-description">
+                        Desde startups hasta grandes empresas, tenemos el plan perfecto para ti
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pricing Cards -->
+            <div class="row g-4 justify-content-center">
+                <!-- Starter Plan -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 class="plan-name">Starter</h4>
+                            <div class="plan-price">
+                                <span class="currency">$</span>
+                                <span class="amount">29</span>
+                                <span class="period">/mes</span>
+                            </div>
+                            <p class="plan-description">Perfecto para equipos pequeños</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="bi bi-check"></i> Hasta 5 usuarios</li>
+                                <li><i class="bi bi-check"></i> 10 proyectos</li>
+                                <li><i class="bi bi-check"></i> Chat básico</li>
+                                <li><i class="bi bi-check"></i> 5GB almacenamiento</li>
+                                <li><i class="bi bi-check"></i> Soporte por email</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-action">
+                            <a href="register.html?plan=starter" class="btn btn-outline-primary w-100">
+                                Empezar Gratis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Plan -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card featured">
+                        <div class="popular-badge">Más Popular</div>
+                        <div class="pricing-header">
+                            <h4 class="plan-name">Professional</h4>
+                            <div class="plan-price">
+                                <span class="currency">$</span>
+                                <span class="amount">79</span>
+                                <span class="period">/mes</span>
+                            </div>
+                            <p class="plan-description">Para equipos en crecimiento</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="bi bi-check"></i> Hasta 25 usuarios</li>
+                                <li><i class="bi bi-check"></i> Proyectos ilimitados</li>
+                                <li><i class="bi bi-check"></i> Chat avanzado</li>
+                                <li><i class="bi bi-check"></i> 100GB almacenamiento</li>
+                                <li><i class="bi bi-check"></i> Seguimiento de tiempo</li>
+                                <li><i class="bi bi-check"></i> Email marketing</li>
+                                <li><i class="bi bi-check"></i> Soporte prioritario</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-action">
+                            <a href="register.html?plan=professional" class="btn btn-primary w-100">
+                                Empezar Prueba
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 class="plan-name">Enterprise</h4>
+                            <div class="plan-price">
+                                <span class="currency">$</span>
+                                <span class="amount">199</span>
+                                <span class="period">/mes</span>
+                            </div>
+                            <p class="plan-description">Para grandes organizaciones</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="bi bi-check"></i> Usuarios ilimitados</li>
+                                <li><i class="bi bi-check"></i> Todo incluido</li>
+                                <li><i class="bi bi-check"></i> Almacenamiento ilimitado</li>
+                                <li><i class="bi bi-check"></i> API personalizada</li>
+                                <li><i class="bi bi-check"></i> Single Sign-On (SSO)</li>
+                                <li><i class="bi bi-check"></i> Soporte dedicado</li>
+                                <li><i class="bi bi-check"></i> Onboarding personalizado</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-action">
+                            <a href="#contact" class="btn btn-outline-primary w-100">
+                                Contactar Ventas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="cta-title">¿Listo para transformar tu negocio?</h2>
+                    <p class="cta-description">
+                        Únete a miles de empresas que ya confían en CRM Pro para gestionar su éxito
+                    </p>
+                    <div class="cta-actions">
+                        <a href="register.html" class="btn btn-primary btn-lg me-3">
+                            Empezar Gratis Ahora
+                        </a>
+                        <a href="login.html" class="btn btn-outline-light btn-lg">
+                            Iniciar Sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-5 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="footer-brand">
+                        <div class="brand-logo mb-3">
+                            <i class="bi bi-graph-up"></i>
+                            <span class="brand-text">CRM Pro</span>
+                        </div>
+                        <p class="footer-description">
+                            La plataforma todo-en-uno que necesitas para administrar 
+                            proyectos, equipos, tiempo y clientes.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="bi bi-facebook"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-linkedin"></i></a>
+                            <a href="#"><i class="bi bi-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6">
+                    <div class="footer-links">
+                        <h6 class="footer-title">Producto</h6>
+                        <ul class="link-list">
+                            <li><a href="#features">Características</a></li>
+                            <li><a href="#pricing">Precios</a></li>
+                            <li><a href="login.html">Demo</a></li>
+                            <li><a href="#">API</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6">
+                    <div class="footer-links">
+                        <h6 class="footer-title">Empresa</h6>
+                        <ul class="link-list">
+                            <li><a href="#about">Nosotros</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Press</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6">
+                    <div class="footer-links">
+                        <h6 class="footer-title">Soporte</h6>
+                        <ul class="link-list">
+                            <li><a href="#contact">Contacto</a></li>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Status</a></li>
+                            <li><a href="#">Seguridad</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6">
+                    <div class="footer-links">
+                        <h6 class="footer-title">Legal</h6>
+                        <ul class="link-list">
+                            <li><a href="privacy.html">Privacidad</a></li>
+                            <li><a href="terms.html">Términos</a></li>
+                            <li><a href="#">Cookies</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="footer-divider">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="footer-copy">
+                        &copy; 2025 CRM Pro. Todos los derechos reservados.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="footer-copy">
+                        Hecho con <i class="bi bi-heart-fill text-danger"></i> para tu éxito
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+    
+    <!-- Page-specific Scripts -->
+    <script>
+        // Hide loading screen
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 300);
+            }, 1000);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('mainNavbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
-            } catch (error) {
-                showAlert(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
-            }
-        }
-
-        // Event listener para el formulario
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!validateForm()) return;
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const loginText = document.querySelector('.login-text');
-            const loading = document.querySelector('.loading');
-
-            // Mostrar loading
-            loginText.style.display = 'none';
-            loading.classList.add('show');
-            
-            try {
-                await handleLogin(email, password);
-            } finally {
-                // Ocultar loading
-                loginText.style.display = 'inline';
-                loading.classList.remove('show');
-            }
+            });
         });
 
-        // Función para login social (placeholder)
-        function socialLogin(provider) {
-            showAlert(`Login con ${provider} será implementado próximamente`, 'info');
-        }
+        // Animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-        // Función para recuperar contraseña (placeholder)
-        function forgotPassword() {
-            showAlert('Funcionalidad de recuperación será implementada próximamente', 'info');
-        }
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
 
-        // Limpiar validaciones al escribir
-        document.getElementById('email').addEventListener('input', function() {
-            this.classList.remove('is-invalid', 'is-valid');
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.feature-card, .pricing-card');
+            animateElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
         });
-
-        document.getElementById('password').addEventListener('input', function() {
-            this.classList.remove('is-invalid', 'is-valid');
-        });
-
-        // Verificar si ya está logueado
-        if (localStorage.getItem('isLoggedIn') === 'true') {
-            window.location.href = 'dashboard.html';
-        }
+    </script>
+    
+    <!-- Analytics -->
+    <script>
+        // Google Analytics or other analytics code
+        console.log('Landing page loaded successfully');
     </script>
 </body>
 </html>
