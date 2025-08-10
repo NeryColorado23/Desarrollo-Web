@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Pro - Iniciar Sesión</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --accent-color: #f8fafc;
+            --text-dark: #1e293b;
+            --border-light: #e2e8f0;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--shadow-light);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            min-height: 600px;
+            display: flex;
+            position: relative;
+        }
+
+        .login-left {
+            flex: 1;
+            background: var(--gradient-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .brand-info {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .brand-logo {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .brand-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .login-right {
+            flex: 1;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-form-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .login-title {
+            color: var(--text-dark);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        .form-floating {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-floating .form-control {
+            height: 60px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 1rem;
+            padding: 20px 15px 10px 15px;
+            background: var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
+        .form-floating .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .form-floating label {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .form-check {
+            margin-bottom: 2rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-check-label {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .btn-login {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            height: 50px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border-light);
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-social {
+            flex: 1;
+            height: 45px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            background: white;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-social:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .forgot-password a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 400px;
+            }
+
+            .login-left {
+                padding: 30px 20px;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .login-right {
+                padding: 40px 30px;
+            }
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: none;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .alert-success {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Panel Izquierdo - Branding -->
+        <div class="login-left">
+            <div class="brand-info">
+                <div class="brand-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h1 class="brand-title">CRM Pro</h1>
+                <p class="brand-subtitle">
+                    Gestiona tus proyectos, clientes y equipos en una sola plataforma. 
+                    Aumenta tu productividad y haz crecer tu negocio con nuestras herramientas profesionales.
+                </p>
+            </div>
+        </div>
+
+        <!-- Panel Derecho - Formulario -->
+        <div class="login-right">
+            <div class="login-form-container">
+                <div class="login-header">
+                    <h2 class="login-title">Iniciar Sesión</h2>
+                    <p class="login-subtitle">Accede a tu cuenta para continuar</p>
+                </div>
+
+                <!-- Mensajes de alerta -->
+                <div id="alertContainer"></div>
+
+                <form id="loginForm" novalidate>
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com" required>
+                        <label for="email">Correo electrónico</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
+                        <label for="password">Contraseña</label>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="passwordIcon"></i>
+                        </button>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember">
+                        <label class="form-check-label" for="remember">
+                            Recordar mis datos
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-login w-100">
+                        <span class="login-text">Iniciar Sesión</span>
+                        <span class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Iniciando...
+                        </span>
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>o continúa con</span>
+                </div>
+
+                <div class="social-login">
+                    <button class="btn btn-social" onclick="socialLogin('google')">
+                        <i class="fab fa-google me-2"></i> Google
+                    </button>
+                    <button class="btn btn-social" onclick="socialLogin('microsoft')">
+                        <i class="fab fa-microsoft me-2"></i> Office
+                    </button>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="forgotPassword()">¿Olvidaste tu contraseña?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        const loginForm = document.getElementById('loginForm');
+        const alertContainer = document.getElementById('alertContainer');
+
+        // Función para mostrar/ocultar contraseña
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Función para mostrar alertas
+        function showAlert(message, type = 'danger') {
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+
+        // Función de validación
+        function validateForm() {
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            let isValid = true;
+
+            // Validar email
+            if (!email.value.trim()) {
+                email.classList.add('is-invalid');
+                isValid = false;
+            } else if (!/\S+@\S+\.\S+/.test(email.value)) {
+                email.classList.add('is-invalid');
+                showAlert('Por favor, ingresa un correo electrónico válido');
+                isValid = false;
+            } else {
+                email.classList.remove('is-invalid');
+                email.classList.add('is-valid');
+            }
+
+            // Validar contraseña
+            if (!password.value.trim()) {
+                password.classList.add('is-invalid');
+                isValid = false;
+            } else if (password.value.length < 6) {
+                password.classList.add('is-invalid');
+                showAlert('La contraseña debe tener al menos 6 caracteres');
+                isValid = false;
+            } else {
+                password.classList.remove('is-invalid');
+                password.classList.add('is-valid');
+            }
+
+            return isValid;
+        }
+
+        // Función para manejar el login
+        async function handleLogin(email, password) {
+            try {
+                // Simulación de API call (aquí conectarás con tu backend)
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Simular delay
+                
+                // Credenciales de prueba
+                if (email === 'admin@crmPro.com' && password === 'admin123') {
+                    showAlert('¡Login exitoso! Redirigiendo...', 'success');
+                    
+                    // Guardar datos de sesión
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('loginTime', new Date().toISOString());
+                    
+                    // Redireccionar al dashboard
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    throw new Error('Credenciales incorrectas');
+                }
+            } catch (error) {
+                showAlert(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
+            }
+        }
+
+        // Event listener para el formulario
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) return;
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginText = document.querySelector('.login-text');
+            const loading = document.querySelector('.loading');
+
+            // Mostrar loading
+            loginText.style.display = 'none';
+            loading.classList.add('show');
+            
+            try {
+                await handleLogin(email, password);
+            } finally {
+                // Ocultar loading
+                loginText.style.display = 'inline';
+                loading.classList.remove('show');
+            }
+        });
+
+        // Función para login social (placeholder)
+        function socialLogin(provider) {
+            showAlert(`Login con ${provider} será implementado próximamente`, 'info');
+        }
+
+        // Función para recuperar contraseña (placeholder)
+        function forgotPassword() {
+            showAlert('Funcionalidad de recuperación será implementada próximamente', 'info');
+        }
+
+        // Limpiar validaciones al escribir
+        document.getElementById('email').addEventListener('input', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+        });
+
+        // Verificar si ya está logueado
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>
