@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fórmula 1 en Bélgica - Experiencia Completa</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- CSS personalizado -->
+    <link href="CSS/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-flag-checkered icon-large"></i>
+                GP de Bélgica F1
+            </h1>
+            <p class="lead">Vive la emoción de la Fórmula 1 en el legendario circuito de Spa-Francorchamps</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-route icon-large"></i>
+                Itinerarios de Experiencia F1
+            </h2>
+            
+            <div class="text-center mb-4">
+                <button class="btn btn-primary btn-itinerary" onclick="showItinerary('circuito')">
+                    <i class="fas fa-road"></i> Experiencia en Circuito
+                </button>
+                <button class="btn btn-success btn-itinerary" onclick="showItinerary('cultural')">
+                    <i class="fas fa-landmark"></i> Tour Cultural Bélgica
+                </button>
+                <button class="btn btn-warning btn-itinerary" onclick="showItinerary('premium')">
+                    <i class="fas fa-crown"></i> Experiencia Premium
+                </button>
+            </div>
+
+            <div id="itinerario-circuito" class="itinerary-table active">
+                <h3 class="text-primary mb-3">
+                    <i class="fas fa-racing-helmet"></i> Experiencia en Spa-Francorchamps
+                </h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-clock"></i> Hora</th>
+                                <th><i class="fas fa-list"></i> Actividad</th>
+                                <th><i class="fas fa-map-marker-alt"></i> Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>8:00 AM</td>
+                                <td>Llegada al circuito y check-in VIP</td>
+                                <td>Entrada Principal Spa-Francorchamps</td>
+                            </tr>
+                            <tr>
+                                <td>9:30 AM</td>
+                                <td>Tour del paddock y boxes privados</td>
+                                <td>Zona de Paddock F1</td>
+                            </tr>
+                            <tr>
+                                <td>11:00 AM</td>
+                                <td>Sesión de entrenamientos libres desde tribuna VIP</td>
+                                <td>Tribuna Eau Rouge</td>
+                            </tr>
+                            <tr>
+                                <td>1:30 PM</td>
+                                <td>Almuerzo con vista a la pista</td>
+                                <td>Club House Spa-Francorchamps</td>
+                            </tr>
+                            <tr>
+                                <td>3:00 PM</td>
+                                <td>Clasificación desde la mejor tribuna</td>
+                                <td>Tribuna Raidillon</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="itinerario-cultural" class="itinerary-table">
+                <h3 class="text-success mb-3">
+                    <i class="fas fa-building"></i> Tour Cultural por Bélgica
+                </h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-clock"></i> Hora</th>
+                                <th><i class="fas fa-list"></i> Actividad</th>
+                                <th><i class="fas fa-map-marker-alt"></i> Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>9:00 AM</td>
+                                <td>Visita a la Grand Place de Bruselas</td>
+                                <td>Centro Histórico de Bruselas</td>
+                            </tr>
+                            <tr>
+                                <td>11:00 AM</td>
+                                <td>Tour por las cervecerías tradicionales</td>
+                                <td>Distrito de Cervecerías</td>
+                            </tr>
+                            <tr>
+                                <td>1:00 PM</td>
+                                <td>Degustación de chocolates belgas</td>
+                                <td>Chocolatería Godiva</td>
+                            </tr>
+                            <tr>
+                                <td>3:00 PM</td>
+                                <td>Visita a Brujas - Ciudad Medieval</td>
+                                <td>Centro Histórico de Brujas</td>
+                            </tr>
+                            <tr>
+                                <td>5:30 PM</td>
+                                <td>Paseo en barco por los canales</td>
+                                <td>Canales de Brujas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="itinerario-premium" class="itinerary-table">
+                <h3 class="text-warning mb-3">
+                    <i class="fas fa-trophy"></i> Experiencia Premium F1
+                </h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-clock"></i> Hora</th>
+                                <th><i class="fas fa-list"></i> Actividad</th>
+                                <th><i class="fas fa-map-marker-alt"></i> Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>7:00 AM</td>
+                                <td>Desayuno con pilotos de F1 (exclusivo)</td>
+                                <td>Hotel Des Indes Spa</td>
+                            </tr>
+                            <tr>
+                                <td>9:00 AM</td>
+                                <td>Acceso backstage y meet & greet</td>
+                                <td>Paddock Club Spa</td>
+                            </tr>
+                            <tr>
+                                <td>11:30 AM</td>
+                                <td>Vuelta en taxi F1 por el circuito</td>
+                                <td>Circuito Spa-Francorchamps</td>
+                            </tr>
+                            <tr>
+                                <td>2:00 PM</td>
+                                <td>Almuerzo VIP con champagne</td>
+                                <td>Paddock Club Premium</td>
+                            </tr>
+                            <tr>
+                                <td>3:00 PM</td>
+                                <td>Gran Premio desde suite privada</td>
+                                <td>Suite VIP Eau Rouge</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-comments icon-large"></i>
+                Comentarios de Fanáticos F1
+            </h2>
+            <div id="comentarios-container" class="row">
+            </div>
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-primary" onclick="loadRandomComments()">
+                    <i class="fas fa-sync-alt"></i> Cargar Nuevos Comentarios
+                </button>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-envelope icon-large"></i>
+                Reserva tu Experiencia F1
+            </h2>
+            <form id="contactForm" novalidate>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nombre" class="form-label">
+                            <i class="fas fa-user"></i> Nombre Completo
+                        </label>
+                        <input type="text" class="form-control" id="nombre" required>
+                        <div class="invalid-feedback">
+                            Por favor ingresa tu nombre completo.
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="fechaNacimiento" class="form-label">
+                            <i class="fas fa-calendar"></i> Fecha de Nacimiento
+                        </label>
+                        <input type="date" class="form-control" id="fechaNacimiento" required>
+                        <div class="invalid-feedback">
+                            Por favor selecciona tu fecha de nacimiento.
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-at"></i> Correo Electrónico
+                    </label>
+                    <input type="email" class="form-control" id="email" required>
+                    <div class="invalid-feedback">
+                        Por favor ingresa un correo electrónico válido.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="mensaje" class="form-label">
+                        <i class="fas fa-comment"></i> Mensaje / Preferencias
+                    </label>
+                    <textarea class="form-control" id="mensaje" rows="4" required placeholder="Cuéntanos qué experiencia F1 te interesa más..."></textarea>
+                    <div class="invalid-feedback">
+                        Por favor escribe tu mensaje.
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane"></i> Reservar Experiencia
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">
+                        <i class="fas fa-check-circle"></i> ¡Reserva Confirmada!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">¡Gracias por elegir nuestra experiencia F1!</h4>
+                        <p>Tu reserva ha sido enviada exitosamente. Nuestro equipo se pondrá en contacto contigo pronto para confirmar los detalles.</p>
+                        <hr>
+                        <p class="mb-0">Revisa la consola del navegador (F12) para ver los detalles de tu reserva.</p>
+                    </div>
+                    <div id="datosEnviados" class="mt-3">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        <i class="fas fa-flag-checkered"></i> ¡Perfecto!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="JS/index.js"></script>
+</body>
+</html>
