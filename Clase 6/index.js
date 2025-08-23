@@ -39,3 +39,6 @@ getUsuariodos("Juan").then((resultado) => {
 
 console.log("fin consulta");
 
+//constante facil usando usuario dos, solo funciona asincrona
+const nery = await getUsuariodos("nery");
+console.log(nery);

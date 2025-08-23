@@ -58,8 +58,10 @@ export function getUsuario(usuario, callback){
 export function getUsuariodos(usuario, callback){
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-        reject("Timeout")    
+        //reject("Timeout")    
         resolve({usuario}); 
     }, 100);
     })
 }
+
+
