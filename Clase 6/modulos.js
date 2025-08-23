@@ -43,4 +43,23 @@ export function esMayor(edad){
     return(edad >= 18)
     }
 
+//usamos callback para que ejecute la funcion ya procesada. si solo usamos return despliega undefined
+//callback es una funcion que se recibe por parametro y ejecutara cuando tenga los datos disponibles
+//osea funcion dentro de otra funcion
+export function getUsuario(usuario, callback){
+    setTimeout(() => {
+        callback({usuario}); 
+    }, 100);
 
+}
+
+
+//funcion promesa, usando tipo flecha
+export function getUsuariodos(usuario, callback){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+        reject("Timeout")    
+        resolve({usuario}); 
+    }, 100);
+    })
+}

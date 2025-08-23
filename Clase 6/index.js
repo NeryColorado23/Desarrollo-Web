@@ -10,10 +10,32 @@ console.log("Sergio es mayor ", esMayor(23));
 */
 
 //nueva forma cambiando el packaje json de type modulo
-import { dpiValido, esMayor } from "./modulos.js";
+import { dpiValido, esMayor, getUsuario, getUsuariodos } from "./modulos.js";
 
 dpiValido("122777777777");
 console.log("Sergio es mayor ", esMayor(23));
 
 
 //EXISTES EXTENSIONES .mjs y .cjs
+
+
+//get usuario
+console.log("Inicion consulta");
+//enviamos funcion por parametro callback de modulos.js aque esta tipo flecha
+getUsuario("Henry", (mensaje) => {console.log(mensaje)});
+console.log("fin consulta");
+
+
+
+//funcion promesa de modulos.js aqui en index
+//get usuario
+console.log("Inicion consulta");
+//enviamos funcion por parametro callback de modulos.js aque esta tipo flecha
+getUsuariodos("Juan").then((resultado) => {
+    console.log(resultado)
+}) .catch((err) => {
+    console.log("Error", err)
+})
+
+console.log("fin consulta");
+
