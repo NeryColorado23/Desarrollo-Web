@@ -14,3 +14,6 @@ import { dpiValido, esMayor } from "./modulos.js";
 
 dpiValido("122777777777");
 console.log("Sergio es mayor ", esMayor(23));
+
+
+//EXISTES EXTENSIONES .mjs y .cjs
