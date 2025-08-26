@@ -10,6 +10,12 @@ import { RouterOutlet } from '@angular/router';
 export class App {
   //protected readonly title = signal('prueba');
   title = 'Nery Colorado';
-  nombre = 'Parker'
-  precio = 5;
+  nombre: String = 'Parker'
+  precio: number = 6;
+  imagensnoopy: string = 'https://cdn.britannica.com/08/198008-050-46AA11CD/film-still-Boy-Named-Charlie-Brown-1969.jpg'; 
+
+  //funciones
+  getFecha(): String{
+    return new Date().toString();
+  }
 }
