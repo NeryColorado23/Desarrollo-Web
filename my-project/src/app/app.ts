@@ -10,5 +10,10 @@ import { HeaderComponent } from './components/header/header';
   styleUrls: ['./app.css']
 })
 export class App {
+  //strings varibales
   userName: string = 'Nery Colorado'; // <-- aquí un string normal
+  
+  //variables numericas
+  number: number = 0;
+
 }
