@@ -9,9 +9,12 @@ export class TaskController {
         this.tasksService = tasksService;
     }
 
+    //genere servicio
     @Get('/tasks')
     getAllTasks(){
-        
+
         return this.tasksService.getTasks();
     }
+
+
 }

@@ -6,4 +6,7 @@ export class TasksService{
     getTasks(){
         return ['Task1','Task2','Task3']
     }
+    testing(){
+        return 'test en proceso'
+    }
 }
