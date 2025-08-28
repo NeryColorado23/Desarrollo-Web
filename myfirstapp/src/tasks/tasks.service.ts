@@ -9,4 +9,22 @@ export class TasksService{
     testing(){
         return 'test en proceso'
     }
+
+    createTask(){
+        return 'Creando Tareas'
+    }
+
+    updateTask(){
+        return 'Actualizando Tareas'
+    }
+
+    deleteTask(){
+        return 'Eliminando Tareas'
+    }
+
+    updateTaskStatus(){
+        return 'Actualizando estado de tareas'
+    }
+ 
+
 }
