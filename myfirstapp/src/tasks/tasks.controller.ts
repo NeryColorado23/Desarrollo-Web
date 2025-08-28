@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Patch, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Patch, Post, Put } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 
 @Controller({})
@@ -16,9 +16,11 @@ export class TaskController {
         return this.tasksService.getTasks();
     }
 
-    @Post('/tasks')
-    createTask(){
-        return this.tasksService.createTask();
+    //extraer valor de thunder extension de mi primer tarea body
+    @Post()
+    createTask(@Body() task: any){
+    console.log(task)
+    return this.tasksService.createTask();
     }
 
     @Put('/tasks')

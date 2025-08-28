@@ -1,10 +1,21 @@
 import {Injectable} from '@nestjs/common';
 
+export interface User{
+    name: String;
+    email: String;
+    password: String;
+}
+
 @Injectable()
 export class TasksService{
 
-    getTasks(){
-        return ['Task1','Task2','Task3']
+    //uso de interface
+    getTasks(): User{
+        return {
+            name: 'Nery',
+            email: 'nery@gmail',
+            password: '123456'
+        }
     }
     testing(){
         return 'test en proceso'
