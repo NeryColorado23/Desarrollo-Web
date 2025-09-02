@@ -82,6 +82,8 @@
               }
             ],
             "styles": [
+              "node_modules/@primeuix/themes/aura-light-green/theme.css",
+              "node_modules/primeicons/primeicons.css",
               "src/styles.css"
             ]
           }
