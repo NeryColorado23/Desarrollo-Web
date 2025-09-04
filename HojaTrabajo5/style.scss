@@ -1,0 +1,118 @@
+
+$primary-color: #333;
+$secondary-color: #007bff;
+$white: #fff;
+$gray: #666;
+$light-gray: #f8f9fa;
+
+$font-large: 2rem;
+$font-medium: 1.5rem;
+$font-base: 1rem;
+$font-small: 0.9rem;
+
+$spacing-small: 0.5rem;
+$spacing-medium: 1rem;
+$spacing-large: 1.5rem;
+
+@mixin nav-link {
+  color: $white;
+  text-decoration: none;
+  padding: $spacing-small $spacing-medium;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+@mixin button($bg-color: $secondary-color, $size: medium) {
+  background-color: $bg-color;
+  color: $white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  
+  @if $size == small {
+    padding: $spacing-small $spacing-medium;
+    font-size: $font-small;
+  } @else if $size == large {
+    padding: $spacing-large;
+    font-size: $font-medium;
+  } @else {
+    padding: $spacing-medium $spacing-large;
+    font-size: $font-base;
+  }
+  
+  &:hover {
+    background-color: darken($bg-color, 10%);
+  }
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  color: $primary-color;
+}
+
+.header {
+  background-color: $primary-color;
+  color: $white;
+  padding: $spacing-large;
+  
+  &__title {
+    font-size: $font-large;
+    margin-bottom: $spacing-medium;
+    text-align: center;
+  }
+  
+  &__nav {
+    text-align: center;
+    
+    &-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      gap: $spacing-medium;
+    }
+    
+    &-item a {
+      @include nav-link;
+    }
+  }
+}
+
+.content {
+  padding: $spacing-large;
+  text-align: center;
+  
+  &__title {
+    font-size: $font-medium;
+    color: $primary-color;
+    margin-bottom: $spacing-medium;
+  }
+  
+  &__text {
+    font-size: $font-base;
+    color: $gray;
+    margin-bottom: $spacing-large;
+  }
+  
+  &__button {
+    @include button($secondary-color, medium);
+  }
+}
+
+ 
+.footer {
+  background-color: $light-gray;
+  color: $gray;
+  text-align: center;
+  padding: $spacing-medium;
+  
+  &__text {
+    font-size: $font-small;
+    margin: 0;
+  }
+}
