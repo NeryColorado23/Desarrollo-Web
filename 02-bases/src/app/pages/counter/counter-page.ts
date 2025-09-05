@@ -1,5 +1,5 @@
 //componente o archivo .component
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 
 //cree un componente
 @Component({
@@ -9,7 +9,7 @@ import { Component } from "@angular/core";
   `button{
     padding: 5px;
     margin: 5px 10px;
-    with: 75px;
+    width: 75px;
   }
   `
 })
@@ -17,13 +17,18 @@ import { Component } from "@angular/core";
 export class CounterPageComponent{
  counter = 15;
 
+//señales
+counterSignal = signal(10);
+
  //cree metodo
  increaseBy(value: number){
   //uso this para hacer referencia a la propiedad counter
   this.counter = this.counter + value;
+  this.counterSignal.update(current => current + value)
  }
  resetCounter(){
-  this.counter = 10;
+  this.counter = 0;
+  this.counterSignal.set(0);
  }
 
 }
