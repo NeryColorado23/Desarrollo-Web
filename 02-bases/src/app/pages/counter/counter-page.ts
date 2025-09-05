@@ -3,10 +3,14 @@ import { Component } from "@angular/core";
 
 //cree un componente
 @Component({
-  template: `
-  <h1>Counter {{counter}}</h1>
-  <button (click)="increaseBy(1)">+1</button>
-  <h2>Counter Component Page</h2>
+  templateUrl: './counter-page.html',
+
+  styles:
+  `button{
+    padding: 5px;
+    margin: 5px 10px;
+    with: 75px;
+  }
   `
 })
 
@@ -18,4 +22,8 @@ export class CounterPageComponent{
   //uso this para hacer referencia a la propiedad counter
   this.counter = this.counter + value;
  }
+ resetCounter(){
+  this.counter = 10;
+ }
+
 }
