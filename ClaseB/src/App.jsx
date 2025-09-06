@@ -1,6 +1,9 @@
 
 import './component/Encabezado/Encabezado'
 import Encabezado, { Cuerpo } from './component/Encabezado/Encabezado'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 function App() {
   const Estudiantes = [
