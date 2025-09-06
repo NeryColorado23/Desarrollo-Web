@@ -12,11 +12,13 @@ function App() {
   <div>
     <Encabezado/>
     {Estudiantes.map(function(valor){
-      return <h5>{valor.nombre} {valor.apellido}</h5>
+      return <Cuerpo {...valor}/>
     })}
       
 
-    <Cuerpo nombre = "Nery" apellido = "Colorado"></Cuerpo>
+    <Cuerpo nombre = "Nery" apellido = "Colorado">
+      <p>Contendido</p>
+    </Cuerpo>
     <Cuerpo nombre = "Juan" apellido="Garcia"></Cuerpo>
   </div>   
   )

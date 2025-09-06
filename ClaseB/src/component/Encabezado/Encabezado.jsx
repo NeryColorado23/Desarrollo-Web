@@ -3,8 +3,8 @@ export default function Encabezado(){
 }
 
 export function Cuerpo(props){
-    const {nombre, apellido} = props
+    const {nombre, apellido, children} = props
 //    const nombre = props.nombre
   //  const apellido = props.apellido
-    return <div>Estudiante  {nombre} {apellido}</div>
+    return <div>Estudiante  {nombre} {apellido} Contenido {children}</div>
 }
