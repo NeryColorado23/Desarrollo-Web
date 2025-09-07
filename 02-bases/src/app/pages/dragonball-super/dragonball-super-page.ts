@@ -1,4 +1,6 @@
 import { Component, signal } from '@angular/core';
+import { CharacterListComponent } from "../../components/dragonball/character-list/character-list";
+import { CharacteAddComponent } from "../../components/dragonball/character-app/character-add";
 
 interface Character{
   id: number;
@@ -8,7 +10,8 @@ interface Character{
 
 @Component({
   templateUrl: './dragonball-super-page.html',
-  selector: 'dragonball-super'
+  selector: 'dragonball-super',
+  imports: [CharacterListComponent, CharacteAddComponent]
 })
 
 //creacion de señal
