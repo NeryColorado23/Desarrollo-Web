@@ -6,7 +6,7 @@ import { DashboardPageComponent } from './medical/components/Dashboard-Page/Dash
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'login',
     component:  LoginPageComponent,
   },
   {
