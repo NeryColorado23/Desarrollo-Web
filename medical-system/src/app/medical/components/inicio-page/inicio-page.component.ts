@@ -5,4 +5,4 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './inicio-page.component.html',
 })
-export class InicioPageComponent { }
+export default class InicioPageComponent { }

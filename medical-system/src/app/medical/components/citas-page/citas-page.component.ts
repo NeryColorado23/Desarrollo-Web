@@ -5,4 +5,4 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './citas-page.component.html',
 })
-export class CitasPageComponent { }
+export default class CitasPageComponent { }

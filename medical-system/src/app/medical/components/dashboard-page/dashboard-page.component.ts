@@ -6,4 +6,4 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   templateUrl: './Dashboard-Page.component.html',
 })
-export class DashboardPageComponent { }
+export default class DashboardPageComponent { }
