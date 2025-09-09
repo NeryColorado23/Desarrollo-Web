@@ -2,6 +2,12 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: () =>
+      import('./gifs/pages/login-page/login-page.component')
+        .then(m => m.LoginPageComponent), // 👈 asegúrate de que la ruta sea correcta
+  },
+  {
     path: 'dashboard',
     loadComponent: () =>
       import('./gifs/pages/dashboard-page/dashboard-page.component'),
@@ -28,9 +34,14 @@ export const routes: Routes = [
       },
     ],
   },
+   {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
 
   {
     path: '**',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
   },
 ];
