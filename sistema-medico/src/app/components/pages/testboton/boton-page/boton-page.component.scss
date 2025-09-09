@@ -1,0 +1,11 @@
+.example-button-row button {
+  margin-right: 8px;
+  background-color: #eee;  // color pálido por defecto
+  color: #000;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.example-button-row button.activo {
+  background-color: purple;  // color fuerte del activo
+  color: white;
+}

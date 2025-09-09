@@ -1,3 +1,16 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () => import('./components/pages/testboton/boton-page/boton-page.component').then(m => m.BotonPageComponent)
+  },
+  {
+    path: 'registro-paciente',
+    loadComponent: () => import('./components/pages/page-form-paciente/page-form-paciente.component').then(m => m.PageFormPacienteComponent)
+  },
+  {
+    path: '**',
+    redirectTo: ''
+  }
+];
