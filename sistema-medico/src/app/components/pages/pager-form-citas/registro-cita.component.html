@@ -1,0 +1,291 @@
+<div class="citas-container">
+  <div class="header">
+    <h2>Gestión de Citas Médicas</h2>
+    <p>Administre las citas médicas: crear, modificar y cancelar</p>
+  </div>
+
+  <!-- Barra de acciones principales -->
+  <div class="actions-bar">
+    <button mat-raised-button color="primary" (click)="abrirModalCita('crear')">
+      <mat-icon>add</mat-icon>
+      Nueva Cita
+    </button>
+
+    <mat-form-field appearance="fill" class="filtro-busqueda">
+      <mat-label>Buscar cita</mat-label>
+      <input matInput [(ngModel)]="filtro" (input)="filtrarCitas()" placeholder="Paciente, doctor o fecha...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filtro-estado">
+      <mat-label>Filtrar por estado</mat-label>
+      <mat-select [(ngModel)]="filtroEstado" (selectionChange)="filtrarCitas()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="pendiente">Pendiente</mat-option>
+        <mat-option value="confirmada">Confirmada</mat-option>
+        <mat-option value="completada">Completada</mat-option>
+        <mat-option value="cancelada">Cancelada</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Lista de citas -->
+  <div class="citas-grid">
+    <mat-card *ngFor="let cita of citasFiltradas" class="cita-card" [ngClass]="'estado-' + cita.estado">
+      <mat-card-header>
+        <div mat-card-avatar class="avatar-cita">
+          <mat-icon [ngClass]="getIconoEstado(cita.estado)">{{ getIconoEstado(cita.estado) }}</mat-icon>
+        </div>
+        <mat-card-title>{{ cita.paciente }}</mat-card-title>
+        <mat-card-subtitle>{{ cita.doctor }} • {{ cita.especialidad }}</mat-card-subtitle>
+
+        <div class="card-actions">
+          <button mat-icon-button [matMenuTriggerFor]="menuCita">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menuCita="matMenu">
+            <button mat-menu-item (click)="abrirModalCita('editar', cita)">
+              <mat-icon>edit</mat-icon>
+              Modificar
+            </button>
+            <button mat-menu-item (click)="verDetallesCita(cita)">
+              <mat-icon>visibility</mat-icon>
+              Ver Detalles
+            </button>
+            <button mat-menu-item (click)="cancelarCita(cita)" *ngIf="cita.estado !== 'cancelada'">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="cita-info">
+          <div class="info-row">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ formatearFecha(cita.fecha) }}</span>
+          </div>
+          <div class="info-row">
+            <mat-icon>access_time</mat-icon>
+            <span>{{ cita.hora }}</span>
+          </div>
+          <div class="info-row">
+            <mat-icon>medical_services</mat-icon>
+            <span>{{ cita.tipoConsulta }}</span>
+          </div>
+          <div class="info-row" *ngIf="cita.motivoConsulta">
+            <mat-icon>description</mat-icon>
+            <span>{{ cita.motivoConsulta }}</span>
+          </div>
+        </div>
+
+        <div class="estado-badge">
+          <mat-chip [ngClass]="'chip-' + cita.estado">
+            {{ getEstadoTexto(cita.estado) }}
+          </mat-chip>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Mensaje cuando no hay citas -->
+  <div *ngIf="citasFiltradas.length === 0" class="no-citas">
+    <mat-icon>event_busy</mat-icon>
+    <h3>No hay citas disponibles</h3>
+    <p>{{ filtro || filtroEstado ? 'No se encontraron citas con los filtros aplicados' : 'Aún no hay citas registradas' }}</p>
+  </div>
+
+  <!-- Botón para regresar -->
+  <div class="boton-regreso-container">
+    <button mat-stroked-button [routerLink]="['/']" class="boton-regreso">
+      Regresar al Menú Principal
+    </button>
+  </div>
+</div>
+
+<!-- Modal para crear/editar cita -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalTipo === 'crear' ? 'Nueva Cita' : 'Modificar Cita' }}</h3>
+      <button mat-icon-button (click)="cerrarModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="citaForm" (ngSubmit)="guardarCita()" class="modal-form">
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Paciente</mat-label>
+          <mat-select formControlName="paciente">
+            <mat-option *ngFor="let paciente of pacientes" [value]="paciente">
+              {{ paciente }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="citaForm.get('paciente')?.hasError('required')">
+            Seleccione un paciente
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Doctor</mat-label>
+          <mat-select formControlName="doctor" (selectionChange)="onDoctorChange($event)">
+            <mat-option *ngFor="let doctor of doctores" [value]="doctor.nombre">
+              {{ doctor.nombre }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="citaForm.get('doctor')?.hasError('required')">
+            Seleccione un doctor
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Especialidad</mat-label>
+          <input matInput formControlName="especialidad" readonly>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="citaPicker" formControlName="fecha">
+          <mat-datepicker-toggle matIconSuffix [for]="citaPicker"></mat-datepicker-toggle>
+          <mat-datepicker #citaPicker></mat-datepicker>
+          <mat-error *ngIf="citaForm.get('fecha')?.hasError('required')">
+            Seleccione una fecha
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Hora</mat-label>
+          <mat-select formControlName="hora">
+            <mat-option *ngFor="let hora of horasDisponibles" [value]="hora">
+              {{ hora }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="citaForm.get('hora')?.hasError('required')">
+            Seleccione una hora
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Tipo de Consulta</mat-label>
+          <mat-select formControlName="tipoConsulta">
+            <mat-option value="primera-vez">Primera vez</mat-option>
+            <mat-option value="control">Control</mat-option>
+            <mat-option value="urgencia">Urgencia</mat-option>
+            <mat-option value="emergencia">Emergencia</mat-option>
+          </mat-select>
+          <mat-error *ngIf="citaForm.get('tipoConsulta')?.hasError('required')">
+            Seleccione el tipo de consulta
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado">
+            <mat-option value="pendiente">Pendiente</mat-option>
+            <mat-option value="confirmada">Confirmada</mat-option>
+            <mat-option value="completada">Completada</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Motivo de la Consulta</mat-label>
+          <textarea matInput formControlName="motivoConsulta" rows="3"
+                    placeholder="Describa el motivo de la consulta..."></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Observaciones</mat-label>
+          <textarea matInput formControlName="observaciones" rows="2"
+                    placeholder="Observaciones adicionales (opcional)"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="modal-actions">
+        <button mat-button type="button" (click)="cerrarModal()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!citaForm.valid">
+          {{ modalTipo === 'crear' ? 'Crear Cita' : 'Guardar Cambios' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de detalles de cita -->
+<div class="modal-overlay" *ngIf="mostrarDetalles" (click)="cerrarDetalles()">
+  <div class="modal-content modal-detalles" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Detalles de la Cita</h3>
+      <button mat-icon-button (click)="cerrarDetalles()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="detalles-content" *ngIf="citaSeleccionada">
+      <div class="detalle-section">
+        <h4>Información del Paciente</h4>
+        <div class="detalle-item">
+          <strong>Paciente:</strong> {{ citaSeleccionada.paciente }}
+        </div>
+      </div>
+
+      <div class="detalle-section">
+        <h4>Información Médica</h4>
+        <div class="detalle-item">
+          <strong>Doctor:</strong> {{ citaSeleccionada.doctor }}
+        </div>
+        <div class="detalle-item">
+          <strong>Especialidad:</strong> {{ citaSeleccionada.especialidad }}
+        </div>
+        <div class="detalle-item">
+          <strong>Tipo de Consulta:</strong> {{ citaSeleccionada.tipoConsulta }}
+        </div>
+      </div>
+
+      <div class="detalle-section">
+        <h4>Programación</h4>
+        <div class="detalle-item">
+          <strong>Fecha:</strong> {{ formatearFecha(citaSeleccionada.fecha) }}
+        </div>
+        <div class="detalle-item">
+          <strong>Hora:</strong> {{ citaSeleccionada.hora }}
+        </div>
+        <div class="detalle-item">
+          <strong>Estado:</strong>
+          <mat-chip [ngClass]="'chip-' + citaSeleccionada.estado">
+            {{ getEstadoTexto(citaSeleccionada.estado) }}
+          </mat-chip>
+        </div>
+      </div>
+
+      <div class="detalle-section" *ngIf="citaSeleccionada.motivoConsulta">
+        <h4>Motivo de Consulta</h4>
+        <p>{{ citaSeleccionada.motivoConsulta }}</p>
+      </div>
+
+      <div class="detalle-section" *ngIf="citaSeleccionada.observaciones">
+        <h4>Observaciones</h4>
+        <p>{{ citaSeleccionada.observaciones }}</p>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button mat-button (click)="cerrarDetalles()">Cerrar</button>
+      <button mat-raised-button color="primary" (click)="abrirModalCita('editar', citaSeleccionada!)"
+              *ngIf="citaSeleccionada">
+        Modificar Cita
+      </button>
+    </div>
+  </div>
+</div>

@@ -20,7 +20,7 @@ import { RouterModule } from '@angular/router';
 export class BotonPageComponent {
   botones = [
     { label: 'Registro', link: '/registro-paciente' },
-    { label: 'Citas', link: '/otra-vista' },
+    { label: 'Citas', link: '/registro-cita' },
     { label: 'Doctores', link: '/otra-vista-2' },
     { label: 'Gestion', link: '/otra-vista' },
   ];
