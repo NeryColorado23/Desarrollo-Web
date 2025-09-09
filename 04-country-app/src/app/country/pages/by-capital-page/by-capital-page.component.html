@@ -1,1 +1,6 @@
-<p>by-capital-page works!</p>,
+<!--coutry search input-->
+<country-search-input placeholder="Buscar por capital"
+(value)="onSearch($event)"/>
+
+<!--coutry list component-->
+<country-list [countries]="countries()"/>
