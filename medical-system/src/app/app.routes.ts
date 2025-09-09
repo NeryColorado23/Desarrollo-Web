@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
-import { FooterComponent } from './shared/components/footer/footer.component';
-import { HomePageComponent } from '../../../04-country-app/src/app/shared/pages/home-page/home-page.component';
 import { LoginPageComponent } from './medical/components/login-page/login-page.component';
 import { DashboardPageComponent } from './medical/components/Dashboard-Page/Dashboard-Page.component';
+import { CitasPageComponent } from './medical/components/citas-page/citas-page.component';
+import { DoctoresPageComponent } from './medical/components/doctores-page/doctores-page.component';
+import { InicioPageComponent } from './medical/components/inicio-page/inicio-page.component';
+import { PacientePageComponent } from './medical/components/paciente-page/paciente-page.component';
 
 export const routes: Routes = [
   {
@@ -12,6 +14,22 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardPageComponent,
+  },
+  {
+    path: 'citas',
+    component: CitasPageComponent,
+  },
+  {
+    path: 'doctores',
+    component: DoctoresPageComponent,
+  },
+  {
+    path: 'inicio',
+    component: InicioPageComponent,
+  },
+  {
+    path: 'paciente',
+    component: PacientePageComponent,
   },
   {
     path: '**',
