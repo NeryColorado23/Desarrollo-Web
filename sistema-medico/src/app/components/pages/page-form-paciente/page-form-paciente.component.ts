@@ -1,41 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+
+// Angular Material Imports
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
-export interface Paciente {
-  id: string;
-  nombre: string;
-  apellido: string;
+export interface PacienteRegistro {
+  // Datos Personales
+  nombreCompleto: string;
   cedula: string;
+  fechaNacimiento: Date;
+  genero: string;
   telefono: string;
   email: string;
-  fechaNacimiento: Date;
-  historial: RegistroConsulta[];
-}
+  direccion: string;
 
-export interface RegistroConsulta {
-  fecha: Date;
-  signosVitales: {
-    presionArterial: string;
-    temperatura: number;
-    pulso: number;
-    respiracion: number;
-    peso: number;
-    talla: number;
-  };
-  motivoCita: string;
-  observaciones?: string;
+  // Signos Vitales
+  temperatura?: number;
+  peso?: number;
+  altura?: number;
+  presionSistolica?: number;
+  presionDiastolica?: number;
+  frecuenciaCardiaca?: number;
+  frecuenciaRespiratoria?: number;
+
+  // Motivo de Consulta
+  motivoConsulta: string;
+  sintomasAdicionales?: string;
+  tipoConsulta: string;
+  prioridad: string;
 }
 
 @Component({
@@ -44,264 +46,152 @@ export interface RegistroConsulta {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    MatIconModule,
+    MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSnackBarModule
+    MatButtonModule,
+    MatIconModule
   ],
   templateUrl: './page-form-paciente.component.html',
-  styleUrls: ['./page-form-paciente.component.scss']
+  styleUrls: ['./page-form-paciente.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageFormPacienteComponent implements OnInit {
-
-  registroForm: FormGroup;
-  pacienteEncontrado: Paciente | null = null;
-  pacientes: Paciente[] = [];
+  pacienteForm!: FormGroup;
+  mensajeExito: string = '';
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
-    private snackBar: MatSnackBar
-  ) {
-    this.registroForm = this.createForm();
-    this.loadPacientesFromStorage();
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.initializeForm();
   }
 
-  ngOnInit(): void {}
+  private initializeForm(): void {
+    this.pacienteForm = this.fb.group({
+      // Datos Personales - Requeridos
+      nombreCompleto: ['', [Validators.required, Validators.minLength(2)]],
+      cedula: ['', [Validators.required, Validators.minLength(6)]],
+      fechaNacimiento: ['', Validators.required],
+      genero: ['', Validators.required],
+      telefono: ['', [Validators.required, Validators.pattern(/^\d{8,15}$/)]],
+      email: ['', [Validators.required, Validators.email]],
+      direccion: ['', [Validators.required, Validators.minLength(10)]],
 
-  createForm(): FormGroup {
-    return this.fb.group({
-      // Datos del paciente
-      cedula: ['', [Validators.required, Validators.minLength(8)]],
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
-      telefono: ['', Validators.required],
-      email: ['', [Validators.email]],
-      fechaNacimiento: [''],
+      // Signos Vitales - Opcionales pero con validaciones
+      temperatura: ['', [Validators.min(35), Validators.max(45)]],
+      peso: ['', [Validators.min(1), Validators.max(300)]],
+      altura: ['', [Validators.min(50), Validators.max(250)]],
+      presionSistolica: ['', [Validators.min(60), Validators.max(250)]],
+      presionDiastolica: ['', [Validators.min(40), Validators.max(150)]],
+      frecuenciaCardiaca: ['', [Validators.min(40), Validators.max(200)]],
+      frecuenciaRespiratoria: ['', [Validators.min(8), Validators.max(40)]],
 
-      // Signos vitales
-      presionArterial: ['', Validators.required],
-      temperatura: ['', [Validators.required, Validators.min(35), Validators.max(42)]],
-      pulso: ['', [Validators.required, Validators.min(40), Validators.max(200)]],
-      respiracion: ['', [Validators.required, Validators.min(10), Validators.max(40)]],
-      peso: ['', [Validators.required, Validators.min(1)]],
-      talla: ['', [Validators.required, Validators.min(50)]],
-
-      // Motivo de la cita
-      motivoCita: ['', Validators.required],
-      observaciones: ['']
+      // Motivo de Consulta - Requeridos
+      motivoConsulta: ['', [Validators.required, Validators.minLength(10)]],
+      sintomasAdicionales: [''],
+      tipoConsulta: ['', Validators.required],
+      prioridad: ['', Validators.required]
     });
   }
 
-  buscarPaciente(): void {
-    const cedula = this.registroForm.get('cedula')?.value;
+  calcularIMC(): string {
+    const peso = this.pacienteForm.get('peso')?.value;
+    const altura = this.pacienteForm.get('altura')?.value;
 
-    if (!cedula) {
-      this.showMessage('Por favor ingrese una cédula');
-      return;
+    if (peso && altura && peso > 0 && altura > 0) {
+      const alturaEnMetros = altura / 100;
+      const imc = peso / (alturaEnMetros * alturaEnMetros);
+      return imc.toFixed(1);
     }
 
-    this.pacienteEncontrado = this.pacientes.find(p => p.cedula === cedula) || null;
-
-    if (this.pacienteEncontrado) {
-      // Llenar datos del paciente existente
-      this.registroForm.patchValue({
-        nombre: this.pacienteEncontrado.nombre,
-        apellido: this.pacienteEncontrado.apellido,
-        telefono: this.pacienteEncontrado.telefono,
-        email: this.pacienteEncontrado.email,
-        fechaNacimiento: this.pacienteEncontrado.fechaNacimiento
-      });
-
-      // Deshabilitar campos de datos personales
-      this.registroForm.get('nombre')?.disable();
-      this.registroForm.get('apellido')?.disable();
-      this.registroForm.get('telefono')?.disable();
-      this.registroForm.get('email')?.disable();
-      this.registroForm.get('fechaNacimiento')?.disable();
-
-      this.showMessage('Paciente encontrado. Complete los signos vitales y motivo de la cita.', 'success');
-    } else {
-      // Habilitar todos los campos para nuevo paciente
-      this.enableAllFields();
-      this.showMessage('Paciente no encontrado. Complete todos los datos para crear nuevo registro.', 'info');
-    }
-  }
-
-  enableAllFields(): void {
-    this.registroForm.get('nombre')?.enable();
-    this.registroForm.get('apellido')?.enable();
-    this.registroForm.get('telefono')?.enable();
-    this.registroForm.get('email')?.enable();
-    this.registroForm.get('fechaNacimiento')?.enable();
-  }
-
-  limpiarFormulario(): void {
-    this.registroForm.reset();
-    this.pacienteEncontrado = null;
-    this.enableAllFields();
+    return '';
   }
 
   onSubmit(): void {
-    if (this.registroForm.invalid) {
-      this.showMessage('Por favor complete todos los campos requeridos');
-      this.markFormGroupTouched();
-      return;
-    }
+    if (this.pacienteForm.valid) {
+      const pacienteData: PacienteRegistro = this.pacienteForm.value;
 
-    const formValue = this.registroForm.getRawValue();
+      // Aquí normalmente harías la llamada a tu servicio para guardar
+      console.log('Datos del paciente a registrar:', pacienteData);
 
-    const nuevaConsulta: RegistroConsulta = {
-      fecha: new Date(),
-      signosVitales: {
-        presionArterial: formValue.presionArterial,
-        temperatura: formValue.temperatura,
-        pulso: formValue.pulso,
-        respiracion: formValue.respiracion,
-        peso: formValue.peso,
-        talla: formValue.talla
-      },
-      motivoCita: formValue.motivoCita,
-      observaciones: formValue.observaciones
-    };
-
-    if (this.pacienteEncontrado) {
-      // Agregar consulta al historial del paciente existente
-      this.pacienteEncontrado.historial.push(nuevaConsulta);
-      this.updatePaciente(this.pacienteEncontrado);
-      this.showMessage('Registro agregado al historial del paciente exitosamente', 'success');
+      // Simular guardado exitoso
+      this.guardarPaciente(pacienteData);
     } else {
-      // Crear nuevo paciente
-      const nuevoPaciente: Paciente = {
-        id: this.generateId(),
-        nombre: formValue.nombre,
-        apellido: formValue.apellido,
-        cedula: formValue.cedula,
-        telefono: formValue.telefono,
-        email: formValue.email,
-        fechaNacimiento: formValue.fechaNacimiento,
-        historial: [nuevaConsulta]
-      };
-
-      this.pacientes.push(nuevoPaciente);
-      this.savePacientesToStorage();
-      this.showMessage('Nuevo paciente registrado exitosamente', 'success');
+      // Marcar todos los campos como tocados para mostrar errores
+      this.marcarCamposComoTocados();
     }
+  }
 
-    // Limpiar formulario después del registro
+  private guardarPaciente(data: PacienteRegistro): void {
+    // Simulación de guardado
     setTimeout(() => {
-      this.limpiarFormulario();
-    }, 2000);
+      this.mensajeExito = 'Paciente registrado exitosamente';
+
+      // Opcional: Redirigir después de un tiempo
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 2000);
+    }, 1000);
   }
 
-  private markFormGroupTouched(): void {
-    Object.keys(this.registroForm.controls).forEach(key => {
-      const control = this.registroForm.get(key);
-      control?.markAsTouched();
+  private marcarCamposComoTocados(): void {
+    Object.keys(this.pacienteForm.controls).forEach(key => {
+      const control = this.pacienteForm.get(key);
+      if (control) {
+        control.markAsTouched();
+      }
     });
   }
 
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private updatePaciente(paciente: Paciente): void {
-    const index = this.pacientes.findIndex(p => p.id === paciente.id);
-    if (index !== -1) {
-      this.pacientes[index] = paciente;
-      this.savePacientesToStorage();
-    }
-  }
-
-  private savePacientesToStorage(): void {
-    localStorage.setItem('pacientes', JSON.stringify(this.pacientes));
-  }
-
-  private loadPacientesFromStorage(): void {
-    const stored = localStorage.getItem('pacientes');
-    if (stored) {
-      this.pacientes = JSON.parse(stored);
-      // Convertir strings de fecha de vuelta a Date objects
-      this.pacientes.forEach(paciente => {
-        if (typeof paciente.fechaNacimiento === 'string') {
-          paciente.fechaNacimiento = new Date(paciente.fechaNacimiento);
-        }
-        paciente.historial.forEach(consulta => {
-          if (typeof consulta.fecha === 'string') {
-            consulta.fecha = new Date(consulta.fecha);
-          }
-        });
-      });
-    }
-  }
-
-  private showMessage(message: string, type: string = 'error'): void {
-    this.snackBar.open(message, 'Cerrar', {
-      duration: 5000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: [`snackbar-${type}`]
-    });
-  }
-
-  volver(): void {
-    this.router.navigate(['/']);
-  }
-
-  // Método para obtener mensajes de error
+  // Método para obtener mensaje de error específico
   getErrorMessage(fieldName: string): string {
-    const field = this.registroForm.get(fieldName);
-    if (field?.hasError('required')) {
+    const control = this.pacienteForm.get(fieldName);
+
+    if (control?.hasError('required')) {
       return `${this.getFieldLabel(fieldName)} es requerido`;
     }
-    if (field?.hasError('email')) {
+
+    if (control?.hasError('email')) {
       return 'Ingrese un email válido';
     }
-    if (field?.hasError('minlength')) {
-      return `${this.getFieldLabel(fieldName)} debe tener al menos ${field.errors?.['minlength'].requiredLength} caracteres`;
+
+    if (control?.hasError('minlength')) {
+      const requiredLength = control.errors?.['minlength']['requiredLength'];
+      return `Mínimo ${requiredLength} caracteres`;
     }
-    if (field?.hasError('min')) {
-      return `Valor mínimo: ${field.errors?.['min'].min}`;
+
+    if (control?.hasError('pattern')) {
+      return 'Formato inválido';
     }
-    if (field?.hasError('max')) {
-      return `Valor máximo: ${field.errors?.['max'].max}`;
+
+    if (control?.hasError('min') || control?.hasError('max')) {
+      return 'Valor fuera del rango permitido';
     }
+
     return '';
   }
 
   private getFieldLabel(fieldName: string): string {
     const labels: { [key: string]: string } = {
-      cedula: 'La cédula',
-      nombre: 'El nombre',
-      apellido: 'El apellido',
-      telefono: 'El teléfono',
-      email: 'El email',
-      presionArterial: 'La presión arterial',
-      temperatura: 'La temperatura',
-      pulso: 'El pulso',
-      respiracion: 'La respiración',
-      peso: 'El peso',
-      talla: 'La talla',
-      motivoCita: 'El motivo de la cita'
+      'nombreCompleto': 'Nombre completo',
+      'cedula': 'Cédula',
+      'fechaNacimiento': 'Fecha de nacimiento',
+      'genero': 'Género',
+      'telefono': 'Teléfono',
+      'email': 'Email',
+      'direccion': 'Dirección',
+      'motivoConsulta': 'Motivo de consulta',
+      'tipoConsulta': 'Tipo de consulta',
+      'prioridad': 'Prioridad'
     };
+
     return labels[fieldName] || fieldName;
-  }
-
-  // Método adicional para validar campos específicos
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.registroForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
-  }
-
-  // Método para mostrar información del paciente encontrado
-  getPacienteInfo(): string {
-    if (this.pacienteEncontrado) {
-      return `${this.pacienteEncontrado.nombre} ${this.pacienteEncontrado.apellido} - Consultas anteriores: ${this.pacienteEncontrado.historial.length}`;
-    }
-    return '';
   }
 }

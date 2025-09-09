@@ -1,242 +1,224 @@
-<div class="registro-container">
-  <mat-card class="registro-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>person_add</mat-icon>
-        Sistema de Registro Médico
-      </mat-card-title>
-      <mat-card-subtitle>
-        Complete los datos del paciente y su consulta médica
-      </mat-card-subtitle>
-    </mat-card-header>
+<div class="registro-paciente-container">
+  <div class="header">
+    <h2>Registro de Paciente</h2>
+    <p>Complete todos los campos para registrar un nuevo paciente</p>
+  </div>
 
-    <mat-card-content>
-      <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="pacienteForm" (ngSubmit)="onSubmit()" class="paciente-form">
 
-        <!-- Sección: Búsqueda de Paciente -->
-        <mat-card class="section-card">
-          <mat-card-title>
-            <mat-icon>search</mat-icon>
-            Identificación del Paciente
-          </mat-card-title>
-          <mat-card-content>
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Número de Cédula</mat-label>
-              <input matInput formControlName="cedula" placeholder="Ingrese la cédula del paciente" maxlength="15">
-              <mat-icon matSuffix>badge</mat-icon>
-              <mat-error *ngIf="isFieldInvalid('cedula')">
-                {{ getErrorMessage('cedula') }}
-              </mat-error>
-            </mat-form-field>
-
-            <div class="button-group">
-              <button mat-raised-button color="primary" type="button"
-                      (click)="buscarPaciente()"
-                      [disabled]="!registroForm.get('cedula')?.value">
-                <mat-icon>search</mat-icon>
-                Buscar Paciente
-              </button>
-              <button mat-stroked-button type="button" (click)="limpiarFormulario()">
-                <mat-icon>clear</mat-icon>
-                Limpiar Formulario
-              </button>
-            </div>
-
-            <!-- Indicador de paciente encontrado -->
-            <div *ngIf="pacienteEncontrado" class="patient-found-indicator">
-              <mat-icon>check_circle</mat-icon>
-              <div class="patient-info">
-                <span class="patient-name">{{ getPacienteInfo() }}</span>
-                <small>Solo complete los signos vitales y motivo de consulta</small>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <!-- Sección: Datos del Paciente -->
-        <mat-card class="section-card">
-          <mat-card-title>
-            <mat-icon>person</mat-icon>
-            Datos Personales del Paciente
-          </mat-card-title>
-          <mat-card-content>
-            <div class="form-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Nombre</mat-label>
-                <input matInput formControlName="nombre" placeholder="Nombre completo">
-                <mat-icon matSuffix>person</mat-icon>
-                <mat-error *ngIf="isFieldInvalid('nombre')">
-                  {{ getErrorMessage('nombre') }}
-                </mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Apellido</mat-label>
-                <input matInput formControlName="apellido" placeholder="Apellidos completos">
-                <mat-icon matSuffix>person_outline</mat-icon>
-                <mat-error *ngIf="isFieldInvalid('apellido')">
-                  {{ getErrorMessage('apellido') }}
-                </mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="form-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Teléfono</mat-label>
-                <input matInput formControlName="telefono" placeholder="Número de contacto" type="tel">
-                <mat-icon matSuffix>phone</mat-icon>
-                <mat-error *ngIf="isFieldInvalid('telefono')">
-                  {{ getErrorMessage('telefono') }}
-                </mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Email (opcional)</mat-label>
-                <input matInput formControlName="email" placeholder="correo@ejemplo.com" type="email">
-                <mat-icon matSuffix>email</mat-icon>
-                <mat-error *ngIf="isFieldInvalid('email')">
-                  {{ getErrorMessage('email') }}
-                </mat-error>
-              </mat-form-field>
-            </div>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Fecha de Nacimiento</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento" readonly>
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-              <mat-icon matSuffix>cake</mat-icon>
-            </mat-form-field>
-          </mat-card-content>
-        </mat-card>
-
-        <!-- Sección: Signos Vitales -->
-        <mat-card class="section-card vital-signs">
-          <mat-card-title>
-            <mat-icon>monitor_heart</mat-icon>
-            Signos Vitales
-          </mat-card-title>
-          <mat-card-subtitle>Registre los signos vitales actuales del paciente</mat-card-subtitle>
-          <mat-card-content>
-            <div class="form-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Presión Arterial</mat-label>
-                <input matInput formControlName="presionArterial" placeholder="120/80 mmHg">
-                <mat-icon matSuffix>favorite</mat-icon>
-                <mat-hint>Formato: 120/80</mat-hint>
-                <mat-error *ngIf="isFieldInvalid('presionArterial')">
-                  {{ getErrorMessage('presionArterial') }}
-                </mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Temperatura (°C)</mat-label>
-                <input matInput type="number" formControlName="temperatura" placeholder="36.5" step="0.1" min="35" max="42">
-                <mat-icon matSuffix>thermostat</mat-icon>
-                <mat-hint>Rango: 35°C - 42°C</mat-hint>
-                <mat-error *ngIf="isFieldInvalid('temperatura')">
-                  {{ getErrorMessage('temperatura') }}
-                </mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="form-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Pulso (ppm)</mat-label>
-                <input matInput type="number" formControlName="pulso" placeholder="72" min="40" max="200">
-                <mat-icon matSuffix>monitor_heart</mat-icon>
-                <mat-hint>Pulsaciones por minuto</mat-hint>
-                <mat-error *ngIf="isFieldInvalid('pulso')">
-                  {{ getErrorMessage('pulso') }}
-                </mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Respiración (rpm)</mat-label>
-                <input matInput type="number" formControlName="respiracion" placeholder="16" min="10" max="40">
-                <mat-icon matSuffix>air</mat-icon>
-                <mat-hint>Respiraciones por minuto</mat-hint>
-                <mat-error *ngIf="isFieldInvalid('respiracion')">
-                  {{ getErrorMessage('respiracion') }}
-                </mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="form-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Peso (kg)</mat-label>
-                <input matInput type="number" formControlName="peso" placeholder="70.5" step="0.1" min="1">
-                <mat-icon matSuffix>scale</mat-icon>
-                <mat-hint>Peso en kilogramos</mat-hint>
-                <mat-error *ngIf="isFieldInvalid('peso')">
-                  {{ getErrorMessage('peso') }}
-                </mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Talla (cm)</mat-label>
-                <input matInput type="number" formControlName="talla" placeholder="170" min="50" max="250">
-                <mat-icon matSuffix>straighten</mat-icon>
-                <mat-hint>Altura en centímetros</mat-hint>
-                <mat-error *ngIf="isFieldInvalid('talla')">
-                  {{ getErrorMessage('talla') }}
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <!-- Sección: Motivo de Consulta -->
-        <mat-card class="section-card consultation">
-          <mat-card-title>
-            <mat-icon>edit_note</mat-icon>
-            Información de la Consulta
-          </mat-card-title>
-          <mat-card-content>
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Motivo de la Cita</mat-label>
-              <textarea matInput formControlName="motivoCita" rows="4"
-                       placeholder="Describa detalladamente el motivo de la consulta médica"
-                       maxlength="500"></textarea>
-              <mat-icon matSuffix>medical_services</mat-icon>
-              <mat-hint align="end">{{ registroForm.get('motivoCita')?.value?.length || 0 }}/500</mat-hint>
-              <mat-error *ngIf="isFieldInvalid('motivoCita')">
-                {{ getErrorMessage('motivoCita') }}
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Observaciones Adicionales (opcional)</mat-label>
-              <textarea matInput formControlName="observaciones" rows="3"
-                       placeholder="Observaciones, síntomas adicionales o notas importantes"
-                       maxlength="300"></textarea>
-              <mat-icon matSuffix>note</mat-icon>
-              <mat-hint align="end">{{ registroForm.get('observaciones')?.value?.length || 0 }}/300</mat-hint>
-            </mat-form-field>
-          </mat-card-content>
-        </mat-card>
-
-        <!-- Botones de acción -->
-        <div class="action-buttons">
-          <button mat-raised-button color="primary" type="submit"
-                  [disabled]="registroForm.invalid"
-                  class="submit-btn">
-            <mat-icon>save</mat-icon>
-            {{ pacienteEncontrado ? 'Agregar Nueva Consulta' : 'Registrar Nuevo Paciente' }}
-          </button>
-
-          <button mat-stroked-button type="button" (click)="volver()" class="back-btn">
-            <mat-icon>arrow_back</mat-icon>
-            Volver al Menú Principal
-          </button>
+    <!-- Datos Personales -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>Datos Personales</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Nombre Completo</mat-label>
+            <input matInput formControlName="nombreCompleto" placeholder="Ingrese el nombre completo">
+            <mat-error *ngIf="pacienteForm.get('nombreCompleto')?.hasError('required')">
+              El nombre es requerido
+            </mat-error>
+          </mat-form-field>
         </div>
 
-        <!-- Información del formulario -->
-        <div class="form-info" *ngIf="registroForm.invalid && registroForm.touched">
-          <mat-icon>info</mat-icon>
-          <span>Complete todos los campos requeridos para continuar</span>
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Cédula/DNI</mat-label>
+            <input matInput formControlName="cedula" placeholder="Número de identificación">
+            <mat-error *ngIf="pacienteForm.get('cedula')?.hasError('required')">
+              La cédula es requerida
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Fecha de Nacimiento</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="pacienteForm.get('fechaNacimiento')?.hasError('required')">
+              La fecha de nacimiento es requerida
+            </mat-error>
+          </mat-form-field>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Género</mat-label>
+            <mat-select formControlName="genero">
+              <mat-option value="masculino">Masculino</mat-option>
+              <mat-option value="femenino">Femenino</mat-option>
+              <mat-option value="otro">Otro</mat-option>
+            </mat-select>
+            <mat-error *ngIf="pacienteForm.get('genero')?.hasError('required')">
+              Seleccione un género
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="telefono" placeholder="Número de teléfono">
+            <mat-error *ngIf="pacienteForm.get('telefono')?.hasError('required')">
+              El teléfono es requerido
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="correo@ejemplo.com">
+            <mat-error *ngIf="pacienteForm.get('email')?.hasError('required')">
+              El email es requerido
+            </mat-error>
+            <mat-error *ngIf="pacienteForm.get('email')?.hasError('email')">
+              Ingrese un email válido
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Dirección</mat-label>
+            <textarea matInput formControlName="direccion" rows="2" placeholder="Dirección completa"></textarea>
+            <mat-error *ngIf="pacienteForm.get('direccion')?.hasError('required')">
+              La dirección es requerida
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Signos Vitales -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>Signos Vitales</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="quarter-width">
+            <mat-label>Temperatura (°C)</mat-label>
+            <input matInput type="number" formControlName="temperatura" step="0.1" placeholder="36.5">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="quarter-width">
+            <mat-label>Peso (kg)</mat-label>
+            <input matInput type="number" formControlName="peso" step="0.1" placeholder="70.0">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="quarter-width">
+            <mat-label>Altura (cm)</mat-label>
+            <input matInput type="number" formControlName="altura" placeholder="170">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="quarter-width">
+            <mat-label>IMC</mat-label>
+            <input matInput type="number" [value]="calcularIMC()" readonly>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Presión Sistólica (mmHg)</mat-label>
+            <input matInput type="number" formControlName="presionSistolica" placeholder="120">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Presión Diastólica (mmHg)</mat-label>
+            <input matInput type="number" formControlName="presionDiastolica" placeholder="80">
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Frecuencia Cardíaca (bpm)</mat-label>
+            <input matInput type="number" formControlName="frecuenciaCardiaca" placeholder="72">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Frecuencia Respiratoria (rpm)</mat-label>
+            <input matInput type="number" formControlName="frecuenciaRespiratoria" placeholder="16">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Motivo de Consulta -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>Motivo de Consulta</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Describe el motivo de la consulta</mat-label>
+            <textarea matInput formControlName="motivoConsulta" rows="4"
+                      placeholder="Describa los síntomas, molestias o motivo por el cual consulta..."></textarea>
+            <mat-error *ngIf="pacienteForm.get('motivoConsulta')?.hasError('required')">
+              El motivo de consulta es requerido
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Síntomas Adicionales</mat-label>
+            <textarea matInput formControlName="sintomasAdicionales" rows="3"
+                      placeholder="Otros síntomas o información relevante (opcional)"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Tipo de Consulta</mat-label>
+            <mat-select formControlName="tipoConsulta">
+              <mat-option value="primera-vez">Primera vez</mat-option>
+              <mat-option value="control">Control</mat-option>
+              <mat-option value="urgencia">Urgencia</mat-option>
+              <mat-option value="emergencia">Emergencia</mat-option>
+            </mat-select>
+            <mat-error *ngIf="pacienteForm.get('tipoConsulta')?.hasError('required')">
+              Seleccione el tipo de consulta
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Prioridad</mat-label>
+            <mat-select formControlName="prioridad">
+              <mat-option value="baja">Baja</mat-option>
+              <mat-option value="media">Media</mat-option>
+              <mat-option value="alta">Alta</mat-option>
+              <mat-option value="critica">Crítica</mat-option>
+            </mat-select>
+            <mat-error *ngIf="pacienteForm.get('prioridad')?.hasError('required')">
+              Seleccione la prioridad
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Botones de Acción -->
+    <div class="form-actions">
+      <button mat-raised-button type="button" color="accent" [routerLink]="['/']">
+        Cancelar
+      </button>
+      <button mat-raised-button type="submit" color="primary" [disabled]="!pacienteForm.valid">
+        Registrar Paciente
+      </button>
+    </div>
+  </form>
+
+  <!-- Botón para regresar al inicio -->
+  <div class="boton-regreso-container">
+    <button mat-stroked-button [routerLink]="['/']" class="boton-regreso">
+      Regresar al Inicio
+    </button>
+  </div>
+
+  <!-- Mensaje de éxito -->
+  <div *ngIf="mensajeExito" class="mensaje-exito">
+    <mat-icon>check_circle</mat-icon>
+    <span>{{ mensajeExito }}</span>
+  </div>
 </div>
