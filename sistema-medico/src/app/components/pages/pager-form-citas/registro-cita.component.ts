@@ -16,9 +16,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 
+// Importar el servicio - AJUSTA ESTA RUTA SEGÚN TU ESTRUCTURA
+import { Paciente, PacienteService } from '../../../services/paciente.service';
+
 export interface Cita {
   id: string;
-  paciente: string;
+  pacienteId: string; // ID para referenciar al paciente
+  paciente: string;   // Nombre para mostrar
   doctor: string;
   especialidad: string;
   fecha: Date;
@@ -75,17 +79,10 @@ export class RegistroCitaComponent implements OnInit {
   citas: Cita[] = [];
   citasFiltradas: Cita[] = [];
 
-  // Datos de referencia
-  pacientes: string[] = [
-    'Juan Pérez García',
-    'María González López',
-    'Carlos Rodríguez Martín',
-    'Ana Fernández Ruiz',
-    'Luis Martínez Díaz',
-    'Carmen Sánchez Torres',
-    'Pablo Jiménez Morales',
-    'Laura Herrera Castro'
-  ];
+  // Obtener pacientes del servicio
+  get pacientes(): string[] {
+    return this.pacienteService.getNombresPacientes();
+  }
 
   doctores: Doctor[] = [
     { nombre: 'Dr. Antonio Méndez', especialidad: 'Cardiología', horarios: ['08:00', '09:00', '10:00', '11:00', '15:00', '16:00'] },
@@ -99,13 +96,19 @@ export class RegistroCitaComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private pacienteService: PacienteService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.cargarCitasEjemplo();
     this.filtrarCitas();
+
+    // Suscribirse a cambios en pacientes
+    this.pacienteService.pacientes$.subscribe(() => {
+      this.cdr.detectChanges();
+    });
   }
 
   private initializeForm(): void {
@@ -123,60 +126,40 @@ export class RegistroCitaComponent implements OnInit {
   }
 
   private cargarCitasEjemplo(): void {
-    // Datos de ejemplo para demostración
-    this.citas = [
-      {
-        id: '1',
-        paciente: 'Juan Pérez García',
-        doctor: 'Dr. Antonio Méndez',
-        especialidad: 'Cardiología',
-        fecha: new Date(2024, 11, 15),
-        hora: '09:00',
-        tipoConsulta: 'control',
-        estado: 'confirmada',
-        motivoConsulta: 'Revisión rutinaria de presión arterial',
-        observaciones: 'Paciente con historial de hipertensión',
-        fechaCreacion: new Date()
-      },
-      {
-        id: '2',
-        paciente: 'María González López',
-        doctor: 'Dra. Isabel Romero',
-        especialidad: 'Pediatría',
-        fecha: new Date(2024, 11, 16),
-        hora: '10:30',
-        tipoConsulta: 'primera-vez',
-        estado: 'pendiente',
-        motivoConsulta: 'Consulta por fiebre y malestar general',
-        fechaCreacion: new Date()
-      },
-      {
-        id: '3',
-        paciente: 'Carlos Rodríguez Martín',
-        doctor: 'Dr. Miguel Herrera',
-        especialidad: 'Traumatología',
-        fecha: new Date(2024, 11, 14),
-        hora: '11:00',
-        tipoConsulta: 'urgencia',
-        estado: 'completada',
-        motivoConsulta: 'Dolor en rodilla después de caída',
-        observaciones: 'Se realizó radiografía, sin fracturas',
-        fechaCreacion: new Date()
-      },
-      {
-        id: '4',
-        paciente: 'Ana Fernández Ruiz',
-        doctor: 'Dra. Carmen Silva',
-        especialidad: 'Ginecología',
-        fecha: new Date(2024, 11, 17),
-        hora: '15:00',
-        tipoConsulta: 'control',
-        estado: 'cancelada',
-        motivoConsulta: 'Control ginecológico anual',
-        observaciones: 'Cancelada por enfermedad del paciente',
-        fechaCreacion: new Date()
-      }
-    ];
+    // Obtener algunos pacientes para las citas de ejemplo
+    const pacientesDisponibles = this.pacienteService.getPacientes();
+
+    if (pacientesDisponibles.length > 0) {
+      this.citas = [
+        {
+          id: '1',
+          pacienteId: pacientesDisponibles[0].id,
+          paciente: pacientesDisponibles[0].nombreCompleto,
+          doctor: 'Dr. Antonio Méndez',
+          especialidad: 'Cardiología',
+          fecha: new Date(2024, 11, 15),
+          hora: '09:00',
+          tipoConsulta: 'control',
+          estado: 'confirmada',
+          motivoConsulta: 'Revisión rutinaria de presión arterial',
+          observaciones: 'Paciente con historial de hipertensión',
+          fechaCreacion: new Date()
+        },
+        {
+          id: '2',
+          pacienteId: pacientesDisponibles[1]?.id || '2',
+          paciente: pacientesDisponibles[1]?.nombreCompleto || 'Paciente Ejemplo',
+          doctor: 'Dra. Isabel Romero',
+          especialidad: 'Pediatría',
+          fecha: new Date(2024, 11, 16),
+          hora: '10:30',
+          tipoConsulta: 'primera-vez',
+          estado: 'pendiente',
+          motivoConsulta: 'Consulta por fiebre y malestar general',
+          fechaCreacion: new Date()
+        }
+      ];
+    }
   }
 
   // Gestión del modal
@@ -233,11 +216,21 @@ export class RegistroCitaComponent implements OnInit {
   guardarCita(): void {
     if (this.citaForm.valid) {
       const formData = this.citaForm.value;
+      const pacienteSeleccionado = this.pacienteService.getPacientePorNombre(formData.paciente);
 
       if (this.modalTipo === 'crear') {
         const nuevaCita: Cita = {
           id: this.generateId(),
-          ...formData,
+          pacienteId: pacienteSeleccionado?.id || '',
+          paciente: formData.paciente,
+          doctor: formData.doctor,
+          especialidad: formData.especialidad,
+          fecha: formData.fecha,
+          hora: formData.hora,
+          tipoConsulta: formData.tipoConsulta,
+          estado: formData.estado,
+          motivoConsulta: formData.motivoConsulta,
+          observaciones: formData.observaciones,
           fechaCreacion: new Date()
         };
         this.citas.push(nuevaCita);
@@ -246,7 +239,16 @@ export class RegistroCitaComponent implements OnInit {
         if (index !== -1) {
           this.citas[index] = {
             ...this.citaSeleccionada,
-            ...formData
+            pacienteId: pacienteSeleccionado?.id || this.citaSeleccionada.pacienteId,
+            paciente: formData.paciente,
+            doctor: formData.doctor,
+            especialidad: formData.especialidad,
+            fecha: formData.fecha,
+            hora: formData.hora,
+            tipoConsulta: formData.tipoConsulta,
+            estado: formData.estado,
+            motivoConsulta: formData.motivoConsulta,
+            observaciones: formData.observaciones
           };
         }
       }
@@ -323,6 +325,10 @@ export class RegistroCitaComponent implements OnInit {
       month: 'long',
       day: 'numeric'
     });
+  }
+
+  getPacienteCompleto(pacienteId: string): Paciente | undefined {
+    return this.pacienteService.getPacientePorId(pacienteId);
   }
 
   getEstadoTexto(estado: string): string {

@@ -13,6 +13,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { PacienteService } from '../../../services/paciente.service';
 
 export interface PacienteRegistro {
   // Datos Personales
@@ -66,7 +67,8 @@ export class PageFormPacienteComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private pacienteService: PacienteService
   ) {}
 
   ngOnInit(): void {
@@ -130,15 +132,15 @@ export class PageFormPacienteComponent implements OnInit {
   }
 
   private guardarPaciente(data: PacienteRegistro): void {
-    // Simulación de guardado
-    setTimeout(() => {
-      this.mensajeExito = 'Paciente registrado exitosamente';
+    // Usar el servicio para guardar el paciente
+    this.pacienteService.agregarPaciente(data);
 
-      // Opcional: Redirigir después de un tiempo
-      setTimeout(() => {
-        this.router.navigate(['/']);
-      }, 2000);
-    }, 1000);
+    this.mensajeExito = 'Paciente registrado exitosamente';
+
+    // Opcional: Redirigir después de un tiempo
+    setTimeout(() => {
+      this.router.navigate(['/']);
+    }, 2000);
   }
 
   private marcarCamposComoTocados(): void {
