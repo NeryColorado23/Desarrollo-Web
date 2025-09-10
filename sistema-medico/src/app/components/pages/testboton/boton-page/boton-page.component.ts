@@ -21,7 +21,7 @@ export class BotonPageComponent {
   botones = [
     { label: 'Registro', link: '/registro-paciente' },
     { label: 'Citas', link: '/registro-cita' },
-    { label: 'Doctores', link: '/otra-vista-2' },
+    { label: 'Doctores', link: '/info-doctores' },
     { label: 'Gestion', link: '/otra-vista' },
   ];
 

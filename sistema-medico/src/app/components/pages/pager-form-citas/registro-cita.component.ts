@@ -16,8 +16,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 
-// Importar el servicio - AJUSTA ESTA RUTA SEGÚN TU ESTRUCTURA
-import { Paciente, PacienteService } from '../../../services/paciente.service';
+// Importar servicios
+import { PacienteService, Paciente } from '../../../services/paciente.service';
+import { DoctorService, Doctor } from '../../../services/doctor.service';
 
 export interface Cita {
   id: string;
@@ -32,12 +33,6 @@ export interface Cita {
   motivoConsulta?: string;
   observaciones?: string;
   fechaCreacion: Date;
-}
-
-export interface Doctor {
-  nombre: string;
-  especialidad: string;
-  horarios: string[];
 }
 
 @Component({
@@ -84,20 +79,18 @@ export class RegistroCitaComponent implements OnInit {
     return this.pacienteService.getNombresPacientes();
   }
 
-  doctores: Doctor[] = [
-    { nombre: 'Dr. Antonio Méndez', especialidad: 'Cardiología', horarios: ['08:00', '09:00', '10:00', '11:00', '15:00', '16:00'] },
-    { nombre: 'Dra. Isabel Romero', especialidad: 'Pediatría', horarios: ['08:30', '09:30', '10:30', '11:30', '15:30', '16:30'] },
-    { nombre: 'Dr. Miguel Herrera', especialidad: 'Traumatología', horarios: ['09:00', '10:00', '11:00', '12:00', '16:00', '17:00'] },
-    { nombre: 'Dra. Carmen Silva', especialidad: 'Ginecología', horarios: ['08:00', '09:00', '10:00', '15:00', '16:00', '17:00'] },
-    { nombre: 'Dr. Roberto Vega', especialidad: 'Medicina General', horarios: ['08:00', '09:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'] }
-  ];
+  // Obtener doctores del servicio
+  get doctores(): Doctor[] {
+    return this.doctorService.getDoctoresActivos();
+  }
 
   horasDisponibles: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private pacienteService: PacienteService
+    private pacienteService: PacienteService,
+    private doctorService: DoctorService
   ) {}
 
   ngOnInit(): void {
@@ -107,6 +100,11 @@ export class RegistroCitaComponent implements OnInit {
 
     // Suscribirse a cambios en pacientes
     this.pacienteService.pacientes$.subscribe(() => {
+      this.cdr.detectChanges();
+    });
+
+    // Suscribirse a cambios en doctores
+    this.doctorService.doctores$.subscribe(() => {
       this.cdr.detectChanges();
     });
   }
@@ -180,7 +178,12 @@ export class RegistroCitaComponent implements OnInit {
         motivoConsulta: cita.motivoConsulta,
         observaciones: cita.observaciones
       });
-      this.actualizarHorasDisponibles(cita.doctor);
+
+      // Actualizar horas disponibles para el doctor seleccionado
+      const doctor = this.doctorService.getDoctorPorNombre(cita.doctor);
+      if (doctor) {
+        this.actualizarHorasDisponibles(doctor);
+      }
     } else {
       this.citaForm.reset();
       this.citaForm.patchValue({ estado: 'pendiente' });
@@ -302,17 +305,16 @@ export class RegistroCitaComponent implements OnInit {
   // Eventos del formulario
   onDoctorChange(event: any): void {
     const doctorNombre = event.value;
-    const doctor = this.doctores.find(d => d.nombre === doctorNombre);
+    const doctor = this.doctorService.getDoctorPorNombre(doctorNombre);
 
     if (doctor) {
       this.citaForm.patchValue({ especialidad: doctor.especialidad });
-      this.actualizarHorasDisponibles(doctorNombre);
+      this.actualizarHorasDisponibles(doctor);
     }
   }
 
-  private actualizarHorasDisponibles(doctorNombre: string): void {
-    const doctor = this.doctores.find(d => d.nombre === doctorNombre);
-    this.horasDisponibles = doctor ? doctor.horarios : [];
+  private actualizarHorasDisponibles(doctor: Doctor): void {
+    this.horasDisponibles = doctor.horasDisponibles || [];
     this.cdr.detectChanges();
   }
 

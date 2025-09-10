@@ -1,0 +1,565 @@
+.doctores-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+
+    h2 {
+      color: #1976d2;
+      margin-bottom: 8px;
+      font-size: 28px;
+      font-weight: 500;
+    }
+
+    p {
+      color: #666;
+      font-size: 16px;
+      margin: 0;
+    }
+  }
+}
+
+// Barra de acciones
+.actions-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 30px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  button[color="primary"] {
+    min-width: 140px;
+    height: 44px;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+
+  .filtro-busqueda {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .filtro-especialidad {
+    min-width: 180px;
+  }
+
+  .filtro-estado {
+    min-width: 120px;
+  }
+}
+
+// Grid de doctores
+.doctores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+// Tarjetas de doctor
+.doctor-card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  &.estado-activo {
+    border-left-color: #4caf50;
+  }
+
+  &.estado-inactivo {
+    border-left-color: #f44336;
+    opacity: 0.8;
+  }
+
+  &.estado-vacaciones {
+    border-left-color: #ff9800;
+  }
+
+  mat-card-header {
+    position: relative;
+    padding-bottom: 16px;
+
+    .card-actions {
+      margin-left: auto;
+    }
+
+    .avatar-doctor {
+      background-color: #e3f2fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        color: #1976d2;
+        font-size: 24px;
+      }
+    }
+  }
+
+  mat-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  mat-card-subtitle {
+    color: #1976d2;
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+// Información del doctor
+.doctor-info {
+  margin: 16px 0;
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #666;
+    }
+
+    span {
+      color: #333;
+    }
+  }
+}
+
+// Horario resumen
+.horario-resumen {
+  margin: 16px 0;
+
+  h4 {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 8px 0;
+    font-weight: 500;
+  }
+
+  .dias-activos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    .chip-dia {
+      font-size: 11px;
+      height: 24px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border: 1px solid #bbdefb;
+    }
+  }
+}
+
+// Estados y chips
+.estado-badge {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+mat-chip {
+  font-size: 12px;
+  font-weight: 500;
+
+  &.chip-activo {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+  }
+
+  &.chip-inactivo {
+    background-color: #ffebee;
+    color: #d32f2f;
+  }
+
+  &.chip-vacaciones {
+    background-color: #fff3e0;
+    color: #f57c00;
+  }
+}
+
+// Mensaje cuando no hay doctores
+.no-doctores {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    color: #ddd;
+  }
+
+  h3 {
+    margin: 16px 0 8px 0;
+    color: #999;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// Botón de regreso
+.boton-regreso-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid #e0e0e0;
+
+  .boton-regreso {
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #1976d2;
+    color: #1976d2;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #1976d2;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+    }
+  }
+}
+
+// Estilos del modal
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+
+  &.modal-detalles {
+    max-width: 600px;
+  }
+
+  &.modal-doctor {
+    max-width: 900px;
+  }
+
+  &.modal-horarios {
+    max-width: 500px;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+
+  h3 {
+    margin: 0;
+    color: #1976d2;
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+
+.modal-form {
+  padding: 24px;
+
+  .form-section {
+    margin-bottom: 32px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h4 {
+      color: #1976d2;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e3f2fd;
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .full-width {
+    flex: 1;
+    width: 100%;
+  }
+
+  .half-width {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+// Configuración de horarios
+.horarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+
+  .dia-horario {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: #fafafa;
+
+    .dia-header {
+      margin-bottom: 12px;
+
+      mat-checkbox {
+        font-weight: 500;
+        color: #333;
+      }
+    }
+
+    .horario-inputs {
+      display: flex;
+      gap: 8px;
+
+      .hora-input {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+}
+
+// Estilos para detalles de doctor
+.detalles-content {
+  padding: 24px;
+
+  .detalle-section {
+    margin-bottom: 24px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h4 {
+      color: #1976d2;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      border-bottom: 2px solid #e3f2fd;
+      padding-bottom: 4px;
+    }
+
+    .detalle-item {
+      margin-bottom: 8px;
+      font-size: 14px;
+
+      strong {
+        color: #333;
+        font-weight: 600;
+        margin-right: 8px;
+        min-width: 120px;
+        display: inline-block;
+      }
+    }
+
+    p {
+      margin: 8px 0 0 0;
+      line-height: 1.5;
+      color: #555;
+    }
+  }
+}
+
+// Vista de horarios
+.horarios-vista {
+  padding: 24px;
+
+  .horario-dia {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .dia-nombre {
+      font-weight: 500;
+      color: #333;
+      min-width: 100px;
+    }
+
+    .dia-horario {
+      color: #1976d2;
+      font-weight: 500;
+    }
+
+    .dia-inactivo {
+      color: #999;
+      font-style: italic;
+    }
+  }
+}
+
+// Estilos de menú
+.menu-inactivar {
+  color: #d32f2f !important;
+}
+
+.menu-activar {
+  color: #2e7d32 !important;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .doctores-container {
+    padding: 16px;
+  }
+
+  .actions-bar {
+    flex-direction: column;
+    align-items: stretch;
+
+    button[color="primary"] {
+      width: 100%;
+    }
+
+    .filtro-busqueda,
+    .filtro-especialidad,
+    .filtro-estado {
+      width: 100%;
+    }
+  }
+
+  .doctores-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    margin: 10px;
+    max-height: 95vh;
+
+    &.modal-doctor {
+      max-width: none;
+    }
+  }
+
+  .modal-form {
+    .form-row {
+      flex-direction: column;
+
+      .half-width {
+        width: 100%;
+      }
+    }
+  }
+
+  .horarios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .doctores-container {
+    padding: 12px;
+
+    .header h2 {
+      font-size: 24px;
+    }
+  }
+
+  .actions-bar {
+    padding: 16px;
+  }
+
+  .doctor-card {
+    mat-card-title {
+      font-size: 16px;
+    }
+
+    mat-card-subtitle {
+      font-size: 13px;
+    }
+
+    .doctor-info .info-row {
+      font-size: 13px;
+    }
+  }
+
+  .horario-resumen {
+    .dias-activos .chip-dia {
+      font-size: 10px;
+      height: 20px;
+    }
+  }
+}

@@ -133,8 +133,8 @@
         <mat-form-field appearance="fill" class="half-width">
           <mat-label>Doctor</mat-label>
           <mat-select formControlName="doctor" (selectionChange)="onDoctorChange($event)">
-            <mat-option *ngFor="let doctor of doctores" [value]="doctor.nombre">
-              {{ doctor.nombre }}
+            <mat-option *ngFor="let doctor of doctores" [value]="doctor.nombreCompleto">
+              {{ doctor.nombreCompleto }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="citaForm.get('doctor')?.hasError('required')">
@@ -238,6 +238,18 @@
         <div class="detalle-item">
           <strong>Paciente:</strong> {{ citaSeleccionada.paciente }}
         </div>
+        <!-- Mostrar información adicional del paciente si está disponible -->
+        <ng-container *ngIf="getPacienteCompleto(citaSeleccionada.pacienteId) as pacienteCompleto">
+          <div class="detalle-item">
+            <strong>Cédula:</strong> {{ pacienteCompleto.cedula }}
+          </div>
+          <div class="detalle-item">
+            <strong>Teléfono:</strong> {{ pacienteCompleto.telefono }}
+          </div>
+          <div class="detalle-item">
+            <strong>Email:</strong> {{ pacienteCompleto.email }}
+          </div>
+        </ng-container>
       </div>
 
       <div class="detalle-section">

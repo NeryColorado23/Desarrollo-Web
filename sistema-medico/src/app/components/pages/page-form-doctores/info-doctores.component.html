@@ -1,0 +1,524 @@
+<!-- info-doctores.component.html -->
+<div class="container-fluid p-4">
+  <!-- Header con título y botón de nuevo doctor -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <mat-card class="header-card">
+        <mat-card-content class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="mb-0">
+              <mat-icon class="me-2">medical_services</mat-icon>
+              Gestión de Doctores
+            </h2>
+            <p class="text-muted mb-0">Administre la información del personal médico</p>
+          </div>
+          <button mat-raised-button color="primary" (click)="abrirModalDoctor('crear')">
+            <mat-icon>add</mat-icon>
+            Nuevo Doctor
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Filtros de búsqueda -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <mat-card>
+        <mat-card-content>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Buscar doctor</mat-label>
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput [(ngModel)]="filtro" (ngModelChange)="filtrarDoctores()"
+                       placeholder="Nombre, email, licencia...">
+              </mat-form-field>
+            </div>
+            <div class="col-md-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Especialidad</mat-label>
+                <mat-select [(ngModel)]="filtroEspecialidad" (ngModelChange)="filtrarDoctores()">
+                  <mat-option value="">Todas</mat-option>
+                  <mat-option *ngFor="let esp of especialidades" [value]="esp">
+                    {{ esp }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Estado</mat-label>
+                <mat-select [(ngModel)]="filtroEstado" (ngModelChange)="filtrarDoctores()">
+                  <mat-option value="">Todos</mat-option>
+                  <mat-option value="activo">Activo</mat-option>
+                  <mat-option value="inactivo">Inactivo</mat-option>
+                  <mat-option value="vacaciones">Vacaciones</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Lista de doctores -->
+  <div class="row">
+    <div class="col-12">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Doctores Registrados
+            <span class="badge bg-primary ms-2">{{ doctoresFiltrados.length }}</span>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Doctor</th>
+                  <th>Especialidad</th>
+                  <th>Contacto</th>
+                  <th>Licencia</th>
+                  <th>Horario</th>
+                  <th>Estado</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let doctor of doctoresFiltrados">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle me-3">
+                        {{ doctor.nombreCompleto.charAt(0) }}
+                      </div>
+                      <div>
+                        <strong>{{ doctor.nombreCompleto }}</strong>
+                        <br>
+                        <small class="text-muted">{{ doctor.cedula }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      {{ doctor.especialidad }}
+                      <span *ngIf="doctor.subespecialidad" class="d-block">
+                        <small class="text-muted">{{ doctor.subespecialidad }}</small>
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <mat-icon class="icon-sm me-1">email</mat-icon>
+                      <small>{{ doctor.email }}</small>
+                      <br>
+                      <mat-icon class="icon-sm me-1">phone</mat-icon>
+                      <small>{{ doctor.telefono }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-info">{{ doctor.numeroLicencia }}</span>
+                  </td>
+                  <td>
+                    <mat-chip-set>
+                      <mat-chip *ngFor="let dia of getDiasActivos(doctor)" class="chip-dia">
+                        {{ dia }}
+                      </mat-chip>
+                    </mat-chip-set>
+                  </td>
+                  <td>
+                    <span [class]="'badge bg-' + (doctor.estado === 'activo' ? 'success' :
+                                    doctor.estado === 'inactivo' ? 'danger' : 'warning')">
+                      {{ getEstadoTexto(doctor.estado) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="text-center">
+                      <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="verDetallesDoctor(doctor)">
+                          <mat-icon>visibility</mat-icon>
+                          <span>Ver detalles</span>
+                        </button>
+                        <button mat-menu-item (click)="abrirModalDoctor('editar', doctor)">
+                          <mat-icon>edit</mat-icon>
+                          <span>Editar</span>
+                        </button>
+                        <button mat-menu-item (click)="verHorarios(doctor)">
+                          <mat-icon>schedule</mat-icon>
+                          <span>Ver horarios</span>
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button mat-menu-item (click)="cambiarEstado(doctor)">
+                          <mat-icon>{{ doctor.estado === 'activo' ? 'block' : 'check_circle' }}</mat-icon>
+                          <span>{{ doctor.estado === 'activo' ? 'Inactivar' : 'Activar' }}</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="doctoresFiltrados.length === 0">
+                  <td colspan="7" class="text-center py-4">
+                    <mat-icon class="icon-lg text-muted">search_off</mat-icon>
+                    <p class="text-muted">No se encontraron doctores con los criterios seleccionados</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Crear/Editar Doctor -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalTipo === 'crear' ? 'Nuevo Doctor' : 'Editar Doctor' }}</h3>
+      <button mat-icon-button (click)="cerrarModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="doctorForm">
+        <div class="row g-3">
+          <!-- Información Personal -->
+          <div class="col-12">
+            <h5 class="section-title">Información Personal</h5>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Nombre Completo</mat-label>
+              <input matInput formControlName="nombreCompleto" placeholder="Dr. Juan Pérez">
+              <mat-error *ngIf="doctorForm.get('nombreCompleto')?.invalid">
+                {{ getErrorMessage('nombreCompleto') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Cédula</mat-label>
+              <input matInput formControlName="cedula" placeholder="DOC001">
+              <mat-error *ngIf="doctorForm.get('cedula')?.invalid">
+                {{ getErrorMessage('cedula') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="doctor@hospital.com">
+              <mat-error *ngIf="doctorForm.get('email')?.invalid">
+                {{ getErrorMessage('email') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Teléfono</mat-label>
+              <input matInput formControlName="telefono" placeholder="555-1234">
+              <mat-error *ngIf="doctorForm.get('telefono')?.invalid">
+                {{ getErrorMessage('telefono') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Información Profesional -->
+          <div class="col-12 mt-3">
+            <h5 class="section-title">Información Profesional</h5>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Especialidad</mat-label>
+              <mat-select formControlName="especialidad">
+                <mat-option *ngFor="let esp of especialidades" [value]="esp">
+                  {{ esp }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="doctorForm.get('especialidad')?.invalid">
+                {{ getErrorMessage('especialidad') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Subespecialidad (Opcional)</mat-label>
+              <input matInput formControlName="subespecialidad" placeholder="Ej: Cardiología Pediátrica">
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Años de Experiencia</mat-label>
+              <input matInput type="number" formControlName="tiempoExperiencia" min="0" max="50">
+              <mat-error *ngIf="doctorForm.get('tiempoExperiencia')?.invalid">
+                {{ getErrorMessage('tiempoExperiencia') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Número de Licencia</mat-label>
+              <input matInput formControlName="numeroLicencia" placeholder="MED-12345">
+              <mat-error *ngIf="doctorForm.get('numeroLicencia')?.invalid">
+                {{ getErrorMessage('numeroLicencia') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Estado</mat-label>
+              <mat-select formControlName="estado">
+                <mat-option value="activo">Activo</mat-option>
+                <mat-option value="inactivo">Inactivo</mat-option>
+                <mat-option value="vacaciones">Vacaciones</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Universidad</mat-label>
+              <input matInput formControlName="universidad" placeholder="Universidad de Medicina">
+              <mat-error *ngIf="doctorForm.get('universidad')?.invalid">
+                {{ getErrorMessage('universidad') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Fecha de Graduación</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="fechaGraduacion">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="doctorForm.get('fechaGraduacion')?.invalid">
+                {{ getErrorMessage('fechaGraduacion') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Dirección del Consultorio (Opcional)</mat-label>
+              <input matInput formControlName="direccionConsultorio"
+                     placeholder="Consultorio 201, Edificio Médico">
+            </mat-form-field>
+          </div>
+
+          <!-- Horarios -->
+          <div class="col-12 mt-3">
+            <h5 class="section-title">Horarios de Atención</h5>
+          </div>
+
+          <div class="col-12">
+            <div formGroupName="horarios">
+              <div class="horarios-grid">
+                <div *ngFor="let dia of diasSemana" class="horario-item">
+                  <div [formGroupName]="dia.key" class="d-flex align-items-center gap-2">
+                    <mat-checkbox formControlName="activo">
+                      {{ dia.nombre }}
+                    </mat-checkbox>
+                    <mat-form-field appearance="outline" class="hora-field">
+                      <input matInput type="time" formControlName="inicio"
+                             [disabled]="!getDiaControl(dia.key, 'activo')?.value">
+                    </mat-form-field>
+                    <span>-</span>
+                    <mat-form-field appearance="outline" class="hora-field">
+                      <input matInput type="time" formControlName="fin"
+                             [disabled]="!getDiaControl(dia.key, 'activo')?.value">
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+
+          <!-- Observaciones -->
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Observaciones (Opcional)</mat-label>
+              <textarea matInput formControlName="observaciones" rows="3"
+                        placeholder="Notas adicionales sobre el doctor..."></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button mat-button (click)="cerrarModal()">Cancelar</button>
+      <button mat-raised-button color="primary" (click)="guardarDoctor()">
+        {{ modalTipo === 'crear' ? 'Crear Doctor' : 'Guardar Cambios' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Detalles del Doctor -->
+<div class="modal-overlay" *ngIf="mostrarDetalles" (click)="cerrarDetalles()">
+  <div class="modal-container modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Detalles del Doctor</h3>
+      <button mat-icon-button (click)="cerrarDetalles()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="doctorSeleccionado">
+      <div class="row g-3">
+        <!-- Encabezado con información principal -->
+        <div class="col-12">
+          <div class="doctor-header">
+            <div class="avatar-large">
+              {{ doctorSeleccionado.nombreCompleto.charAt(0) }}
+            </div>
+            <div class="doctor-info">
+              <h4>{{ doctorSeleccionado.nombreCompleto }}</h4>
+              <p class="text-muted mb-1">{{ doctorSeleccionado.especialidad }}</p>
+              <span [class]="'badge bg-' + (doctorSeleccionado.estado === 'activo' ? 'success' :
+                              doctorSeleccionado.estado === 'inactivo' ? 'danger' : 'warning')">
+                {{ getEstadoTexto(doctorSeleccionado.estado) }}
+              </span>
+            </div>
+            <div class="ms-auto">
+              <button mat-raised-button color="primary" (click)="abrirModalDoctor('editar', doctorSeleccionado)">
+                <mat-icon>edit</mat-icon>
+                Editar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información detallada -->
+        <div class="col-md-6">
+          <div class="info-group">
+            <h6>Información Personal</h6>
+            <div class="info-item">
+              <span class="info-label">Cédula:</span>
+              <span class="info-value">{{ doctorSeleccionado.cedula }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{ doctorSeleccionado.email }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Teléfono:</span>
+              <span class="info-value">{{ doctorSeleccionado.telefono }}</span>
+            </div>
+            <div class="info-item" *ngIf="doctorSeleccionado.direccionConsultorio">
+              <span class="info-label">Consultorio:</span>
+              <span class="info-value">{{ doctorSeleccionado.direccionConsultorio }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="info-group">
+            <h6>Información Profesional</h6>
+            <div class="info-item">
+              <span class="info-label">Licencia:</span>
+              <span class="info-value">{{ doctorSeleccionado.numeroLicencia }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Universidad:</span>
+              <span class="info-value">{{ doctorSeleccionado.universidad }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Graduación:</span>
+              <span class="info-value">{{ formatearFecha(doctorSeleccionado.fechaGraduacion) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Experiencia:</span>
+              <span class="info-value">{{ doctorSeleccionado.tiempoExperiencia }} años</span>
+            </div>
+            <div class="info-item" *ngIf="doctorSeleccionado.subespecialidad">
+              <span class="info-label">Subespecialidad:</span>
+              <span class="info-value">{{ doctorSeleccionado.subespecialidad }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horarios -->
+        <div class="col-12">
+          <div class="info-group">
+            <h6>Horarios de Atención</h6>
+            <div class="horarios-detalle">
+              <ng-container *ngFor="let dia of diasSemana">
+                <div class="dia-horario" *ngIf="getHorarioDia(doctorSeleccionado, dia.key) && getHorarioDia(doctorSeleccionado, dia.key)?.activo">
+                  <span class="dia-nombre">{{ dia.nombre }}:</span>
+                  <span class="dia-hora">
+                    {{ getHorarioDia(doctorSeleccionado, dia.key)?.inicio }} -
+                    {{ getHorarioDia(doctorSeleccionado, dia.key)?.fin }}
+                  </span>
+                </div>
+              </ng-container>
+              <div *ngIf="!getDiasActivos(doctorSeleccionado).length" class="text-muted">
+                No hay horarios configurados
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="col-12" *ngIf="doctorSeleccionado.observaciones">
+          <div class="info-group">
+            <h6>Observaciones</h6>
+            <p class="mb-0">{{ doctorSeleccionado.observaciones }}</p>
+          </div>
+        </div>
+
+        <!-- Información del sistema -->
+        <div class="col-12">
+          <div class="info-group">
+            <h6>Información del Sistema</h6>
+            <div class="info-item">
+              <span class="info-label">Fecha de Registro:</span>
+              <span class="info-value">{{ formatearFecha(doctorSeleccionado.fechaRegistro) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Horarios -->
+<div class="modal-overlay" *ngIf="mostrarHorarios" (click)="cerrarHorarios()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Horarios de {{ doctorSeleccionado?.nombreCompleto }}</h3>
+      <button mat-icon-button (click)="cerrarHorarios()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="doctorSeleccionado">
+      <div class="horarios-semana">
+        <div *ngFor="let dia of diasSemana" class="dia-completo">
+          <div class="dia-header">
+            <h6>{{ dia.nombre }}</h6>
+          </div>
+          <div class="dia-horario" *ngIf="getHorarioDia(doctorSeleccionado, dia.key) && getHorarioDia(doctorSeleccionado, dia.key)?.activo">
+            {{ getHorarioDia(doctorSeleccionado, dia.key)?.inicio }} -
+            {{ getHorarioDia(doctorSeleccionado, dia.key)?.fin }}
+          </div>
+          <div class="dia-inactivo" *ngIf="!getHorarioDia(doctorSeleccionado, dia.key) || !getHorarioDia(doctorSeleccionado, dia.key)?.activo">
+            No disponible
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

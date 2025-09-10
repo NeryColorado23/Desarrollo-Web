@@ -14,6 +14,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/pages/pager-form-citas/registro-cita.component').then(m => m.RegistroCitaComponent)
   },
   {
+    path: 'info-doctores',
+    loadComponent: () => import('./components/pages/page-form-doctores/info-doctores.component').then(m => m.InfoDoctoresComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
