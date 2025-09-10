@@ -1,6 +1,3 @@
-<!-- Overlay oscuro -->
-<div class="overlay" *ngIf="mostrarMenu" (click)="cerrarMenu()"></div>
-
 <!-- Panel lateral del menú -->
 <div class="menu-panel" [class.active]="mostrarMenu">
   <section>
@@ -12,6 +9,9 @@
         [ngClass]="{'activo': btn.label === seleccionado}"
         (click)="seleccionar(btn)"
         [routerLink]="btn.link">
+
+        <!-- Icono solo para el botón Home -->
+        <mat-icon *ngIf="btn.label === 'Home'" class="button-icon">home</mat-icon>
         {{ btn.label }}
       </button>
     </div>

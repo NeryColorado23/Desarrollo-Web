@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { MenuService } from '../../../../services/menu.service';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-boton-page',
@@ -14,14 +15,16 @@ import { MenuService } from '../../../../services/menu.service';
     CommonModule,
     MatButtonModule,
     MatDividerModule,
-    RouterModule
-  ],
+    RouterModule,
+    MatIconModule
+],
   templateUrl: './boton-page.component.html',
   styleUrls: ['./boton-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BotonPageComponent implements OnInit, OnDestroy {
   botones = [
+    { label: 'Home', link: '' },
     { label: 'Registro', link: '/registro-paciente' },
     { label: 'Citas', link: '/registro-cita' },
     { label: 'Doctores', link: '/info-doctores' },
