@@ -1,15 +1,21 @@
-<section>
-  <div class="example-label"></div>
-  <div class="example-button-row">
-    <button
-      matButton="filled"
-      *ngFor="let btn of botones"
-      [ngClass]="{'activo': btn.label === seleccionado}"
-      (click)="seleccionar(btn)"
-      [routerLink]="btn.link">
-      {{ btn.label }}
-    </button>
-  </div>
-</section>
+<!-- Overlay oscuro -->
+<div class="overlay" *ngIf="mostrarMenu" (click)="cerrarMenu()"></div>
 
-<mat-divider/>
+<!-- Panel lateral del menú -->
+<div class="menu-panel" [class.active]="mostrarMenu">
+  <section>
+    <div class="example-label"></div>
+    <div class="example-button-column">
+      <button
+        mat-stroked-button
+        *ngFor="let btn of botones"
+        [ngClass]="{'activo': btn.label === seleccionado}"
+        (click)="seleccionar(btn)"
+        [routerLink]="btn.link">
+        {{ btn.label }}
+      </button>
+    </div>
+  </section>
+
+  <mat-divider/>
+</div>

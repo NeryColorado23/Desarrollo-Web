@@ -1,6 +1,13 @@
+<!-- Header fijo arriba -->
 <app-header-page></app-header-page>
 
-<!-- Aquí se renderizarán las diferentes páginas según la ruta -->
-<router-outlet></router-outlet>
+<!-- Menú lateral (oculto por defecto) -->
+<app-boton-page></app-boton-page>
 
+<!-- Contenido principal -->
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Footer al final -->
 <app-footer-page></app-footer-page>

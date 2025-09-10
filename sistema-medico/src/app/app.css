@@ -1,0 +1,22 @@
+/* Header fijo arriba */
+app-header-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+/* Contenido principal con margen para el header */
+.main-content {
+  margin-top: 64px; /* Altura del header */
+  min-height: calc(100vh - 64px - 100px); /* 100px para el footer */
+  padding: 20px;
+}
+
+/* Footer al final */
+app-footer-page {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
