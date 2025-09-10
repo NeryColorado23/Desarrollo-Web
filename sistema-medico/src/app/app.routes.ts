@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./components/pages/testboton/boton-page/boton-page.component').then(m => m.BotonPageComponent)
+    loadComponent: () => import('./components/pages/page-central/page-central.component').then(m => m.PageCentralComponent)
   },
   {
     path: 'registro-paciente',
