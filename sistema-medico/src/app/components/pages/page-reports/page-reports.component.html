@@ -1,0 +1,401 @@
+<!-- page-reports.component.html -->
+<div class="reports-wrapper">
+  <!-- Header Principal -->
+  <div class="reports-header">
+    <div class="header-background"></div>
+    <div class="container-fluid">
+      <div class="header-content">
+        <div class="header-left">
+          <div class="header-icon-box">
+            <mat-icon class="header-icon">assessment</mat-icon>
+          </div>
+          <div class="header-text">
+            <h1>Centro de Reportes</h1>
+            <p>Análisis y estadísticas del sistema médico</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button class="btn-export" [matMenuTriggerFor]="exportMenu">
+            <mat-icon>download</mat-icon>
+            Exportar
+          </button>
+          <mat-menu #exportMenu="matMenu" class="export-menu">
+            <button mat-menu-item (click)="exportarPDF()">
+              <mat-icon style="color: #e74c3c">picture_as_pdf</mat-icon>
+              <span>Exportar como PDF</span>
+            </button>
+            <button mat-menu-item (click)="exportarExcel()">
+              <mat-icon style="color: #27ae60">description</mat-icon>
+              <span>Exportar como Excel</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="imprimirReporte()">
+              <mat-icon style="color: #3498db">print</mat-icon>
+              <span>Imprimir Reporte</span>
+            </button>
+          </mat-menu>
+
+          <button mat-icon-button class="btn-refresh" (click)="loadReportData()" matTooltip="Actualizar datos">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid reports-content">
+    <!-- Panel de Filtros -->
+    <mat-card class="filtros-card">
+      <mat-card-content>
+        <form [formGroup]="filtrosForm" class="filtros-form">
+          <div class="filtros-grid">
+            <mat-form-field appearance="fill" class="filter-field">
+              <mat-label>
+                <mat-icon class="field-icon">date_range</mat-icon>
+                Período
+              </mat-label>
+              <mat-select formControlName="periodo">
+                <mat-option *ngFor="let periodo of periodos" [value]="periodo.value">
+                  {{ periodo.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="filter-field">
+              <mat-label>
+                <mat-icon class="field-icon">local_hospital</mat-icon>
+                Especialidad
+              </mat-label>
+              <mat-select formControlName="especialidad">
+                <mat-option *ngFor="let esp of especialidades" [value]="esp">
+                  {{ esp }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="filter-field" *ngIf="filtrosForm.get('periodo')?.value === 'personalizado'">
+              <mat-label>Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="fechaInicio" formControlName="fechaInicio">
+              <mat-datepicker-toggle matSuffix [for]="fechaInicio"></mat-datepicker-toggle>
+              <mat-datepicker #fechaInicio></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="filter-field" *ngIf="filtrosForm.get('periodo')?.value === 'personalizado'">
+              <mat-label>Fecha Fin</mat-label>
+              <input matInput [matDatepicker]="fechaFin" formControlName="fechaFin">
+              <mat-datepicker-toggle matSuffix [for]="fechaFin"></mat-datepicker-toggle>
+              <mat-datepicker #fechaFin></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tarjetas de Métricas -->
+    <div class="metrics-grid">
+      <mat-card class="metric-card citas-total">
+        <div class="metric-icon">
+          <mat-icon>event</mat-icon>
+        </div>
+        <div class="metric-content">
+          <h3>Total Citas</h3>
+          <div class="metric-value">{{ reportData.citasTotal | number }}</div>
+          <div class="metric-change positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+12.5%</span>
+          </div>
+        </div>
+        <div class="metric-chart">
+          <div class="mini-chart"></div>
+        </div>
+      </mat-card>
+
+      <mat-card class="metric-card pacientes">
+        <div class="metric-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="metric-content">
+          <h3>Pacientes Totales</h3>
+          <div class="metric-value">{{ reportData.pacientesTotal | number }}</div>
+          <div class="metric-change positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+8.3%</span>
+          </div>
+        </div>
+        <div class="metric-chart">
+          <div class="mini-chart"></div>
+        </div>
+      </mat-card>
+
+      <mat-card class="metric-card ingresos">
+        <div class="metric-icon">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <div class="metric-content">
+          <h3>Ingresos Mensuales</h3>
+          <div class="metric-value">${{ reportData.ingresosMensuales | number:'1.0-0' }}</div>
+          <div class="metric-change positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+15.2%</span>
+          </div>
+        </div>
+        <div class="metric-chart">
+          <div class="mini-chart"></div>
+        </div>
+      </mat-card>
+
+      <mat-card class="metric-card ocupacion">
+        <div class="metric-icon">
+          <mat-icon>show_chart</mat-icon>
+        </div>
+        <div class="metric-content">
+          <h3>Tasa de Ocupación</h3>
+          <div class="metric-value">{{ reportData.tasaOcupacion }}%</div>
+          <div class="metric-change negative">
+            <mat-icon>trending_down</mat-icon>
+            <span>-3.1%</span>
+          </div>
+        </div>
+        <div class="metric-chart">
+          <div class="mini-chart"></div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Tabs de Reportes -->
+    <mat-card class="reports-tabs-card">
+      <mat-tab-group [(selectedIndex)]="selectedTab" class="reports-tabs">
+        <!-- Tab Dashboard -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">dashboard</mat-icon>
+            Dashboard
+          </ng-template>
+
+          <div class="tab-content">
+            <div class="charts-grid">
+              <!-- Gráfico de Citas -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>timeline</mat-icon>
+                    Evolución de Citas
+                  </mat-card-title>
+                  <button mat-icon-button class="chart-options">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="chart-container">
+                    <canvas #citasChart></canvas>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Gráfico de Especialidades -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>donut_large</mat-icon>
+                    Distribución por Especialidad
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="chart-container">
+                    <canvas #especialidadesChart></canvas>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Gráfico de Ingresos -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>monetization_on</mat-icon>
+                    Ingresos Mensuales
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="chart-container">
+                    <canvas #ingresosChart></canvas>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Gráfico de Pacientes -->
+              <mat-card class="chart-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>radar</mat-icon>
+                    Análisis de Pacientes
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="chart-container">
+                    <canvas #pacientesChart></canvas>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Citas -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">event_note</mat-icon>
+            Reporte de Citas
+          </ng-template>
+
+          <div class="tab-content">
+            <div class="table-container">
+              <table mat-table [dataSource]="citasReporte" class="reports-table">
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef>ID</th>
+                  <td mat-cell *matCellDef="let cita">
+                    <span class="id-badge">{{ cita.id }}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Paciente Column -->
+                <ng-container matColumnDef="paciente">
+                  <th mat-header-cell *matHeaderCellDef>Paciente</th>
+                  <td mat-cell *matCellDef="let cita">{{ cita.paciente }}</td>
+                </ng-container>
+
+                <!-- Doctor Column -->
+                <ng-container matColumnDef="doctor">
+                  <th mat-header-cell *matHeaderCellDef>Doctor</th>
+                  <td mat-cell *matCellDef="let cita">{{ cita.doctor }}</td>
+                </ng-container>
+
+                <!-- Fecha Column -->
+                <ng-container matColumnDef="fecha">
+                  <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                  <td mat-cell *matCellDef="let cita">{{ cita.fecha | date:'dd/MM/yyyy' }}</td>
+                </ng-container>
+
+                <!-- Hora Column -->
+                <ng-container matColumnDef="hora">
+                  <th mat-header-cell *matHeaderCellDef>Hora</th>
+                  <td mat-cell *matCellDef="let cita">{{ cita.hora }}</td>
+                </ng-container>
+
+                <!-- Especialidad Column -->
+                <ng-container matColumnDef="especialidad">
+                  <th mat-header-cell *matHeaderCellDef>Especialidad</th>
+                  <td mat-cell *matCellDef="let cita">
+                    <mat-chip class="especialidad-chip">{{ cita.especialidad }}</mat-chip>
+                  </td>
+                </ng-container>
+
+                <!-- Estado Column -->
+                <ng-container matColumnDef="estado">
+                  <th mat-header-cell *matHeaderCellDef>Estado</th>
+                  <td mat-cell *matCellDef="let cita">
+                    <span class="estado-badge" [attr.data-estado]="cita.estado">
+                      <mat-icon *ngIf="cita.estado === 'completada'">check_circle</mat-icon>
+                      <mat-icon *ngIf="cita.estado === 'pendiente'">schedule</mat-icon>
+                      <mat-icon *ngIf="cita.estado === 'cancelada'">cancel</mat-icon>
+                      {{ cita.estado | titlecase }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <!-- Monto Column -->
+                <ng-container matColumnDef="monto">
+                  <th mat-header-cell *matHeaderCellDef>Monto</th>
+                  <td mat-cell *matCellDef="let cita">${{ cita.monto | number:'1.2-2' }}</td>
+                </ng-container>
+
+                <!-- Acciones Column -->
+                <ng-container matColumnDef="acciones">
+                  <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                  <td mat-cell *matCellDef="let cita">
+                    <button mat-icon-button (click)="verDetalleCita(cita)" matTooltip="Ver detalles">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+
+              <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Doctores -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">medical_services</mat-icon>
+            Reporte de Doctores
+          </ng-template>
+
+          <div class="tab-content">
+            <div class="doctor-stats-grid">
+              <mat-card class="doctor-stat-card" *ngFor="let i of [1,2,3,4]">
+                <div class="doctor-avatar">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <div class="doctor-info">
+                  <h4>Dr. Antonio Méndez</h4>
+                  <p>Cardiología</p>
+                  <div class="doctor-metrics">
+                    <div class="metric">
+                      <span class="value">156</span>
+                      <span class="label">Citas</span>
+                    </div>
+                    <div class="metric">
+                      <span class="value">98%</span>
+                      <span class="label">Satisfacción</span>
+                    </div>
+                    <div class="metric">
+                      <span class="value">4.9</span>
+                      <span class="label">Rating</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Financiero -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">account_balance</mat-icon>
+            Reporte Financiero
+          </ng-template>
+
+          <div class="tab-content">
+            <div class="financial-summary">
+              <mat-card class="summary-card">
+                <h3>Resumen Financiero del Período</h3>
+                <div class="summary-grid">
+                  <div class="summary-item">
+                    <span class="label">Ingresos Totales</span>
+                    <span class="value positive">$80,000.00</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="label">Margen de Ganancia</span>
+                    <span class="value">64%</span>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="loading">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Cargando reportes...</p>
+    </div>
+  </div>
+</div>

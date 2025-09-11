@@ -28,7 +28,7 @@ export class BotonPageComponent implements OnInit, OnDestroy {
     { label: 'Registro', link: '/registro-paciente' },
     { label: 'Citas', link: '/registro-cita' },
     { label: 'Doctores', link: '/info-doctores' },
-    { label: 'Gestion', link: '/otra-vista' },
+    { label: 'Reportes', link: '/reportes' },
   ];
 
   seleccionado: string | null = null;

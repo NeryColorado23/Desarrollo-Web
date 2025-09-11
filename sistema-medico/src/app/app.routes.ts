@@ -18,6 +18,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/pages/page-form-doctores/info-doctores.component').then(m => m.InfoDoctoresComponent)
   },
   {
+    path: 'reportes',
+    loadComponent: () => import('./components/pages/page-reports/page-reports.component').then(m => m.PageReportsComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

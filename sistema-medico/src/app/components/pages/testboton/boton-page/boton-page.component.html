@@ -1,21 +1,32 @@
 <!-- Panel lateral del menú -->
 <div class="menu-panel" [class.active]="mostrarMenu">
   <section>
-    <div class="example-label"></div>
+    <div class="menu-header">
+      <h3>Menú Principal</h3>
+    </div>
     <div class="example-button-column">
       <button
         mat-stroked-button
         *ngFor="let btn of botones"
         [ngClass]="{'activo': btn.label === seleccionado}"
         (click)="seleccionar(btn)"
-        [routerLink]="btn.link">
+        [routerLink]="btn.link"
+        class="menu-button">
 
-        <!-- Icono solo para el botón Home -->
+        <!-- Iconos para cada botón -->
         <mat-icon *ngIf="btn.label === 'Home'" class="button-icon">home</mat-icon>
-        {{ btn.label }}
+        <mat-icon *ngIf="btn.label === 'Registro'" class="button-icon">person_add</mat-icon>
+        <mat-icon *ngIf="btn.label === 'Citas'" class="button-icon">event</mat-icon>
+        <mat-icon *ngIf="btn.label === 'Doctores'" class="button-icon">medical_services</mat-icon>
+        <mat-icon *ngIf="btn.label === 'Reportes'" class="button-icon">assessment</mat-icon>
+
+        <span class="button-label">{{ btn.label }}</span>
       </button>
     </div>
   </section>
 
   <mat-divider/>
 </div>
+
+<!-- Overlay para cerrar el menú -->
+<div class="menu-overlay" [class.active]="mostrarMenu" (click)="cerrarMenu()"></div>
