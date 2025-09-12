@@ -1,6 +1,8 @@
 Nombre: Nery Otoniel Colorado Menchú
 Carnet: 9490-22-4867
 
+Link proyecto netlify:https://tareaa2.netlify.app/
+
 Información para ejecutar proyecto:
 1. npm install
 
