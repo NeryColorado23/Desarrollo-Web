@@ -1,3 +1,16 @@
+Nombre: Nery Otoniel Colorado Menchú
+Carnet: 9490-22-4867
+
+Información para ejecutar proyecto:
+1. npm install
+
+Detalle: Utilizado React, Boostrap, Vite. Y se mejoro usando: npm install react-router-dom para utilizar botones entre rutas y vistas.
+
+Utiliza componentes de Bootstrap como Carrusel, Navbar, Card, y Footer.
+Utiliza componentes de Bootstrap como Table, ListGroup, Accordion, etc., para estructurar la información.
+
+
+----------------------
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
