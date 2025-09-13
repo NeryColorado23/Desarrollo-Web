@@ -1,7 +1,12 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 
 function Componente(){
     const [nombre, setNombre] = useState("Alan")
+
+    //ayuda a indicar si algo cambio en este hook uso de useEffect para controlar el cambio de estados de componentes
+    useEffect(() => {
+        console.log('Algo cambio')
+    })
 
     function cambionombre(nuevoNombre){
         setNombre(nuevoNombre)
