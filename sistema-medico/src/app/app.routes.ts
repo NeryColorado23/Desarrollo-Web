@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/pages/page-reports/page-reports.component').then(m => m.PageReportsComponent)
   },
   {
+    path: 'calendar',
+    loadComponent: () => import('./components/pages/page-calendar/calendar.component').then(m => m.CalendarComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

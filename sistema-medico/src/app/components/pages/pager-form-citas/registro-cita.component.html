@@ -301,3 +301,35 @@
     </div>
   </div>
 </div>
+
+
+<!-- Agregar este botón en la barra de acciones principales, después del botón "Nueva Cita" -->
+<div class="actions-bar">
+  <button mat-raised-button color="primary" (click)="abrirModalCita('crear')">
+    <mat-icon>add</mat-icon>
+    Nueva Cita
+  </button>
+
+  <!-- NUEVO BOTÓN PARA EL CALENDARIO -->
+  <button mat-stroked-button color="accent" [routerLink]="['/calendar']" class="calendar-button">
+    <mat-icon>calendar_view_month</mat-icon>
+    Ver Calendario
+  </button>
+
+  <mat-form-field appearance="fill" class="filtro-busqueda">
+    <mat-label>Buscar cita</mat-label>
+    <input matInput [(ngModel)]="filtro" (input)="filtrarCitas()" placeholder="Paciente, doctor o fecha...">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="filtro-estado">
+    <mat-label>Filtrar por estado</mat-label>
+    <mat-select [(ngModel)]="filtroEstado" (selectionChange)="filtrarCitas()">
+      <mat-option value="">Todos</mat-option>
+      <mat-option value="pendiente">Pendiente</mat-option>
+      <mat-option value="confirmada">Confirmada</mat-option>
+      <mat-option value="completada">Completada</mat-option>
+      <mat-option value="cancelada">Cancelada</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

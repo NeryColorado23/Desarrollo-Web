@@ -1,0 +1,216 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <div class="header-title">
+      <h2>
+        <mat-icon>calendar_today</mat-icon>
+        Calendario de Citas Médicas
+      </h2>
+      <p>Gestión visual de citas y disponibilidad de doctores</p>
+    </div>
+
+    <!-- Controles del calendario -->
+    <div class="calendar-controls">
+      <div class="navigation-controls">
+        <button mat-icon-button (click)="previousMonth()" class="nav-button">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <div class="current-date">
+          <h3 *ngIf="monthView">{{ monthView.monthName }} {{ monthView.year }}</h3>
+        </div>
+
+        <button mat-icon-button (click)="nextMonth()" class="nav-button">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+      <div class="action-controls">
+        <button mat-button (click)="goToToday()" class="today-button">
+          <mat-icon>today</mat-icon>
+          Hoy
+        </button>
+
+        <mat-form-field appearance="fill" class="doctor-select">
+          <mat-label>Filtrar por Doctor</mat-label>
+          <mat-select [value]="selectedDoctor" (selectionChange)="onDoctorChange($event.value)">
+            <mat-option value="">Todos los doctores</mat-option>
+            <mat-option *ngFor="let doctor of doctores" [value]="doctor.nombreCompleto">
+              {{ doctor.nombreCompleto }} - {{ doctor.especialidad }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="calendar-stats" *ngIf="monthView">
+      <div class="stats-container">
+        <div class="stat-item">
+          <span class="stat-number">{{ getMonthStats().total }}</span>
+          <span class="stat-label">Total Citas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ getMonthStats().confirmadas }}</span>
+          <span class="stat-label">Confirmadas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ getMonthStats().pendientes }}</span>
+          <span class="stat-label">Pendientes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calendar-content">
+    <!-- Vista del calendario -->
+    <div class="calendar-grid-container">
+      <mat-card class="calendar-card">
+        <!-- Encabezados de días -->
+        <div class="calendar-weekdays">
+          <div *ngFor="let dayName of dayNames" class="weekday-header">
+            {{ dayName }}
+          </div>
+        </div>
+
+        <!-- Grid del calendario -->
+        <div class="calendar-grid" *ngIf="monthView">
+          <div *ngFor="let week of monthView.weeks" class="calendar-week">
+            <div
+              *ngFor="let day of week.days"
+              [class]="getDayClasses(day).join(' ')"
+              [matTooltip]="getDayTooltip(day)"
+              (click)="selectDay(day)">
+
+              <div class="day-number">
+                {{ day.date.getDate() }}
+                <mat-icon *ngIf="day.isToday" class="today-indicator">star</mat-icon>
+              </div>
+
+              <div class="day-citas" *ngIf="day.citas.length > 0">
+                <div
+                  *ngFor="let cita of day.citas.slice(0, 2)"
+                  class="cita-indicator"
+                  [ngClass]="'cita-' + cita.estado">
+                  <span class="cita-time">{{ cita.hora }}</span>
+                  <span class="cita-patient">{{ cita.paciente.split(' ')[0] }}</span>
+                </div>
+                <div *ngIf="day.citas.length > 2" class="more-citas">
+                  +{{ day.citas.length - 2 }} más
+                </div>
+              </div>
+
+              <div class="availability-indicator" *ngIf="day.hasAvailableSlots && day.isCurrentMonth && !day.isPast">
+                <mat-icon>add_circle_outline</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Panel lateral de detalles -->
+    <div class="details-panel" *ngIf="selectedDate">
+      <mat-card class="details-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>event</mat-icon>
+            {{ formatDate(selectedDate) }}
+          </mat-card-title>
+          <div class="header-actions">
+            <button mat-icon-button (click)="clearSelection()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div *ngIf="selectedDateCitas.length === 0" class="no-citas-message">
+            <mat-icon>event_available</mat-icon>
+            <h4>Sin citas programadas</h4>
+            <p>Este día está disponible para programar nuevas citas</p>
+            <button mat-raised-button color="primary" [routerLink]="['/registro-cita']">
+              <mat-icon>add</mat-icon>
+              Programar Cita
+            </button>
+          </div>
+
+          <div *ngIf="selectedDateCitas.length > 0" class="citas-del-dia">
+            <div class="citas-header">
+              <h4>Citas del día ({{ selectedDateCitas.length }})</h4>
+              <button mat-button [routerLink]="['/registro-cita']" class="add-cita-btn">
+                <mat-icon>add</mat-icon>
+                Agregar Cita
+              </button>
+            </div>
+
+            <div class="citas-list">
+              <div *ngFor="let cita of selectedDateCitas" class="cita-item">
+                <div class="cita-time-indicator">
+                  <mat-icon>access_time</mat-icon>
+                  <span class="time">{{ cita.hora }}</span>
+                </div>
+
+                <div class="cita-details">
+                  <div class="patient-info">
+                    <strong>{{ cita.paciente }}</strong>
+                    <mat-chip [color]="getEstadoColor(cita.estado)" class="estado-chip">
+                      {{ getEstadoTexto(cita.estado) }}
+                    </mat-chip>
+                  </div>
+
+                  <div class="doctor-info">
+                    <mat-icon>medical_services</mat-icon>
+                    <span>{{ cita.doctor }} - {{ cita.especialidad }}</span>
+                  </div>
+
+                  <div class="consulta-info" *ngIf="cita.motivoConsulta">
+                    <mat-icon>description</mat-icon>
+                    <span>{{ cita.motivoConsulta }}</span>
+                  </div>
+                </div>
+
+                <div class="cita-actions">
+                  <button mat-icon-button [matMenuTriggerFor]="citaMenu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #citaMenu="matMenu">
+                    <button mat-menu-item [routerLink]="['/registro-cita']">
+                      <mat-icon>edit</mat-icon>
+                      Editar
+                    </button>
+                    <button mat-menu-item>
+                      <mat-icon>visibility</mat-icon>
+                      Ver Detalles
+                    </button>
+                    <button mat-menu-item *ngIf="cita.estado !== 'cancelada'">
+                      <mat-icon>cancel</mat-icon>
+                      Cancelar
+                    </button>
+                  </mat-menu>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Leyenda del calendario -->
+  <div class="calendar-legend">
+    <mat-card class="legend-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>info</mat-icon>
+          Leyenda
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="legend-items">
+          <div class="legend-item">
+            <div class="legend-color cita-confirmada"></div>
+            <span>Cita Confirmada</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color cita-pendiente"></div>
+            <span>Cita Pendiente
