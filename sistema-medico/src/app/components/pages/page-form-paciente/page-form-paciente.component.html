@@ -16,9 +16,9 @@
           <mat-form-field appearance="fill" class="full-width">
             <mat-label>Nombre Completo</mat-label>
             <input matInput formControlName="nombreCompleto" placeholder="Ingrese el nombre completo">
-            <mat-error *ngIf="pacienteForm.get('nombreCompleto')?.hasError('required')">
-              El nombre es requerido
-            </mat-error>
+            @if (pacienteForm.get('nombreCompleto')?.hasError('required')) {
+              <mat-error>El nombre es requerido</mat-error>
+            }
           </mat-form-field>
         </div>
 
