@@ -3,8 +3,8 @@ import { getContexto } from '../contexto/contexto'
 
 export default function Login() {
     const { Autenticar } = getContexto()
-    const user = useRef(null)
-    const password = useRef(null)
+    const user = useRef()
+    const password = useRef()
 
     const handleLogin = () => {
         const usuario = user.current.value
