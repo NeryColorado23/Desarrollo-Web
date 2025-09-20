@@ -1,11 +1,28 @@
-function Login(){
+import { useRef } from 'react'
+import { getContexto } from '../contexto/contexto'
+
+export default function Login() {
+    const { Autenticar } = getContexto()
+    const user = useRef(null)
+    const password = useRef(null)
+
+    const handleLogin = () => {
+        const usuario = user.current.value
+        const pass = password.current.value
+        const ok = Autenticar(usuario, pass)
+
+        if (ok) {
+            alert("✅ Sesión iniciada")
+        } else {
+            alert("❌ Usuario o contraseña incorrectos")
+        }
+    }
 
     return (
-     <div>
-        <input type="text"/> 
-        <input type="password"/>
-        <button>Login</button>
-     </div>   
-    
-)
+        <div>
+            <input type="text" ref={user} placeholder="Usuario" /> 
+            <input type="password" ref={password} placeholder="Contraseña" />
+            <button onClick={handleLogin}>Login</button>
+        </div>   
+    )
 }
