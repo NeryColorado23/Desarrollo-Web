@@ -1,5 +1,5 @@
-<!-- Panel lateral del menú -->
-<div class="menu-panel" [class.active]="mostrarMenu">
+<!-- Panel lateral del menú - Solo visible si está autenticado -->
+<div class="menu-panel" [class.active]="mostrarMenu && isAuthenticated" *ngIf="isAuthenticated">
   <section>
     <div class="menu-header">
       <h3>Menú Principal</h3>
@@ -28,5 +28,10 @@
   <mat-divider/>
 </div>
 
-<!-- Overlay para cerrar el menú -->
-<div class="menu-overlay" [class.active]="mostrarMenu" (click)="cerrarMenu()"></div>
+<!-- Overlay para cerrar el menú - Solo visible si está autenticado y el menú está abierto -->
+<div
+  class="menu-overlay"
+  [class.active]="mostrarMenu && isAuthenticated"
+  (click)="cerrarMenu()"
+  *ngIf="isAuthenticated"
+></div>
