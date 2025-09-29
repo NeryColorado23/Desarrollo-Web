@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { ɵEmptyOutletComponent } from '@angular/router';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-card',
-  imports: [ɵEmptyOutletComponent],
+  imports: [],
   templateUrl: './card.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardComponent {
-  title = input.required()
+  title = input.required();
 }
