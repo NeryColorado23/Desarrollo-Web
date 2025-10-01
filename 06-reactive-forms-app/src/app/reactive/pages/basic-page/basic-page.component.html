@@ -17,11 +17,13 @@
                            formControlName = "name"
                            >
 
-
-                    <span class="form-text text-danger">
+                    @if (isValidField('name')) {
+                      <span class="form-text text-danger">
                         <!-- Debe de ser de 3 letras -->
-                        error message
+                        {{getFieldError('name')}}
                     </span>
+                    }
+
                 </div>
             </div>
 
@@ -98,9 +100,9 @@
 
 
         <span>Precio</span>
-        <pre>{{ myForm.controls.price.value | json }}</pre>
+        <pre>{{ myForm.controls['price'].value | json }}</pre>
 
         <span>Producto</span>
-        <pre>{{ myForm.controls.name.value| json }}</pre>
+        <pre>{{ myForm.controls['name'].value| json }}</pre>
     </div>
 </div>
