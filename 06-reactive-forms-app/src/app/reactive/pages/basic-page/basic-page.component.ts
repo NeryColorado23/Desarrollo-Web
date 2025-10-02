@@ -27,8 +27,12 @@ export class BasicPageComponent {
   // })
 
   //validar campos requeridos
+  //se valida tambien que cuando el usuario toque los form aparezcan los campos requeridos y no antes
   isValidField(fieldName: string):boolean | null {
-    return !! this.myForm.controls[fieldName].errors
+    return (
+    this.myForm.controls[fieldName].errors &&
+    this.myForm.controls[fieldName].touched
+  );
   }
 
   //validar largo minimo establecido para mostrar error en html
@@ -50,7 +54,14 @@ export class BasicPageComponent {
       }
     }
     return null;
+  }
 
+  //validacion para que si la persona manipula el formulario, muestre error de campos requeridos
+  onSave(){
+    if(this.myForm.invalid){
+          this.myForm.markAllAsTouched();
+          return;
+    }
   }
 
 }
