@@ -1,0 +1,76 @@
+/* src/index.css */
+:root {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #f8f9fa;
+}
+
+/* Animaciones suaves para transiciones */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Estilos para formularios */
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Botones con mejor apariencia */
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Navbar personalizado */
+.navbar-brand {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos para el dropdown del usuario */
+.dropdown-menu {
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 2rem !important;
+  }
+  
+  .display-4 {
+    font-size: 2rem;
+  }
+}
