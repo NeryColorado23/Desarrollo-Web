@@ -15,8 +15,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
 // Services
-import { CalendarService, MonthView, CalendarDay, CalendarCita } from '../../../services/calendar.service';
+import { CalendarService, MonthView, CalendarDay } from '../../../services/calendar.service';
 import { DoctorService, Doctor } from '../../../services/doctor.service';
+import { Cita, CitaService } from '../../../services/cita.service';
 
 @Component({
   selector: 'app-calendar',
@@ -53,10 +54,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
   doctores: Doctor[] = [];
 
   // Citas del día seleccionado
-  selectedDateCitas: CalendarCita[] = [];
+  selectedDateCitas: Cita[] = [];
 
   constructor(
     private calendarService: CalendarService,
+    private citaService: CitaService,
     private doctorService: DoctorService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -82,7 +84,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     combineLatest([
       this.calendarService.currentDate$,
       this.calendarService.selectedDoctor$,
-      this.calendarService.citas$
+      this.citaService.citas$
     ])
     .pipe(takeUntil(this.destroy$))
     .subscribe(([currentDate, selectedDoctor, citas]) => {

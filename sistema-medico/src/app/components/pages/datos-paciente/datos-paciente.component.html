@@ -1,0 +1,273 @@
+<div class="datos-paciente-container">
+  <div class="header-section">
+    <h1>
+      <mat-icon>person_search</mat-icon>
+      Datos del Paciente e Historial Médico
+    </h1>
+    <p class="subtitle">Consulte la información completa y el historial médico de los pacientes registrados</p>
+  </div>
+
+  <!-- Selector de Paciente -->
+  <mat-card class="selector-card">
+    <mat-card-content>
+      <div class="selector-container">
+        <mat-form-field appearance="outline" class="paciente-select">
+          <mat-label>Seleccione un Paciente</mat-label>
+          <mat-select
+            [formControl]="pacienteControl"
+            (selectionChange)="onPacienteChange($event)">
+            <mat-option *ngFor="let paciente of pacientes" [value]="paciente.nombreCompleto">
+              {{ paciente.nombreCompleto }} - {{ paciente.cedula }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="warn"
+          *ngIf="pacienteSeleccionado"
+          (click)="limpiarSeleccion()"
+          class="clear-btn">
+          <mat-icon>clear</mat-icon>
+          Limpiar
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Información del Paciente -->
+  <div *ngIf="pacienteSeleccionado" class="paciente-info">
+
+    <!-- Datos Personales -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>badge</mat-icon>
+          Datos Personales
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nombre Completo:</span>
+            <span class="value">{{ pacienteSeleccionado.nombreCompleto }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Cédula:</span>
+            <span class="value">{{ pacienteSeleccionado.cedula }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Fecha de Nacimiento:</span>
+            <span class="value">{{ formatearFecha(pacienteSeleccionado.fechaNacimiento) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Edad:</span>
+            <span class="value">{{ calcularEdad(pacienteSeleccionado.fechaNacimiento) }} años</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Género:</span>
+            <span class="value">{{ pacienteSeleccionado.genero | titlecase }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Teléfono:</span>
+            <span class="value">{{ pacienteSeleccionado.telefono }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ pacienteSeleccionado.email }}</span>
+          </div>
+          <div class="info-item full-width">
+            <span class="label">Dirección:</span>
+            <span class="value">{{ pacienteSeleccionado.direccion }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Signos Vitales Actuales -->
+    <mat-card class="info-card" *ngIf="pacienteSeleccionado.peso || pacienteSeleccionado.altura">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>monitor_heart</mat-icon>
+          Signos Vitales Registrados
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="vitales-grid">
+          <div class="vital-item" *ngIf="pacienteSeleccionado.temperatura">
+            <mat-icon>thermostat</mat-icon>
+            <div class="vital-info">
+              <span class="vital-label">Temperatura</span>
+              <span class="vital-value">{{ pacienteSeleccionado.temperatura }}°C</span>
+            </div>
+          </div>
+          <div class="vital-item" *ngIf="pacienteSeleccionado.peso">
+            <mat-icon>scale</mat-icon>
+            <div class="vital-info">
+              <span class="vital-label">Peso</span>
+              <span class="vital-value">{{ pacienteSeleccionado.peso }} kg</span>
+            </div>
+          </div>
+          <div class="vital-item" *ngIf="pacienteSeleccionado.altura">
+            <mat-icon>height</mat-icon>
+            <div class="vital-info">
+              <span class="vital-label">Altura</span>
+              <span class="vital-value">{{ pacienteSeleccionado.altura }} cm</span>
+            </div>
+          </div>
+          <div class="vital-item" *ngIf="pacienteSeleccionado.peso && pacienteSeleccionado.altura">
+            <mat-icon>calculate</mat-icon>
+            <div class="vital-info">
+              <span class="vital-label">IMC</span>
+              <span class="vital-value">
+                {{ calcularIMC(pacienteSeleccionado.peso, pacienteSeleccionado.altura) }}
+                <span class="imc-categoria">
+                  ({{ obtenerCategoriaIMC(pacienteSeleccionado.peso, pacienteSeleccionado.altura) }})
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="vital-item" *ngIf="pacienteSeleccionado.presionSistolica">
+            <mat-icon>favorite</mat-icon>
+            <div class="vital-info">
+              <span class="vital-label">Presión Arterial</span>
+              <span class="vital-value">
+                {{ pacienteSeleccionado.presionSistolica }}/{{ pacienteSeleccionado.presionDiastolica }} mmHg
+              </span>
+            </div>
+          </div>
+          <div class="vital-item" *ngIf="pacienteSeleccionado.frecuenciaCardiaca">
+            <mat-icon>ecg_heart</mat-icon>
+            <div class="vital-info">
+              <span class="vital-label">Frecuencia Cardíaca</span>
+              <span class="vital-value">{{ pacienteSeleccionado.frecuenciaCardiaca }} lpm</span>
+            </div>
+          </div>
+          <div class="vital-item" *ngIf="pacienteSeleccionado.frecuenciaRespiratoria">
+            <mat-icon>air</mat-icon>
+            <div class="vital-info">
+              <span class="vital-label">Frecuencia Respiratoria</span>
+              <span class="vital-value">{{ pacienteSeleccionado.frecuenciaRespiratoria }} rpm</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Historial Médico -->
+    <mat-card class="historial-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>medical_information</mat-icon>
+          Historial Médico
+          <mat-chip class="historial-count">{{ historialMedico.length }} registro(s)</mat-chip>
+        </mat-card-title>
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="exportarHistorial()"
+          matTooltip="Imprimir/Exportar"
+          *ngIf="historialMedico.length > 0">
+          <mat-icon>print</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="historialMedico.length === 0" class="no-historial">
+          <mat-icon>inbox</mat-icon>
+          <p>No hay registros médicos para este paciente</p>
+        </div>
+
+        <mat-accordion *ngIf="historialMedico.length > 0">
+          <mat-expansion-panel *ngFor="let registro of historialMedico; let i = index">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon class="registro-icon">event</mat-icon>
+                {{ formatearFecha(registro.fecha) }}
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ registro.motivo }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="registro-detalle">
+              <div class="detalle-section">
+                <h4><mat-icon>person</mat-icon> Doctor</h4>
+                <p>{{ registro.doctorNombre }}</p>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="detalle-section">
+                <h4><mat-icon>assignment</mat-icon> Motivo de Consulta</h4>
+                <p>{{ registro.motivo }}</p>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="detalle-section">
+                <h4><mat-icon>stethoscope</mat-icon> Diagnóstico</h4>
+                <p>{{ registro.diagnostico }}</p>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="detalle-section">
+                <h4><mat-icon>healing</mat-icon> Tratamiento</h4>
+                <p>{{ registro.tratamiento }}</p>
+              </div>
+
+              <mat-divider *ngIf="registro.medicamentos"></mat-divider>
+
+              <div class="detalle-section" *ngIf="registro.medicamentos">
+                <h4><mat-icon>medication</mat-icon> Medicamentos</h4>
+                <p>{{ registro.medicamentos }}</p>
+              </div>
+
+              <!-- Signos Vitales del Registro -->
+              <mat-divider *ngIf="registro.temperatura || registro.peso"></mat-divider>
+
+              <div class="detalle-section" *ngIf="registro.temperatura || registro.peso">
+                <h4><mat-icon>monitor_heart</mat-icon> Signos Vitales en la Consulta</h4>
+                <div class="vitales-registro">
+                  <span *ngIf="registro.temperatura">
+                    <strong>Temperatura:</strong> {{ registro.temperatura }}°C
+                  </span>
+                  <span *ngIf="registro.peso">
+                    <strong>Peso:</strong> {{ registro.peso }} kg
+                  </span>
+                  <span *ngIf="registro.altura">
+                    <strong>Altura:</strong> {{ registro.altura }} cm
+                  </span>
+                  <span *ngIf="registro.presionSistolica">
+                    <strong>Presión:</strong> {{ registro.presionSistolica }}/{{ registro.presionDiastolica }} mmHg
+                  </span>
+                  <span *ngIf="registro.frecuenciaCardiaca">
+                    <strong>FC:</strong> {{ registro.frecuenciaCardiaca }} lpm
+                  </span>
+                  <span *ngIf="registro.frecuenciaRespiratoria">
+                    <strong>FR:</strong> {{ registro.frecuenciaRespiratoria }} rpm
+                  </span>
+                </div>
+              </div>
+
+              <mat-divider *ngIf="registro.observaciones"></mat-divider>
+
+              <div class="detalle-section observaciones" *ngIf="registro.observaciones">
+                <h4><mat-icon>notes</mat-icon> Observaciones</h4>
+                <p>{{ registro.observaciones }}</p>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Mensaje cuando no hay paciente seleccionado -->
+  <div *ngIf="!pacienteSeleccionado" class="no-selection">
+    <mat-icon>search</mat-icon>
+    <h2>Seleccione un paciente para ver su información</h2>
+    <p>Utilice el selector superior para buscar y seleccionar un paciente registrado en el sistema</p>
+  </div>
+</div>

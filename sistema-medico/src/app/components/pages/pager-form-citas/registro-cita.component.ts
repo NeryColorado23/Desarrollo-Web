@@ -19,21 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
 // Importar servicios
 import { PacienteService, Paciente } from '../../../services/paciente.service';
 import { DoctorService, Doctor } from '../../../services/doctor.service';
-
-export interface Cita {
-  id: string;
-  pacienteId: string; // ID para referenciar al paciente
-  paciente: string;   // Nombre para mostrar
-  doctor: string;
-  especialidad: string;
-  fecha: Date;
-  hora: string;
-  tipoConsulta: string;
-  estado: 'pendiente' | 'confirmada' | 'completada' | 'cancelada';
-  motivoConsulta?: string;
-  observaciones?: string;
-  fechaCreacion: Date;
-}
+import { CitaService, Cita } from '../../../services/cita.service';
 
 @Component({
   selector: 'app-registro-cita',
@@ -71,7 +57,6 @@ export class RegistroCitaComponent implements OnInit {
   filtroEstado = '';
 
   // Datos
-  citas: Cita[] = [];
   citasFiltradas: Cita[] = [];
 
   // Obtener pacientes del servicio
@@ -90,13 +75,19 @@ export class RegistroCitaComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private pacienteService: PacienteService,
-    private doctorService: DoctorService
+    private doctorService: DoctorService,
+    private citaService: CitaService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    this.cargarCitasEjemplo();
     this.filtrarCitas();
+
+    // Suscribirse a cambios en citas
+    this.citaService.citas$.subscribe(() => {
+      this.filtrarCitas();
+      this.cdr.detectChanges();
+    });
 
     // Suscribirse a cambios en pacientes
     this.pacienteService.pacientes$.subscribe(() => {
@@ -121,43 +112,6 @@ export class RegistroCitaComponent implements OnInit {
       motivoConsulta: [''],
       observaciones: ['']
     });
-  }
-
-  private cargarCitasEjemplo(): void {
-    // Obtener algunos pacientes para las citas de ejemplo
-    const pacientesDisponibles = this.pacienteService.getPacientes();
-
-    if (pacientesDisponibles.length > 0) {
-      this.citas = [
-        {
-          id: '1',
-          pacienteId: pacientesDisponibles[0].id,
-          paciente: pacientesDisponibles[0].nombreCompleto,
-          doctor: 'Dr. Antonio Méndez',
-          especialidad: 'Cardiología',
-          fecha: new Date(2024, 11, 15),
-          hora: '09:00',
-          tipoConsulta: 'control',
-          estado: 'confirmada',
-          motivoConsulta: 'Revisión rutinaria de presión arterial',
-          observaciones: 'Paciente con historial de hipertensión',
-          fechaCreacion: new Date()
-        },
-        {
-          id: '2',
-          pacienteId: pacientesDisponibles[1]?.id || '2',
-          paciente: pacientesDisponibles[1]?.nombreCompleto || 'Paciente Ejemplo',
-          doctor: 'Dra. Isabel Romero',
-          especialidad: 'Pediatría',
-          fecha: new Date(2024, 11, 16),
-          hora: '10:30',
-          tipoConsulta: 'primera-vez',
-          estado: 'pendiente',
-          motivoConsulta: 'Consulta por fiebre y malestar general',
-          fechaCreacion: new Date()
-        }
-      ];
-    }
   }
 
   // Gestión del modal
@@ -222,8 +176,8 @@ export class RegistroCitaComponent implements OnInit {
       const pacienteSeleccionado = this.pacienteService.getPacientePorNombre(formData.paciente);
 
       if (this.modalTipo === 'crear') {
-        const nuevaCita: Cita = {
-          id: this.generateId(),
+        // Usar el servicio centralizado para agregar la cita
+        this.citaService.agregarCita({
           pacienteId: pacienteSeleccionado?.id || '',
           paciente: formData.paciente,
           doctor: formData.doctor,
@@ -233,56 +187,42 @@ export class RegistroCitaComponent implements OnInit {
           tipoConsulta: formData.tipoConsulta,
           estado: formData.estado,
           motivoConsulta: formData.motivoConsulta,
-          observaciones: formData.observaciones,
-          fechaCreacion: new Date()
-        };
-        this.citas.push(nuevaCita);
+          observaciones: formData.observaciones
+        });
       } else if (this.modalTipo === 'editar' && this.citaSeleccionada) {
-        const index = this.citas.findIndex(c => c.id === this.citaSeleccionada!.id);
-        if (index !== -1) {
-          this.citas[index] = {
-            ...this.citaSeleccionada,
-            pacienteId: pacienteSeleccionado?.id || this.citaSeleccionada.pacienteId,
-            paciente: formData.paciente,
-            doctor: formData.doctor,
-            especialidad: formData.especialidad,
-            fecha: formData.fecha,
-            hora: formData.hora,
-            tipoConsulta: formData.tipoConsulta,
-            estado: formData.estado,
-            motivoConsulta: formData.motivoConsulta,
-            observaciones: formData.observaciones
-          };
-        }
+        // Usar el servicio centralizado para actualizar la cita
+        this.citaService.actualizarCita(this.citaSeleccionada.id, {
+          pacienteId: pacienteSeleccionado?.id || this.citaSeleccionada.pacienteId,
+          paciente: formData.paciente,
+          doctor: formData.doctor,
+          especialidad: formData.especialidad,
+          fecha: formData.fecha,
+          hora: formData.hora,
+          tipoConsulta: formData.tipoConsulta,
+          estado: formData.estado,
+          motivoConsulta: formData.motivoConsulta,
+          observaciones: formData.observaciones
+        });
       }
 
-      this.filtrarCitas();
       this.cerrarModal();
-      this.cdr.detectChanges();
     }
   }
 
   cancelarCita(cita: Cita): void {
     if (confirm(`¿Está seguro de que desea cancelar la cita de ${cita.paciente}?`)) {
-      const index = this.citas.findIndex(c => c.id === cita.id);
-      if (index !== -1) {
-        this.citas[index].estado = 'cancelada';
-        this.citas[index].observaciones = (this.citas[index].observaciones || '') +
-          ` \n[${new Date().toLocaleDateString()}] Cita cancelada por el usuario.`;
-        this.filtrarCitas();
-        this.cdr.detectChanges();
-      }
+      this.citaService.cancelarCita(cita.id, 'Cancelada por el usuario');
     }
   }
 
   // Filtros y búsqueda
   filtrarCitas(): void {
-    let citasFiltradas = [...this.citas];
+    let citasFiltradas = this.citaService.getCitas();
 
     // Filtro por texto
     if (this.filtro.trim()) {
       const filtroLower = this.filtro.toLowerCase();
-      citasFiltradas = citasFiltradas.filter(cita =>
+      citasFiltradas = citasFiltradas.filter((cita: Cita) =>
         cita.paciente.toLowerCase().includes(filtroLower) ||
         cita.doctor.toLowerCase().includes(filtroLower) ||
         cita.especialidad.toLowerCase().includes(filtroLower) ||
@@ -292,11 +232,11 @@ export class RegistroCitaComponent implements OnInit {
 
     // Filtro por estado
     if (this.filtroEstado) {
-      citasFiltradas = citasFiltradas.filter(cita => cita.estado === this.filtroEstado);
+      citasFiltradas = citasFiltradas.filter((cita: Cita) => cita.estado === this.filtroEstado);
     }
 
     // Ordenar por fecha más reciente
-    citasFiltradas.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    citasFiltradas.sort((a: Cita, b: Cita) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
 
     this.citasFiltradas = citasFiltradas;
     this.cdr.detectChanges();
@@ -351,9 +291,5 @@ export class RegistroCitaComponent implements OnInit {
       'cancelada': 'cancel'
     };
     return iconos[estado] || 'help';
-  }
-
-  private generateId(): string {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 }

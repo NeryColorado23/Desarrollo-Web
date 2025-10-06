@@ -18,7 +18,7 @@ import { MatIconModule } from "@angular/material/icon";
     MatDividerModule,
     RouterModule,
     MatIconModule
-],
+  ],
   templateUrl: './boton-page.component.html',
   styleUrls: ['./boton-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +28,7 @@ export class BotonPageComponent implements OnInit, OnDestroy {
     { label: 'Home', link: '/home' },
     { label: 'Registro', link: '/registro-paciente' },
     { label: 'Citas', link: '/registro-cita' },
+    { label: 'Datos Paciente', link: '/datos-paciente' },
     { label: 'Doctores', link: '/info-doctores' },
     { label: 'Reportes', link: '/reportes' },
   ];

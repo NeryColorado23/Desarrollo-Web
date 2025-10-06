@@ -1,24 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { CitaService, Cita } from './cita.service';
 
 export interface CalendarDay {
   date: Date;
   isCurrentMonth: boolean;
   isToday: boolean;
   isPast: boolean;
-  citas: CalendarCita[];
+  citas: Cita[];
   hasAvailableSlots: boolean;
-}
-
-export interface CalendarCita {
-  id: string;
-  paciente: string;
-  doctor: string;
-  especialidad: string;
-  hora: string;
-  tipoConsulta: string;
-  estado: 'pendiente' | 'confirmada' | 'completada' | 'cancelada';
-  motivoConsulta?: string;
 }
 
 export interface CalendarWeek {
@@ -37,11 +27,9 @@ export interface MonthView {
 })
 export class CalendarService {
   private currentDateSubject = new BehaviorSubject<Date>(new Date());
-  private citasSubject = new BehaviorSubject<CalendarCita[]>([]);
   private selectedDoctorSubject = new BehaviorSubject<string>('');
 
   currentDate$ = this.currentDateSubject.asObservable();
-  citas$ = this.citasSubject.asObservable();
   selectedDoctor$ = this.selectedDoctorSubject.asObservable();
 
   private monthNames = [
@@ -51,57 +39,7 @@ export class CalendarService {
 
   private dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-  constructor() {
-    this.initializeExampleCitas();
-  }
-
-  private initializeExampleCitas(): void {
-    const today = new Date();
-    const exampleCitas: CalendarCita[] = [
-      {
-        id: '1',
-        paciente: 'Ana García López',
-        doctor: 'Dr. Antonio Méndez',
-        especialidad: 'Cardiología',
-        hora: '09:00',
-        tipoConsulta: 'control',
-        estado: 'confirmada',
-        motivoConsulta: 'Revisión rutinaria'
-      },
-      {
-        id: '2',
-        paciente: 'Carlos Rodríguez',
-        doctor: 'Dra. Isabel Romero',
-        especialidad: 'Pediatría',
-        hora: '10:30',
-        tipoConsulta: 'primera-vez',
-        estado: 'pendiente',
-        motivoConsulta: 'Consulta por fiebre'
-      },
-      {
-        id: '3',
-        paciente: 'María Fernández',
-        doctor: 'Dr. Antonio Méndez',
-        especialidad: 'Cardiología',
-        hora: '14:00',
-        tipoConsulta: 'urgencia',
-        estado: 'confirmada',
-        motivoConsulta: 'Dolor en el pecho'
-      },
-      {
-        id: '4',
-        paciente: 'Pedro Martínez',
-        doctor: 'Dr. Luis Herrera',
-        especialidad: 'Neurología',
-        hora: '11:15',
-        tipoConsulta: 'control',
-        estado: 'completada',
-        motivoConsulta: 'Seguimiento migraña'
-      }
-    ];
-
-    this.citasSubject.next(exampleCitas);
-  }
+  constructor(private citaService: CitaService) {}
 
   getCurrentDate(): Date {
     return this.currentDateSubject.value;
@@ -140,16 +78,12 @@ export class CalendarService {
     const month = date.getMonth();
     const monthName = this.monthNames[month];
 
-    // Primer día del mes
     const firstDayOfMonth = new Date(year, month, 1);
-    // Último día del mes
     const lastDayOfMonth = new Date(year, month + 1, 0);
 
-    // Primer día a mostrar (puede ser del mes anterior)
     const firstDayToShow = new Date(firstDayOfMonth);
     firstDayToShow.setDate(firstDayToShow.getDate() - firstDayOfMonth.getDay());
 
-    // Último día a mostrar (puede ser del mes siguiente)
     const lastDayToShow = new Date(lastDayOfMonth);
     const daysToAdd = 6 - lastDayOfMonth.getDay();
     lastDayToShow.setDate(lastDayToShow.getDate() + daysToAdd);
@@ -197,34 +131,21 @@ export class CalendarService {
     };
   }
 
-  private getCitasForDate(date: Date): CalendarCita[] {
-    const citas = this.citasSubject.value;
+  private getCitasForDate(date: Date): Cita[] {
     const selectedDoctor = this.selectedDoctorSubject.value;
+    let citas = this.citaService.getCitasPorFecha(date);
 
-    // Simulamos que tenemos citas en fechas específicas
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const dayAfterTomorrow = new Date(today);
-    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
-
-    let dateCitas: CalendarCita[] = [];
-
-    if (this.isSameDay(date, today)) {
-      dateCitas = citas.filter(c => selectedDoctor ? c.doctor === selectedDoctor : true).slice(0, 2);
-    } else if (this.isSameDay(date, tomorrow)) {
-      dateCitas = citas.filter(c => selectedDoctor ? c.doctor === selectedDoctor : true).slice(1, 3);
-    } else if (this.isSameDay(date, dayAfterTomorrow)) {
-      dateCitas = citas.filter(c => selectedDoctor ? c.doctor === selectedDoctor : true).slice(2, 4);
+    // Filtrar por doctor si hay uno seleccionado
+    if (selectedDoctor) {
+      citas = citas.filter((c: Cita) => c.doctor === selectedDoctor);
     }
 
-    return dateCitas;
+    return citas;
   }
 
   private hasAvailableSlotsForDate(date: Date): boolean {
     const citas = this.getCitasForDate(date);
-    const maxCitasPerDay = 8; // Asumimos máximo 8 citas por día
+    const maxCitasPerDay = 8;
     return citas.length < maxCitasPerDay && !this.isPast(date);
   }
 
@@ -242,34 +163,5 @@ export class CalendarService {
 
   getDayNames(): string[] {
     return this.dayNames;
-  }
-
-  addCita(cita: CalendarCita): void {
-    const currentCitas = this.citasSubject.value;
-    this.citasSubject.next([...currentCitas, cita]);
-  }
-
-  updateCita(cita: CalendarCita): void {
-    const currentCitas = this.citasSubject.value;
-    const index = currentCitas.findIndex(c => c.id === cita.id);
-    if (index !== -1) {
-      currentCitas[index] = cita;
-      this.citasSubject.next([...currentCitas]);
-    }
-  }
-
-  deleteCita(citaId: string): void {
-    const currentCitas = this.citasSubject.value;
-    const filteredCitas = currentCitas.filter(c => c.id !== citaId);
-    this.citasSubject.next(filteredCitas);
-  }
-
-  getCitasForDateRange(startDate: Date, endDate: Date): CalendarCita[] {
-    // Esta función podría usarse para obtener citas en un rango de fechas
-    const citas = this.citasSubject.value;
-    return citas.filter(cita => {
-      // Por ahora retornamos todas las citas, pero aquí podrías filtrar por fechas
-      return true;
-    });
   }
 }
