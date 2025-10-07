@@ -10,9 +10,10 @@ import VotingChart from '../components/VotingChart';
 import { 
   formatDateOnly, 
   calculateTimeRemaining, 
-  formatTimeRemaining,
   handleAPIError 
 } from '../utils/helpers';
+
+// ... resto del código igual
 
 const CampaignDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

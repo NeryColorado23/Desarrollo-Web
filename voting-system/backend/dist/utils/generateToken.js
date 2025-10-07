@@ -10,9 +10,10 @@ const generateToken = (payload) => {
     if (!secret) {
         throw new Error('JWT_SECRET no está definido en las variables de entorno');
     }
-    return jsonwebtoken_1.default.sign(payload, secret, {
+    const options = {
         expiresIn: process.env.JWT_EXPIRE || '7d',
-    });
+    };
+    return jsonwebtoken_1.default.sign(payload, secret, options);
 };
 exports.generateToken = generateToken;
 const verifyToken = (token) => {

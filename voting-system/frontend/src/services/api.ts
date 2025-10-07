@@ -1,5 +1,5 @@
 // src/services/api.ts
-import axios, { type AxiosInstance, AxiosError } from 'axios';
+import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import type {
     LoginCredentials,
     RegisterData,
@@ -40,7 +40,6 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Token expirado o inválido
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
@@ -106,7 +105,6 @@ export const campaignAPI = {
     return response.data;
   },
 
-  // Candidatos
   addCandidate: async (campaignId: string, data: CandidateFormData) => {
     const response = await api.post(`/campaigns/${campaignId}/candidates`, data);
     return response.data;

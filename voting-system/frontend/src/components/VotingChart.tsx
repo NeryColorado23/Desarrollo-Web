@@ -49,7 +49,7 @@ const VotingChart: React.FC<VotingChartProps> = ({ data, title = 'Resultados de 
           />
           <Legend />
           <Bar dataKey="votos" fill="#1e3a5f" name="Votos">
-            {chartData.map((entry, index) => (
+            {chartData.map((_item, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Bar>

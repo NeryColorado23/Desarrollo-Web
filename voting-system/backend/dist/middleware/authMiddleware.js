@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.protect = void 0;
+exports.admin = exports.protect = void 0;
 const generateToken_1 = require("../utils/generateToken");
 const User_1 = __importDefault(require("../models/User"));
 const protect = async (req, res, next) => {
@@ -51,3 +51,5 @@ const protect = async (req, res, next) => {
     }
 };
 exports.protect = protect;
+var adminMiddleware_1 = require("./adminMiddleware");
+Object.defineProperty(exports, "admin", { enumerable: true, get: function () { return adminMiddleware_1.admin; } });
