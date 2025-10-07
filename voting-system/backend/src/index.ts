@@ -13,9 +13,22 @@ const app: Application = express();
 
 connectDB();
 
-app.use(cors());
+// ✅ CAMBIO IMPORTANTE: Configuración específica de CORS
+app.use(cors({
+  origin: 'http://localhost:3000',  // ← Frontend
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 🔍 Middleware para debug (opcional, puedes comentarlo después)
+app.use((req: Request, res: Response, next) => {
+  console.log(`📥 ${req.method} ${req.path}`);
+  next();
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
@@ -41,4 +54,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
   console.log(`📍 Ambiente: ${process.env.NODE_ENV}`);
+  console.log(`🌐 MongoDB conectado: ${process.env.MONGODB_URI ? 'Sí' : 'No'}`);
 });
