@@ -57,7 +57,7 @@ const MyVotes: React.FC = () => {
           >
             <span className="visually-hidden">Cargando...</span>
           </div>
-          <h5 className="text-navy fw-bold">Cargando tus votos...</h5>
+          <h4 className="text-navy fw-bold">Cargando tus votos...</h4>
         </div>
       </div>
     );
@@ -65,22 +65,22 @@ const MyVotes: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      <Container className="py-4">
+      <Container className="py-5" style={{ maxWidth: '1400px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
         {/* Header mejorado */}
-        <Card className="border-0 shadow-sm mb-4">
-          <Card.Body className="p-4">
+        <Card className="border-0 shadow mb-5">
+          <Card.Body className="p-5">
             <Row className="align-items-center">
               <Col>
-                <div className="d-flex align-items-center gap-3 mb-2">
+                <div className="d-flex align-items-center gap-4 mb-3">
                   <div 
-                    className="d-flex align-items-center justify-content-center bg-success text-white rounded-circle shadow-sm"
-                    style={{ width: '60px', height: '60px', minWidth: '60px' }}
+                    className="d-flex align-items-center justify-content-center bg-success text-white rounded-circle shadow"
+                    style={{ width: '80px', height: '80px', minWidth: '80px' }}
                   >
-                    <i className="bi bi-check-circle-fill" style={{ fontSize: '2rem' }}></i>
+                    <i className="bi bi-check-circle-fill" style={{ fontSize: '2.5rem' }}></i>
                   </div>
                   <div>
-                    <h1 className="mb-1 fw-bold text-navy">Mis Votos</h1>
-                    <p className="mb-0 text-muted">
+                    <h1 className="mb-2 fw-bold text-navy" style={{ fontSize: '2.5rem' }}>Mis Votos</h1>
+                    <p className="mb-0 text-muted" style={{ fontSize: '1.2rem' }}>
                       <i className="bi bi-clock-history me-2"></i>
                       Historial completo de tus participaciones
                     </p>
@@ -89,9 +89,9 @@ const MyVotes: React.FC = () => {
               </Col>
               <Col xs="auto">
                 <div className="text-center">
-                  <div className="display-5 fw-bold text-navy">{votes.length}</div>
-                  <Badge bg="warning" text="dark" className="px-3 py-2 mt-2">
-                    <i className="bi bi-award-fill me-1"></i>
+                  <div className="fw-bold text-navy" style={{ fontSize: '3.5rem' }}>{votes.length}</div>
+                  <Badge bg="warning" text="dark" className="mt-2" style={{ fontSize: '1.1rem', padding: '10px 20px' }}>
+                    <i className="bi bi-award-fill me-2"></i>
                     {votes.length === 1 ? 'Voto Emitido' : 'Votos Emitidos'}
                   </Badge>
                 </div>
@@ -102,7 +102,7 @@ const MyVotes: React.FC = () => {
 
         {/* Alerta de error */}
         {error && (
-          <Alert variant="danger" dismissible onClose={() => setError('')} className="shadow-sm">
+          <Alert variant="danger" dismissible onClose={() => setError('')} className="shadow-sm mb-4" style={{ fontSize: '1.05rem' }}>
             <i className="bi bi-exclamation-triangle-fill me-2"></i>
             {error}
           </Alert>
@@ -110,13 +110,13 @@ const MyVotes: React.FC = () => {
 
         {/* Estado vacío o lista de votos */}
         {votes.length === 0 ? (
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow">
             <Card.Body className="p-5">
               <div className="empty-state">
-                <div className="text-center mb-4">
-                  <i className="bi bi-inbox display-1 text-muted mb-4" style={{ fontSize: '6rem' }}></i>
-                  <h3 className="text-navy fw-bold mb-3">No has emitido votos aún</h3>
-                  <p className="text-muted mb-4 fs-5">
+                <div className="text-center mb-5">
+                  <i className="bi bi-inbox text-muted mb-4" style={{ fontSize: '8rem' }}></i>
+                  <h2 className="text-navy fw-bold mb-4" style={{ fontSize: '2rem' }}>No has emitido votos aún</h2>
+                  <p className="text-muted mb-5" style={{ fontSize: '1.2rem' }}>
                     Participa en las campañas activas para comenzar a votar y<br />
                     ver tu historial de participación aquí.
                   </p>
@@ -124,7 +124,8 @@ const MyVotes: React.FC = () => {
                     variant="navy" 
                     size="lg"
                     onClick={() => navigate('/')}
-                    className="px-5 py-3 fw-bold shadow-sm"
+                    className="fw-bold shadow"
+                    style={{ fontSize: '1.1rem', padding: '12px 30px' }}
                   >
                     <i className="bi bi-trophy-fill me-2"></i>
                     Ver Campañas Disponibles
@@ -132,30 +133,30 @@ const MyVotes: React.FC = () => {
                 </div>
 
                 {/* Información adicional */}
-                <Row className="mt-5 g-4">
+                <Row className="mt-5 g-5">
                   <Col md={4}>
                     <div className="text-center">
-                      <i className="bi bi-shield-check text-success display-4 mb-3"></i>
-                      <h6 className="fw-bold text-navy mb-2">Voto Seguro</h6>
-                      <p className="text-muted small mb-0">
+                      <i className="bi bi-shield-check text-success mb-4" style={{ fontSize: '4rem' }}></i>
+                      <h5 className="fw-bold text-navy mb-3" style={{ fontSize: '1.3rem' }}>Voto Seguro</h5>
+                      <p className="text-muted mb-0" style={{ fontSize: '1.05rem' }}>
                         Tu voto es confidencial y está protegido
                       </p>
                     </div>
                   </Col>
                   <Col md={4}>
                     <div className="text-center">
-                      <i className="bi bi-clock-history text-primary display-4 mb-3"></i>
-                      <h6 className="fw-bold text-navy mb-2">Historial Completo</h6>
-                      <p className="text-muted small mb-0">
+                      <i className="bi bi-clock-history text-primary mb-4" style={{ fontSize: '4rem' }}></i>
+                      <h5 className="fw-bold text-navy mb-3" style={{ fontSize: '1.3rem' }}>Historial Completo</h5>
+                      <p className="text-muted mb-0" style={{ fontSize: '1.05rem' }}>
                         Guarda registro de todas tus participaciones
                       </p>
                     </div>
                   </Col>
                   <Col md={4}>
                     <div className="text-center">
-                      <i className="bi bi-award-fill text-warning display-4 mb-3"></i>
-                      <h6 className="fw-bold text-navy mb-2">Tu Opinión Cuenta</h6>
-                      <p className="text-muted small mb-0">
+                      <i className="bi bi-award-fill text-warning mb-4" style={{ fontSize: '4rem' }}></i>
+                      <h5 className="fw-bold text-navy mb-3" style={{ fontSize: '1.3rem' }}>Tu Opinión Cuenta</h5>
+                      <p className="text-muted mb-0" style={{ fontSize: '1.05rem' }}>
                         Participa en las decisiones importantes
                       </p>
                     </div>
@@ -167,14 +168,14 @@ const MyVotes: React.FC = () => {
         ) : (
           <>
             {/* Info banner */}
-            <Alert variant="info" className="shadow-sm mb-4">
+            <Alert variant="info" className="shadow-sm mb-5" style={{ fontSize: '1.05rem' }}>
               <Row className="align-items-center">
                 <Col md={8}>
-                  <div className="d-flex align-items-center gap-2">
-                    <i className="bi bi-info-circle-fill fs-4"></i>
+                  <div className="d-flex align-items-center gap-3">
+                    <i className="bi bi-info-circle-fill" style={{ fontSize: '2rem' }}></i>
                     <div>
-                      <strong>Registro Permanente</strong>
-                      <p className="mb-0 small">
+                      <strong style={{ fontSize: '1.15rem' }}>Registro Permanente</strong>
+                      <p className="mb-0" style={{ fontSize: '1rem' }}>
                         Este es tu historial oficial de votaciones. Los datos son inmutables y verificables.
                       </p>
                     </div>
@@ -182,8 +183,23 @@ const MyVotes: React.FC = () => {
                 </Col>
                 <Col md={4} className="text-md-end mt-3 mt-md-0">
                   <Button 
-                    variant="outline-primary" 
+                    size="lg"
                     onClick={() => navigate('/')}
+                    className="fw-bold shadow-sm"
+                    style={{ 
+                      fontSize: '1rem', 
+                      padding: '10px 25px',
+                      backgroundColor: '#5DADE2',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      transition: 'all 0.3s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#3498DB';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#5DADE2';
+                    }}
                   >
                     <i className="bi bi-trophy me-2"></i>
                     Ver Más Campañas
@@ -207,10 +223,12 @@ const MyVotes: React.FC = () => {
                     <Card className="border-0 shadow-sm h-100 position-relative overflow-hidden">
                       {/* Badge de verificación en la esquina */}
                       <div 
-                        className="position-absolute top-0 end-0 bg-success text-white px-3 py-2"
+                        className="position-absolute top-0 end-0 bg-success text-white"
                         style={{ 
                           borderBottomLeftRadius: '0.5rem',
-                          zIndex: 1
+                          zIndex: 1,
+                          padding: '12px 18px',
+                          fontSize: '1.2rem'
                         }}
                       >
                         <i className="bi bi-patch-check-fill"></i>
@@ -219,14 +237,14 @@ const MyVotes: React.FC = () => {
                       <Card.Body className="p-4">
                         {/* Sección de campaña */}
                         <div className="mb-4">
-                          <Badge bg="primary" className="px-3 py-2 mb-3">
+                          <Badge bg="primary" className="mb-3" style={{ fontSize: '1rem', padding: '10px 18px' }}>
                             <i className="bi bi-trophy-fill me-2"></i>
                             Campaña
                           </Badge>
-                          <h5 className="text-navy fw-bold mb-2">
+                          <h5 className="text-navy fw-bold mb-3" style={{ fontSize: '1.3rem' }}>
                             {campaign.titulo}
                           </h5>
-                          <p className="text-muted small mb-0">
+                          <p className="text-muted mb-0" style={{ fontSize: '1rem' }}>
                             {campaign.descripcion.length > 100
                               ? campaign.descripcion.substring(0, 100) + '...'
                               : campaign.descripcion}
@@ -234,11 +252,11 @@ const MyVotes: React.FC = () => {
                         </div>
 
                         {/* Divider */}
-                        <hr className="my-3" />
+                        <hr className="my-4" />
 
                         {/* Sección de candidato votado */}
                         <div className="mb-4">
-                          <Badge bg="success" className="px-3 py-2 mb-3">
+                          <Badge bg="success" className="mb-3" style={{ fontSize: '1rem', padding: '10px 18px' }}>
                             <i className="bi bi-person-check-fill me-2"></i>
                             Tu Voto
                           </Badge>
@@ -246,17 +264,17 @@ const MyVotes: React.FC = () => {
                             <div 
                               className="d-flex align-items-center justify-content-center bg-navy text-white rounded-circle fw-bold"
                               style={{ 
-                                width: '50px', 
-                                height: '50px', 
-                                minWidth: '50px',
-                                fontSize: '1.2rem'
+                                width: '60px', 
+                                height: '60px', 
+                                minWidth: '60px',
+                                fontSize: '1.5rem'
                               }}
                             >
                               {candidate.nombre.charAt(0)}
                             </div>
                             <div className="flex-grow-1">
-                              <h6 className="text-navy fw-bold mb-1">{candidate.nombre}</h6>
-                              <p className="text-muted small mb-0">
+                              <h6 className="text-navy fw-bold mb-2" style={{ fontSize: '1.15rem' }}>{candidate.nombre}</h6>
+                              <p className="text-muted mb-0" style={{ fontSize: '0.95rem' }}>
                                 {candidate.descripcion.length > 60
                                   ? candidate.descripcion.substring(0, 60) + '...'
                                   : candidate.descripcion}
@@ -266,15 +284,15 @@ const MyVotes: React.FC = () => {
                         </div>
 
                         {/* Divider */}
-                        <hr className="my-3" />
+                        <hr className="my-4" />
 
                         {/* Fecha del voto */}
                         <div className="d-flex align-items-center justify-content-between">
                           <div className="d-flex align-items-center gap-2 text-muted">
-                            <i className="bi bi-calendar-check-fill"></i>
-                            <small className="fw-semibold">Fecha de Voto</small>
+                            <i className="bi bi-calendar-check-fill" style={{ fontSize: '1.1rem' }}></i>
+                            <span className="fw-semibold" style={{ fontSize: '1rem' }}>Fecha de Voto</span>
                           </div>
-                          <Badge bg="light" text="dark" className="px-3 py-2">
+                          <Badge bg="light" text="dark" style={{ fontSize: '0.95rem', padding: '8px 15px' }}>
                             <i className="bi bi-clock me-1"></i>
                             {formatDate(vote.fechaVoto)}
                           </Badge>
@@ -283,10 +301,10 @@ const MyVotes: React.FC = () => {
 
                       {/* Footer de la card */}
                       <Card.Footer className="bg-light border-0 p-3 text-center">
-                        <small className="text-muted">
-                          <i className="bi bi-shield-lock-fill me-1"></i>
+                        <span className="text-muted" style={{ fontSize: '0.95rem' }}>
+                          <i className="bi bi-shield-lock-fill me-2"></i>
                           Voto verificado y registrado
-                        </small>
+                        </span>
                       </Card.Footer>
                     </Card>
                   </Col>
@@ -295,25 +313,26 @@ const MyVotes: React.FC = () => {
             </Row>
 
             {/* Resumen al final */}
-            <Card className="border-0 shadow-sm mt-5 bg-light">
-              <Card.Body className="p-4">
+            <Card className="border-0 shadow mt-5 bg-light">
+              <Card.Body className="p-5">
                 <Row className="align-items-center">
-                  <Col md={8}>
-                    <h5 className="text-navy fw-bold mb-2">
+                  <Col md={7}>
+                    <h4 className="text-navy fw-bold mb-3" style={{ fontSize: '1.6rem' }}>
                       <i className="bi bi-graph-up-arrow me-2"></i>
                       Tu Participación
-                    </h5>
-                    <p className="text-muted mb-0">
+                    </h4>
+                    <p className="text-muted mb-0" style={{ fontSize: '1.15rem' }}>
                       Has participado en <strong className="text-navy">{votes.length}</strong> {votes.length === 1 ? 'campaña' : 'campañas'} de votación.
                       ¡Gracias por tu participación activa!
                     </p>
                   </Col>
-                  <Col md={4} className="text-md-end mt-3 mt-md-0">
+                  <Col md={5} className="text-md-end mt-4 mt-md-0">
                     <Button 
                       variant="navy" 
                       size="lg"
                       onClick={() => navigate('/')}
-                      className="fw-bold"
+                      className="fw-bold shadow"
+                      style={{ fontSize: '1.05rem', padding: '12px 28px' }}
                     >
                       <i className="bi bi-plus-circle-fill me-2"></i>
                       Ver Más Campañas

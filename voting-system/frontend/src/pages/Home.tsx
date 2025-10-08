@@ -82,7 +82,7 @@ const Home: React.FC = () => {
           >
             <span className="visually-hidden">Cargando...</span>
           </div>
-          <h5 className="text-navy fw-bold">Cargando campañas...</h5>
+          <h4 className="text-navy fw-bold">Cargando campañas...</h4>
         </div>
       </div>
     );
@@ -92,35 +92,35 @@ const Home: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      <Container className="py-4">
+      <Container className="py-5" style={{ maxWidth: '1400px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
         {/* Hero Header mejorado */}
-        <Card className="border-0 shadow-sm mb-4" style={{ 
+        <Card className="border-0 shadow mb-5" style={{ 
           background: 'linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%)',
           color: 'white'
         }}>
           <Card.Body className="p-4 p-md-5">
             <Row className="align-items-center">
               <Col lg={8}>
-                <div className="d-flex align-items-center gap-3 mb-3 flex-wrap">
+                <div className="d-flex align-items-center gap-4 mb-3 flex-wrap">
                   <div 
-                    className="d-flex align-items-center justify-content-center bg-yellow rounded-circle"
-                    style={{ width: '70px', height: '70px', minWidth: '70px' }}
+                    className="d-flex align-items-center justify-content-center bg-yellow rounded-circle shadow"
+                    style={{ width: '80px', height: '80px', minWidth: '80px' }}
                   >
-                    <i className="bi bi-trophy-fill text-navy" style={{ fontSize: '2.5rem' }}></i>
+                    <i className="bi bi-trophy-fill text-navy" style={{ fontSize: '2.8rem' }}></i>
                   </div>
                   <div>
-                    <h1 className="mb-2 fw-bold" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
+                    <h1 className="mb-2 fw-bold" style={{ fontSize: 'clamp(1.8rem, 5vw, 2.8rem)' }}>
                       Campañas de Votación
                     </h1>
-                    <p className="mb-0 opacity-75" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
+                    <p className="mb-0 opacity-75" style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>
                       <i className="bi bi-building me-2"></i>
                       Colegio de Ingenieros de Guatemala
                     </p>
                   </div>
                 </div>
                 {isAuthenticated && (
-                  <Alert variant="light" className="mb-0 mt-3 d-inline-flex align-items-center gap-2">
-                    <i className="bi bi-person-circle text-primary fs-5"></i>
+                  <Alert variant="light" className="mb-0 mt-4 d-inline-flex align-items-center gap-3" style={{ fontSize: '1.05rem', padding: '12px 20px' }}>
+                    <i className="bi bi-person-circle text-primary" style={{ fontSize: '1.8rem' }}></i>
                     <span>
                       Bienvenido, <strong>{user?.nombreCompleto}</strong>
                     </span>
@@ -129,17 +129,17 @@ const Home: React.FC = () => {
               </Col>
               <Col lg={4} className="text-lg-end mt-4 mt-lg-0">
                 <div className="d-flex flex-column gap-3">
-                  <div className="d-flex align-items-center justify-content-lg-end justify-content-center gap-3">
+                  <div className="d-flex align-items-center justify-content-lg-end justify-content-center gap-4">
                     <div className="text-center">
-                      <div className="display-4 fw-bold">{campaigns.length}</div>
-                      <small className="text-uppercase opacity-75" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
+                      <div className="fw-bold" style={{ fontSize: '3.5rem' }}>{campaigns.length}</div>
+                      <small className="text-uppercase opacity-75" style={{ fontSize: '0.85rem', letterSpacing: '1px' }}>
                         Campañas Totales
                       </small>
                     </div>
-                    <div className="vr d-none d-lg-block" style={{ height: '60px', opacity: 0.3 }}></div>
+                    <div className="vr d-none d-lg-block" style={{ height: '70px', opacity: 0.3 }}></div>
                     <div className="text-center">
-                      <div className="display-4 fw-bold text-success">{statusCounts.activa}</div>
-                      <small className="text-uppercase opacity-75" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
+                      <div className="fw-bold text-success" style={{ fontSize: '3.5rem' }}>{statusCounts.activa}</div>
+                      <small className="text-uppercase opacity-75" style={{ fontSize: '0.85rem', letterSpacing: '1px' }}>
                         Activas
                       </small>
                     </div>
@@ -152,7 +152,7 @@ const Home: React.FC = () => {
 
         {/* Alert de error */}
         {error && (
-          <Alert variant="danger" dismissible onClose={() => setError('')} className="shadow-sm">
+          <Alert variant="danger" dismissible onClose={() => setError('')} className="shadow-sm mb-4" style={{ fontSize: '1.05rem' }}>
             <i className="bi bi-exclamation-triangle-fill me-2"></i>
             {error}
           </Alert>
@@ -160,14 +160,14 @@ const Home: React.FC = () => {
 
         {/* Filtros y búsqueda */}
         {campaigns.length > 0 && (
-          <Card className="border-0 shadow-sm mb-4">
-            <Card.Body className="p-3 p-md-4">
-              <Row className="align-items-center g-3">
+          <Card className="border-0 shadow-sm mb-5">
+            <Card.Body className="p-4">
+              <Row className="align-items-center g-4">
                 {/* Búsqueda */}
                 <Col lg={6}>
                   <InputGroup size="lg">
-                    <InputGroup.Text className="bg-white">
-                      <i className="bi bi-search text-muted"></i>
+                    <InputGroup.Text className="bg-white" style={{ padding: '12px 18px' }}>
+                      <i className="bi bi-search text-muted" style={{ fontSize: '1.2rem' }}></i>
                     </InputGroup.Text>
                     <Form.Control
                       type="text"
@@ -175,13 +175,15 @@ const Home: React.FC = () => {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="border-start-0"
+                      style={{ fontSize: '1.05rem', padding: '12px 18px' }}
                     />
                     {searchTerm && (
                       <Button 
                         variant="outline-secondary"
                         onClick={() => setSearchTerm('')}
+                        style={{ padding: '10px 15px' }}
                       >
-                        <i className="bi bi-x-lg"></i>
+                        <i className="bi bi-x-lg" style={{ fontSize: '1.1rem' }}></i>
                       </Button>
                     )}
                   </InputGroup>
@@ -191,50 +193,54 @@ const Home: React.FC = () => {
                 <Col lg={6}>
                   <div className="d-flex flex-wrap gap-2 justify-content-lg-end">
                     <Button
-                      size="sm"
+                      size="lg"
                       variant={filterStatus === 'all' ? 'navy' : 'outline-secondary'}
                       onClick={() => setFilterStatus('all')}
                       className="d-flex align-items-center gap-2"
+                      style={{ fontSize: '1rem', padding: '10px 20px' }}
                     >
                       <i className="bi bi-grid-fill"></i>
                       <span className="d-none d-sm-inline">Todas</span>
-                      <Badge bg={filterStatus === 'all' ? 'yellow' : 'light'} text="dark">
+                      <Badge bg={filterStatus === 'all' ? 'yellow' : 'light'} text="dark" style={{ fontSize: '0.9rem', padding: '4px 10px' }}>
                         {statusCounts.all}
                       </Badge>
                     </Button>
                     <Button
-                      size="sm"
+                      size="lg"
                       variant={filterStatus === 'activa' ? 'success' : 'outline-success'}
                       onClick={() => setFilterStatus('activa')}
                       className="d-flex align-items-center gap-2"
+                      style={{ fontSize: '1rem', padding: '10px 20px' }}
                     >
                       <i className="bi bi-check-circle-fill"></i>
                       <span className="d-none d-sm-inline">Activas</span>
-                      <Badge bg="light" text="dark">
+                      <Badge bg="light" text="dark" style={{ fontSize: '0.9rem', padding: '4px 10px' }}>
                         {statusCounts.activa}
                       </Badge>
                     </Button>
                     <Button
-                      size="sm"
+                      size="lg"
                       variant={filterStatus === 'finalizada' ? 'danger' : 'outline-danger'}
                       onClick={() => setFilterStatus('finalizada')}
                       className="d-flex align-items-center gap-2"
+                      style={{ fontSize: '1rem', padding: '10px 20px' }}
                     >
                       <i className="bi bi-x-circle-fill"></i>
                       <span className="d-none d-sm-inline">Finalizadas</span>
-                      <Badge bg="light" text="dark">
+                      <Badge bg="light" text="dark" style={{ fontSize: '0.9rem', padding: '4px 10px' }}>
                         {statusCounts.finalizada}
                       </Badge>
                     </Button>
                     <Button
-                      size="sm"
+                      size="lg"
                       variant={filterStatus === 'inactiva' ? 'secondary' : 'outline-secondary'}
                       onClick={() => setFilterStatus('inactiva')}
                       className="d-flex align-items-center gap-2"
+                      style={{ fontSize: '1rem', padding: '10px 20px' }}
                     >
                       <i className="bi bi-pause-circle-fill"></i>
                       <span className="d-none d-sm-inline">Inactivas</span>
-                      <Badge bg="light" text="dark">
+                      <Badge bg="light" text="dark" style={{ fontSize: '0.9rem', padding: '4px 10px' }}>
                         {statusCounts.inactiva}
                       </Badge>
                     </Button>
@@ -247,16 +253,16 @@ const Home: React.FC = () => {
 
         {/* Lista de campañas */}
         {filteredCampaigns.length === 0 ? (
-          <Card className="border-0 shadow-sm">
-            <Card.Body className="p-4 p-md-5">
-              <div className="empty-state">
-                <i className="bi bi-inbox display-1 text-muted mb-4"></i>
-                <h3 className="empty-title text-navy fw-bold mb-2">
+          <Card className="border-0 shadow">
+            <Card.Body className="p-5">
+              <div className="empty-state text-center">
+                <i className="bi bi-inbox text-muted mb-4" style={{ fontSize: '6rem' }}></i>
+                <h3 className="text-navy fw-bold mb-3" style={{ fontSize: '2rem' }}>
                   {searchTerm || filterStatus !== 'all' 
                     ? 'No se encontraron campañas' 
                     : 'No hay campañas disponibles'}
                 </h3>
-                <p className="empty-description mb-4">
+                <p className="text-muted mb-4" style={{ fontSize: '1.15rem' }}>
                   {searchTerm || filterStatus !== 'all'
                     ? 'Intenta cambiar los filtros o la búsqueda para ver más resultados.'
                     : 'Actualmente no hay campañas de votación disponibles.'}
@@ -264,10 +270,12 @@ const Home: React.FC = () => {
                 {(searchTerm || filterStatus !== 'all') && (
                   <Button 
                     variant="navy" 
+                    size="lg"
                     onClick={() => {
                       setSearchTerm('');
                       setFilterStatus('all');
                     }}
+                    style={{ fontSize: '1.1rem', padding: '12px 30px' }}
                   >
                     <i className="bi bi-arrow-counterclockwise me-2"></i>
                     Limpiar Filtros
@@ -280,14 +288,14 @@ const Home: React.FC = () => {
           <>
             {/* Header de resultados */}
             <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-              <h4 className="text-navy mb-0 fw-bold">
+              <h4 className="text-navy mb-0 fw-bold" style={{ fontSize: '1.6rem' }}>
                 <i className="bi bi-list-check me-2"></i>
                 {filterStatus === 'all' ? 'Todas las Campañas' : 
                  filterStatus === 'activa' ? 'Campañas Activas' :
                  filterStatus === 'finalizada' ? 'Campañas Finalizadas' :
                  'Campañas Inactivas'}
               </h4>
-              <Badge bg="light" text="dark" className="px-3 py-2 fs-6">
+              <Badge bg="light" text="dark" style={{ fontSize: '1.05rem', padding: '10px 20px' }}>
                 {filteredCampaigns.length} resultado{filteredCampaigns.length !== 1 ? 's' : ''}
               </Badge>
             </div>
@@ -308,32 +316,32 @@ const Home: React.FC = () => {
 
         {/* Footer informativo */}
         {campaigns.length > 0 && (
-          <Card className="border-0 shadow-sm mt-5 bg-light">
-            <Card.Body className="p-4">
-              <Row className="g-4">
+          <Card className="border-0 shadow mt-5 bg-light">
+            <Card.Body className="p-5">
+              <Row className="g-5">
                 <Col md={4}>
                   <div className="text-center">
-                    <i className="bi bi-shield-check text-primary display-4 mb-3"></i>
-                    <h6 className="fw-bold text-navy mb-2">Votación Segura</h6>
-                    <p className="text-muted small mb-0">
+                    <i className="bi bi-shield-check text-primary mb-4" style={{ fontSize: '4rem' }}></i>
+                    <h5 className="fw-bold text-navy mb-3" style={{ fontSize: '1.3rem' }}>Votación Segura</h5>
+                    <p className="text-muted mb-0" style={{ fontSize: '1.05rem' }}>
                       Tu voto es confidencial y está protegido por nuestro sistema
                     </p>
                   </div>
                 </Col>
                 <Col md={4}>
                   <div className="text-center">
-                    <i className="bi bi-clock-history text-success display-4 mb-3"></i>
-                    <h6 className="fw-bold text-navy mb-2">Vota a Tiempo</h6>
-                    <p className="text-muted small mb-0">
+                    <i className="bi bi-clock-history text-success mb-4" style={{ fontSize: '4rem' }}></i>
+                    <h5 className="fw-bold text-navy mb-3" style={{ fontSize: '1.3rem' }}>Vota a Tiempo</h5>
+                    <p className="text-muted mb-0" style={{ fontSize: '1.05rem' }}>
                       Verifica las fechas límite de cada campaña antes de votar
                     </p>
                   </div>
                 </Col>
                 <Col md={4}>
                   <div className="text-center">
-                    <i className="bi bi-graph-up-arrow text-warning display-4 mb-3"></i>
-                    <h6 className="fw-bold text-navy mb-2">Resultados en Tiempo Real</h6>
-                    <p className="text-muted small mb-0">
+                    <i className="bi bi-graph-up-arrow text-warning mb-4" style={{ fontSize: '4rem' }}></i>
+                    <h5 className="fw-bold text-navy mb-3" style={{ fontSize: '1.3rem' }}>Resultados en Tiempo Real</h5>
+                    <p className="text-muted mb-0" style={{ fontSize: '1.05rem' }}>
                       Observa los resultados actualizados de las votaciones
                     </p>
                   </div>

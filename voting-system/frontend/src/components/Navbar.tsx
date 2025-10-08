@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
 
   return (
     <BSNavbar expand="lg" className="navbar-custom shadow-sm" sticky="top">
-      <Container>
+      <Container fluid className="px-4">
         {/* Logo y nombre */}
         <BSNavbar.Brand 
           as={Link} 
@@ -26,8 +26,8 @@ const Navbar: React.FC = () => {
           className="d-flex align-items-center"
           style={{ textDecoration: 'none' }}
         >
-          <i className="bi bi-box-seam-fill me-2 fs-4"></i>
-          <span className="fw-bold">Votación CIG</span>
+          <i className="bi bi-box-seam-fill me-2" style={{ fontSize: '1.8rem' }}></i>
+          <span className="fw-bold" style={{ fontSize: '1.3rem' }}>Votación CIG</span>
         </BSNavbar.Brand>
         
         <BSNavbar.Toggle aria-controls="basic-navbar-nav">
@@ -35,14 +35,30 @@ const Navbar: React.FC = () => {
         </BSNavbar.Toggle>
         
         <BSNavbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto align-items-lg-center gap-2">
+          <Nav className="mx-auto align-items-lg-center gap-3" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
             {!isAuthenticated ? (
               <>
                 <Nav.Link 
                   as={Link} 
                   to="/login"
-                  className="px-3 py-2 rounded"
-                  style={{ textDecoration: 'none' }}
+                  className="rounded fw-semibold"
+                  style={{ 
+                    textDecoration: 'none',
+                    padding: '12px 30px',
+                    fontSize: '1.05rem',
+                    backgroundColor: '#5DADE2',
+                    color: '#FFFFFF',
+                    transition: 'all 0.3s',
+                    border: '2px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#3498DB';
+                    e.currentTarget.style.borderColor = '#2874A6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#5DADE2';
+                    e.currentTarget.style.borderColor = 'transparent';
+                  }}
                 >
                   <i className="bi bi-box-arrow-in-right me-2"></i>
                   Iniciar Sesión
@@ -50,12 +66,20 @@ const Navbar: React.FC = () => {
                 <Nav.Link 
                   as={Link} 
                   to="/register" 
-                  className="btn btn-yellow ms-lg-2 fw-bold"
+                  className="btn btn-yellow fw-bold shadow-sm"
                   style={{ 
-                    padding: '0.5rem 1.5rem',
+                    padding: '12px 30px',
+                    fontSize: '1.05rem',
                     borderRadius: '0.375rem',
                     textDecoration: 'none',
-                    display: 'inline-block'
+                    display: 'inline-block',
+                    border: '2px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#F39C12';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'transparent';
                   }}
                 >
                   <i className="bi bi-person-plus-fill me-2"></i>
@@ -64,14 +88,30 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                {/* Links de navegación */}
+                {/* Links de navegación con estilo de botón */}
                 <Nav.Link 
                   as={Link} 
                   to="/"
-                  className="px-3 py-2 rounded d-flex align-items-center"
-                  style={{ textDecoration: 'none' }}
+                  className="rounded fw-semibold d-flex align-items-center"
+                  style={{ 
+                    textDecoration: 'none',
+                    padding: '12px 25px',
+                    fontSize: '1.05rem',
+                    backgroundColor: '#5DADE2',
+                    color: '#FFFFFF',
+                    transition: 'all 0.3s',
+                    border: '2px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#3498DB';
+                    e.currentTarget.style.borderColor = '#2874A6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#5DADE2';
+                    e.currentTarget.style.borderColor = 'transparent';
+                  }}
                 >
-                  <i className="bi bi-house-fill me-2"></i>
+                  <i className="bi bi-house-fill me-2" style={{ fontSize: '1.1rem' }}></i>
                   Campañas
                 </Nav.Link>
                 
@@ -79,41 +119,74 @@ const Navbar: React.FC = () => {
                   <Nav.Link 
                     as={Link} 
                     to="/admin"
-                    className="px-3 py-2 rounded d-flex align-items-center"
-                    style={{ textDecoration: 'none' }}
+                    className="rounded fw-semibold d-flex align-items-center"
+                    style={{ 
+                      textDecoration: 'none',
+                      padding: '12px 25px',
+                      fontSize: '1.05rem',
+                      backgroundColor: '#5DADE2',
+                      color: '#FFFFFF',
+                      transition: 'all 0.3s',
+                      border: '2px solid transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#3498DB';
+                      e.currentTarget.style.borderColor = '#2874A6';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#5DADE2';
+                      e.currentTarget.style.borderColor = 'transparent';
+                    }}
                   >
-                    <i className="bi bi-speedometer2 me-2"></i>
+                    <i className="bi bi-speedometer2 me-2" style={{ fontSize: '1.1rem' }}></i>
                     Panel Admin
-                    <Badge bg="warning" text="dark" className="ms-2">Admin</Badge>
+                    <Badge bg="warning" text="dark" className="ms-2" style={{ fontSize: '0.85rem', padding: '5px 10px' }}>Admin</Badge>
                   </Nav.Link>
                 )}
                 
                 <Nav.Link 
                   as={Link} 
                   to="/my-votes"
-                  className="px-3 py-2 rounded d-flex align-items-center"
-                  style={{ textDecoration: 'none' }}
+                  className="rounded fw-semibold d-flex align-items-center"
+                  style={{ 
+                    textDecoration: 'none',
+                    padding: '12px 25px',
+                    fontSize: '1.05rem',
+                    backgroundColor: '#5DADE2',
+                    color: '#FFFFFF',
+                    transition: 'all 0.3s',
+                    border: '2px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#3498DB';
+                    e.currentTarget.style.borderColor = '#2874A6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#5DADE2';
+                    e.currentTarget.style.borderColor = 'transparent';
+                  }}
                 >
-                  <i className="bi bi-check-circle-fill me-2"></i>
+                  <i className="bi bi-check-circle-fill me-2" style={{ fontSize: '1.1rem' }}></i>
                   Mis Votos
                 </Nav.Link>
                 
-                {/* Dropdown de usuario */}
+                {/* Dropdown de usuario mejorado */}
                 <NavDropdown
                   title={
                     <span className="d-flex align-items-center">
                       <span 
-                        className="badge bg-yellow text-navy me-2 d-flex align-items-center justify-content-center fw-bold"
+                        className="badge bg-yellow text-navy me-2 d-flex align-items-center justify-content-center fw-bold shadow-sm"
                         style={{
-                          width: '35px',
-                          height: '35px',
+                          width: '45px',
+                          height: '45px',
                           borderRadius: '50%',
-                          fontSize: '0.9rem'
+                          fontSize: '1.1rem',
+                          border: '3px solid #003366'
                         }}
                       >
                         {getInitials(user?.nombreCompleto || '')}
                       </span>
-                      <span className="d-none d-lg-inline fw-semibold">
+                      <span className="d-none d-lg-inline fw-semibold" style={{ fontSize: '1.05rem', color: '#003366' }}>
                         {user?.nombreCompleto}
                       </span>
                     </span>
@@ -121,16 +194,17 @@ const Navbar: React.FC = () => {
                   id="user-dropdown"
                   align="end"
                   className="nav-dropdown-custom"
+                  style={{ marginLeft: '15px' }}
                 >
                   {/* Header del dropdown */}
-                  <div className="px-3 py-2 bg-light border-bottom">
-                    <div className="fw-bold text-navy">{user?.nombreCompleto}</div>
-                    <small className="text-muted d-block">
-                      <i className="bi bi-envelope-fill me-1"></i>
+                  <div className="px-4 py-3 bg-light border-bottom">
+                    <div className="fw-bold text-navy" style={{ fontSize: '1.1rem' }}>{user?.nombreCompleto}</div>
+                    <small className="text-muted d-block mt-2" style={{ fontSize: '0.95rem' }}>
+                      <i className="bi bi-envelope-fill me-2"></i>
                       {user?.correoElectronico}
                     </small>
-                    <small className="text-muted d-block mt-1">
-                      <i className="bi bi-card-text me-1"></i>
+                    <small className="text-muted d-block mt-1" style={{ fontSize: '0.95rem' }}>
+                      <i className="bi bi-card-text me-2"></i>
                       Colegiado: {user?.numeroColegiado}
                     </small>
                   </div>
@@ -140,9 +214,10 @@ const Navbar: React.FC = () => {
                   {/* Botón de cerrar sesión */}
                   <NavDropdown.Item 
                     onClick={handleLogout}
-                    className="text-danger d-flex align-items-center py-2"
+                    className="text-danger d-flex align-items-center py-3 px-4"
+                    style={{ fontSize: '1.05rem' }}
                   >
-                    <i className="bi bi-box-arrow-right me-2 fs-5"></i>
+                    <i className="bi bi-box-arrow-right me-2" style={{ fontSize: '1.3rem' }}></i>
                     <span className="fw-semibold">Cerrar Sesión</span>
                   </NavDropdown.Item>
                 </NavDropdown>
