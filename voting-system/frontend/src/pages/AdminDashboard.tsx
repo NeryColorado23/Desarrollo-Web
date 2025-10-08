@@ -1,4 +1,4 @@
-// src/pages/AdminDashboard.tsx (VERSIÓN COMPLETA)
+// src/pages/AdminDashboard.tsx (VERSIÓN COMPLETA MEJORADA)
 import React, { useState, useEffect } from 'react';
 import { 
   Container, 
@@ -10,7 +10,10 @@ import {
   Form, 
   Alert,
   Table,
-  Badge
+  Badge,
+  OverlayTrigger,
+  Tooltip,
+  ProgressBar
 } from 'react-bootstrap';
 import { campaignAPI, voteAPI } from '../services/api';
 import { 
@@ -270,122 +273,211 @@ const AdminDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="spinner-custom">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Cargando...</span>
+      <div 
+        className="d-flex flex-column justify-content-center align-items-center" 
+        style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}
+      >
+        <div className="text-center">
+          <div 
+            className="spinner-border text-navy mb-3" 
+            role="status"
+            style={{ width: '4rem', height: '4rem', borderWidth: '0.4rem' }}
+          >
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <h5 className="text-navy fw-bold">Cargando Panel de Administración...</h5>
         </div>
       </div>
     );
   }
 
   return (
-    <Container fluid className="py-4">
-      <div className="dashboard-header mb-4">
-        <Row className="align-items-center">
-          <Col>
-            <h1>
-              <i className="bi bi-gear-fill me-3"></i>
-              Panel de Administración
-            </h1>
-            <p className="mb-0 mt-2">Gestión de campañas y votaciones</p>
-          </Col>
-          <Col xs="auto">
-            <Button variant="success" onClick={handleGenerateReport}>
-              <i className="bi bi-file-earmark-bar-graph me-2"></i>
-              Generar Reporte
-            </Button>
-          </Col>
-        </Row>
-      </div>
-
-      {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
-      {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
-
-      <Row>
-        <Col lg={5}>
-          <Card className="card-custom mb-4">
-            <Card.Header className="bg-navy text-white d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">
-                <i className="bi bi-trophy me-2"></i>
-                Campañas ({campaigns.length})
-              </h5>
-              <Button size="sm" variant="yellow" onClick={openCreateCampaignModal}>
-                <i className="bi bi-plus-lg me-1"></i>
-                Nueva
+    <Container fluid className="py-4" style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      {/* Header mejorado */}
+      <Card className="dashboard-header mb-4 border-0 shadow-sm">
+        <Card.Body className="p-4">
+          <Row className="align-items-center">
+            <Col>
+              <div className="d-flex align-items-center gap-3">
+                <div 
+                  className="d-flex align-items-center justify-content-center bg-navy rounded-circle"
+                  style={{ width: '60px', height: '60px' }}
+                >
+                  <i className="bi bi-gear-fill text-white fs-3"></i>
+                </div>
+                <div>
+                  <h1 className="mb-1 fw-bold text-navy">Panel de Administración</h1>
+                  <p className="mb-0 text-muted">
+                    <i className="bi bi-shield-check me-2"></i>
+                    Gestión completa de campañas y votaciones
+                  </p>
+                </div>
+              </div>
+            </Col>
+            <Col xs="auto">
+              <Button 
+                variant="success" 
+                size="lg"
+                onClick={handleGenerateReport}
+                className="fw-bold shadow-sm"
+              >
+                <i className="bi bi-file-earmark-bar-graph-fill me-2"></i>
+                Generar Reporte Completo
               </Button>
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+
+      {/* Alertas mejoradas */}
+      {error && (
+        <Alert variant="danger" dismissible onClose={() => setError('')} className="shadow-sm">
+          <i className="bi bi-exclamation-triangle-fill me-2"></i>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert variant="success" dismissible onClose={() => setSuccess('')} className="shadow-sm">
+          <i className="bi bi-check-circle-fill me-2"></i>
+          {success}
+        </Alert>
+      )}
+
+      <Row className="g-4">
+        {/* Columna de Campañas */}
+        <Col lg={5}>
+          <Card className="shadow-sm border-0 h-100">
+            <Card.Header className="bg-navy text-white p-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <h5 className="mb-0 fw-bold">
+                  <i className="bi bi-trophy-fill me-2"></i>
+                  Campañas
+                  <Badge bg="yellow" text="dark" className="ms-2">{campaigns.length}</Badge>
+                </h5>
+                <Button 
+                  size="sm" 
+                  variant="yellow" 
+                  onClick={openCreateCampaignModal}
+                  className="fw-bold px-3"
+                >
+                  <i className="bi bi-plus-circle-fill me-1"></i>
+                  Nueva Campaña
+                </Button>
+              </div>
             </Card.Header>
-            <Card.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+            <Card.Body style={{ maxHeight: '70vh', overflowY: 'auto' }} className="p-3">
               {campaigns.length === 0 ? (
-                <div className="text-center py-4">
-                  <i className="bi bi-inbox display-4 text-muted"></i>
-                  <p className="text-muted mt-2">No hay campañas creadas</p>
+                <div className="empty-state py-5">
+                  <div className="text-center">
+                    <i className="bi bi-inbox display-1 text-muted mb-3"></i>
+                    <h5 className="text-muted fw-bold">No hay campañas creadas</h5>
+                    <p className="text-muted">Comienza creando tu primera campaña</p>
+                    <Button variant="navy" onClick={openCreateCampaignModal} className="mt-2">
+                      <i className="bi bi-plus-lg me-2"></i>
+                      Crear Primera Campaña
+                    </Button>
+                  </div>
                 </div>
               ) : (
-                <div className="list-group">
+                <div className="d-flex flex-column gap-3">
                   {campaigns.map((campaign) => (
-                    <div
+                    <Card
                       key={campaign._id}
-                      className={`list-group-item list-group-item-action ${
-                        selectedCampaign?._id === campaign._id ? 'active' : ''
+                      className={`border-0 shadow-sm ${
+                        selectedCampaign?._id === campaign._id ? 'border-start border-warning border-4' : ''
                       }`}
                       onClick={() => setSelectedCampaign(campaign)}
-                      style={{ cursor: 'pointer' }}
+                      style={{ 
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        backgroundColor: selectedCampaign?._id === campaign._id ? '#fff9e6' : 'white'
+                      }}
                     >
-                      <div className="d-flex justify-content-between align-items-start">
-                        <div className="flex-grow-1">
-                          <h6 className="mb-1">{campaign.titulo}</h6>
-                          <small>{campaign.descripcion.substring(0, 60)}...</small>
-                          <div className="mt-2">
-                            {campaign.estado === 'activa' && (
-                              <Badge bg="success" className="me-1">Activa</Badge>
-                            )}
-                            {campaign.estado === 'finalizada' && (
-                              <Badge bg="danger" className="me-1">Finalizada</Badge>
-                            )}
-                            {campaign.estado === 'inactiva' && (
-                              <Badge bg="secondary" className="me-1">Inactiva</Badge>
-                            )}
-                            {campaign.habilitadaVotacion && (
-                              <Badge bg="primary">Votación ON</Badge>
-                            )}
+                      <Card.Body className="p-3">
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div className="flex-grow-1">
+                            <h6 className="mb-1 fw-bold text-navy">{campaign.titulo}</h6>
+                            <p className="text-muted small mb-2">{campaign.descripcion.substring(0, 80)}...</p>
+                            <div className="d-flex flex-wrap gap-1">
+                              {campaign.estado === 'activa' && (
+                                <Badge bg="success" className="px-2 py-1">
+                                  <i className="bi bi-check-circle-fill me-1"></i>
+                                  Activa
+                                </Badge>
+                              )}
+                              {campaign.estado === 'finalizada' && (
+                                <Badge bg="danger" className="px-2 py-1">
+                                  <i className="bi bi-x-circle-fill me-1"></i>
+                                  Finalizada
+                                </Badge>
+                              )}
+                              {campaign.estado === 'inactiva' && (
+                                <Badge bg="secondary" className="px-2 py-1">
+                                  <i className="bi bi-pause-circle-fill me-1"></i>
+                                  Inactiva
+                                </Badge>
+                              )}
+                              {campaign.habilitadaVotacion && (
+                                <Badge bg="primary" className="px-2 py-1">
+                                  <i className="bi bi-box-arrow-in-right me-1"></i>
+                                  Votación Habilitada
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <div className="ms-2">
-                          <Button
-                            size="sm"
-                            variant="outline-primary"
-                            className="me-1"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEditCampaignModal(campaign);
-                            }}
+                        
+                        <div className="d-flex gap-2 pt-2 border-top">
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={<Tooltip>Editar campaña</Tooltip>}
                           >
-                            <i className="bi bi-pencil"></i>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant={campaign.habilitadaVotacion ? 'warning' : 'success'}
-                            className="me-1"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleVoting(campaign._id);
-                            }}
+                            <Button
+                              size="sm"
+                              variant="outline-primary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditCampaignModal(campaign);
+                              }}
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </Button>
+                          </OverlayTrigger>
+                          
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={<Tooltip>{campaign.habilitadaVotacion ? 'Pausar votación' : 'Activar votación'}</Tooltip>}
                           >
-                            <i className={`bi bi-${campaign.habilitadaVotacion ? 'pause' : 'play'}-fill`}></i>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline-danger"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteCampaign(campaign._id);
-                            }}
+                            <Button
+                              size="sm"
+                              variant={campaign.habilitadaVotacion ? 'warning' : 'success'}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleVoting(campaign._id);
+                              }}
+                            >
+                              <i className={`bi bi-${campaign.habilitadaVotacion ? 'pause' : 'play'}-circle-fill`}></i>
+                            </Button>
+                          </OverlayTrigger>
+                          
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={<Tooltip>Eliminar campaña</Tooltip>}
                           >
-                            <i className="bi bi-trash"></i>
-                          </Button>
+                            <Button
+                              size="sm"
+                              variant="outline-danger"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteCampaign(campaign._id);
+                              }}
+                            >
+                              <i className="bi bi-trash3-fill"></i>
+                            </Button>
+                          </OverlayTrigger>
                         </div>
-                      </div>
-                    </div>
+                      </Card.Body>
+                    </Card>
                   ))}
                 </div>
               )}
@@ -393,75 +485,145 @@ const AdminDashboard: React.FC = () => {
           </Card>
         </Col>
 
+        {/* Columna de Candidatos */}
         <Col lg={7}>
           {selectedCampaign ? (
-            <Card className="card-custom">
-              <Card.Header className="bg-navy text-white d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">
-                  <i className="bi bi-people me-2"></i>
-                  Candidatos - {selectedCampaign.titulo}
-                </h5>
-                <Button size="sm" variant="yellow" onClick={openCreateCandidateModal}>
-                  <i className="bi bi-plus-lg me-1"></i>
-                  Agregar
-                </Button>
+            <Card className="shadow-sm border-0">
+              <Card.Header className="bg-navy text-white p-3">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="mb-0 fw-bold">
+                      <i className="bi bi-people-fill me-2"></i>
+                      Candidatos
+                    </h5>
+                    <small className="opacity-75">{selectedCampaign.titulo}</small>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="yellow" 
+                    onClick={openCreateCandidateModal}
+                    className="fw-bold px-3"
+                  >
+                    <i className="bi bi-person-plus-fill me-1"></i>
+                    Agregar Candidato
+                  </Button>
+                </div>
               </Card.Header>
-              <Card.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+              <Card.Body style={{ maxHeight: '70vh', overflowY: 'auto' }} className="p-3">
                 {candidates.length === 0 ? (
-                  <div className="text-center py-4">
-                    <i className="bi bi-person-x display-4 text-muted"></i>
-                    <p className="text-muted mt-2">No hay candidatos en esta campaña</p>
+                  <div className="empty-state py-5">
+                    <div className="text-center">
+                      <i className="bi bi-person-x display-1 text-muted mb-3"></i>
+                      <h5 className="text-muted fw-bold">No hay candidatos</h5>
+                      <p className="text-muted">Agrega candidatos a esta campaña</p>
+                      <Button variant="navy" onClick={openCreateCandidateModal} className="mt-2">
+                        <i className="bi bi-person-plus-fill me-2"></i>
+                        Agregar Primer Candidato
+                      </Button>
+                    </div>
                   </div>
                 ) : (
-                  <Table striped bordered hover>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th className="text-center">Votos</th>
-                        <th className="text-center">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {candidates.map((candidate, index) => (
-                        <tr key={candidate._id}>
-                          <td>{index + 1}</td>
-                          <td><strong>{candidate.nombre}</strong></td>
-                          <td>{candidate.descripcion.substring(0, 50)}...</td>
-                          <td className="text-center">
-                            <Badge bg="primary">{candidate.votos}</Badge>
-                          </td>
-                          <td className="text-center">
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              className="me-1"
-                              onClick={() => openEditCandidateModal(candidate)}
-                            >
-                              <i className="bi bi-pencil"></i>
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline-danger"
-                              onClick={() => handleDeleteCandidate(candidate._id)}
-                            >
-                              <i className="bi bi-trash"></i>
-                            </Button>
-                          </td>
+                  <div className="table-responsive">
+                    <Table hover className="align-middle mb-0">
+                      <thead className="table-light">
+                        <tr>
+                          <th style={{ width: '50px' }} className="text-center">#</th>
+                          <th>Nombre</th>
+                          <th>Propuesta</th>
+                          <th className="text-center" style={{ width: '100px' }}>
+                            <i className="bi bi-trophy-fill me-1"></i>
+                            Votos
+                          </th>
+                          <th className="text-center" style={{ width: '150px' }}>Acciones</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </Table>
+                      </thead>
+                      <tbody>
+                        {candidates.map((candidate, index) => (
+                          <tr key={candidate._id}>
+                            <td className="text-center">
+                              {index === 0 && candidate.votos > 0 ? (
+                                <i className="bi bi-trophy-fill text-warning fs-5"></i>
+                              ) : (
+                                <span className="fw-bold text-muted">{index + 1}</span>
+                              )}
+                            </td>
+                            <td>
+                              <div className="d-flex align-items-center gap-2">
+                                {candidate.fotoUrl ? (
+                                  <img 
+                                    src={candidate.fotoUrl} 
+                                    alt={candidate.nombre}
+                                    className="rounded-circle"
+                                    style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                                  />
+                                ) : (
+                                  <div 
+                                    className="rounded-circle bg-navy text-white d-flex align-items-center justify-content-center fw-bold"
+                                    style={{ width: '40px', height: '40px' }}
+                                  >
+                                    {candidate.nombre.charAt(0)}
+                                  </div>
+                                )}
+                                <strong>{candidate.nombre}</strong>
+                              </div>
+                            </td>
+                            <td>
+                              <small className="text-muted">
+                                {candidate.descripcion.substring(0, 50)}...
+                              </small>
+                            </td>
+                            <td className="text-center">
+                              <Badge bg="primary" className="px-3 py-2 fs-6">
+                                {candidate.votos}
+                              </Badge>
+                            </td>
+                            <td className="text-center">
+                              <div className="d-flex gap-2 justify-content-center">
+                                <OverlayTrigger
+                                  placement="top"
+                                  overlay={<Tooltip>Editar candidato</Tooltip>}
+                                >
+                                  <Button
+                                    size="sm"
+                                    variant="outline-primary"
+                                    onClick={() => openEditCandidateModal(candidate)}
+                                  >
+                                    <i className="bi bi-pencil-square"></i>
+                                  </Button>
+                                </OverlayTrigger>
+                                
+                                <OverlayTrigger
+                                  placement="top"
+                                  overlay={<Tooltip>Eliminar candidato</Tooltip>}
+                                >
+                                  <Button
+                                    size="sm"
+                                    variant="outline-danger"
+                                    onClick={() => handleDeleteCandidate(candidate._id)}
+                                  >
+                                    <i className="bi bi-trash3-fill"></i>
+                                  </Button>
+                                </OverlayTrigger>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
                 )}
               </Card.Body>
             </Card>
           ) : (
-            <Card className="card-custom">
-              <Card.Body className="text-center py-5">
-                <i className="bi bi-arrow-left display-1 text-muted"></i>
-                <h4 className="text-muted mt-3">Selecciona una campaña</h4>
-                <p className="text-muted">Selecciona una campaña de la izquierda para ver y gestionar sus candidatos</p>
+            <Card className="shadow-sm border-0" style={{ height: 'calc(100% - 0px)' }}>
+              <Card.Body className="d-flex align-items-center justify-content-center" style={{ minHeight: '500px' }}>
+                <div className="text-center">
+                  <i className="bi bi-arrow-left-circle display-1 text-muted mb-3" style={{ fontSize: '5rem' }}></i>
+                  <h4 className="text-navy fw-bold mb-2">Selecciona una campaña</h4>
+                  <p className="text-muted mb-0">
+                    Elige una campaña de la izquierda para ver y gestionar sus candidatos
+                  </p>
+                </div>
               </Card.Body>
             </Card>
           )}
@@ -469,39 +631,50 @@ const AdminDashboard: React.FC = () => {
       </Row>
 
       {/* Modal de Campaña */}
-      <Modal show={showCampaignModal} onHide={() => setShowCampaignModal(false)} size="lg">
+      <Modal show={showCampaignModal} onHide={() => setShowCampaignModal(false)} size="lg" centered>
         <Modal.Header closeButton className="bg-navy text-white">
-          <Modal.Title>
+          <Modal.Title className="fw-bold">
+            <i className="bi bi-trophy-fill me-2"></i>
             {editingCampaign ? 'Editar Campaña' : 'Nueva Campaña'}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4">
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Título de la Campaña</Form.Label>
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-card-heading me-2"></i>
+                Título de la Campaña
+              </Form.Label>
               <Form.Control
                 type="text"
                 value={campaignForm.titulo}
                 onChange={(e) => setCampaignForm({ ...campaignForm, titulo: e.target.value })}
                 placeholder="Ej: Elecciones Junta Directiva 2025"
+                className="form-control-lg"
                 required
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Descripción</Form.Label>
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-card-text me-2"></i>
+                Descripción
+              </Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={4}
                 value={campaignForm.descripcion}
                 onChange={(e) => setCampaignForm({ ...campaignForm, descripcion: e.target.value })}
-                placeholder="Describe la campaña..."
+                placeholder="Describe la campaña y sus objetivos..."
                 required
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Cantidad de Votos por Usuario</Form.Label>
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-123 me-2"></i>
+                Cantidad de Votos por Usuario
+              </Form.Label>
               <Form.Control
                 type="number"
                 min="1"
@@ -510,6 +683,7 @@ const AdminDashboard: React.FC = () => {
                 required
               />
               <Form.Text className="text-muted">
+                <i className="bi bi-info-circle me-1"></i>
                 Número de votos que cada usuario puede emitir en esta campaña
               </Form.Text>
             </Form.Group>
@@ -517,22 +691,30 @@ const AdminDashboard: React.FC = () => {
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Fecha de Inicio</Form.Label>
+                  <Form.Label className="fw-semibold">
+                    <i className="bi bi-calendar-check me-2"></i>
+                    Fecha de Inicio
+                  </Form.Label>
                   <Form.Control
                     type="date"
                     value={campaignForm.fechaInicio}
                     onChange={(e) => setCampaignForm({ ...campaignForm, fechaInicio: e.target.value })}
+                    className="form-control-lg"
                     required
                   />
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Fecha de Fin</Form.Label>
+                  <Form.Label className="fw-semibold">
+                    <i className="bi bi-calendar-x me-2"></i>
+                    Fecha de Fin
+                  </Form.Label>
                   <Form.Control
                     type="date"
                     value={campaignForm.fechaFin}
                     onChange={(e) => setCampaignForm({ ...campaignForm, fechaFin: e.target.value })}
+                    className="form-control-lg"
                     required
                   />
                 </Form.Group>
@@ -540,53 +722,67 @@ const AdminDashboard: React.FC = () => {
             </Row>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowCampaignModal(false)}>
+        <Modal.Footer className="bg-light">
+          <Button variant="secondary" onClick={() => setShowCampaignModal(false)} className="px-4">
+            <i className="bi bi-x-lg me-2"></i>
             Cancelar
           </Button>
           <Button 
             variant="navy"
             onClick={editingCampaign ? handleUpdateCampaign : handleCreateCampaign}
+            className="px-4 fw-bold"
           >
+            <i className={`bi bi-${editingCampaign ? 'check' : 'plus'}-circle-fill me-2`}></i>
             {editingCampaign ? 'Actualizar' : 'Crear'} Campaña
           </Button>
         </Modal.Footer>
       </Modal>
 
       {/* Modal de Candidato */}
-      <Modal show={showCandidateModal} onHide={() => setShowCandidateModal(false)}>
+      <Modal show={showCandidateModal} onHide={() => setShowCandidateModal(false)} centered>
         <Modal.Header closeButton className="bg-navy text-white">
-          <Modal.Title>
+          <Modal.Title className="fw-bold">
+            <i className="bi bi-person-fill me-2"></i>
             {editingCandidate ? 'Editar Candidato' : 'Nuevo Candidato'}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4">
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Nombre del Candidato</Form.Label>
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-person-badge me-2"></i>
+                Nombre del Candidato
+              </Form.Label>
               <Form.Control
                 type="text"
                 value={candidateForm.nombre}
                 onChange={(e) => setCandidateForm({ ...candidateForm, nombre: e.target.value })}
                 placeholder="Ej: Ing. Juan Pérez"
+                className="form-control-lg"
                 required
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Descripción</Form.Label>
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-file-text me-2"></i>
+                Propuesta / Descripción
+              </Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={4}
                 value={candidateForm.descripcion}
                 onChange={(e) => setCandidateForm({ ...candidateForm, descripcion: e.target.value })}
-                placeholder="Experiencia, propuestas, etc..."
+                placeholder="Experiencia profesional, propuestas, visión..."
                 required
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>URL de Foto (Opcional)</Form.Label>
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-image me-2"></i>
+                URL de Foto (Opcional)
+              </Form.Label>
               <Form.Control
                 type="url"
                 value={candidateForm.fotoUrl}
@@ -594,114 +790,231 @@ const AdminDashboard: React.FC = () => {
                 placeholder="https://ejemplo.com/foto.jpg"
               />
               <Form.Text className="text-muted">
+                <i className="bi bi-info-circle me-1"></i>
                 Si no se proporciona, se usarán las iniciales del nombre
               </Form.Text>
+              
+              {candidateForm.fotoUrl && (
+                <div className="mt-3 text-center">
+                  <p className="small text-muted mb-2">Vista previa:</p>
+                  <img 
+                    src={candidateForm.fotoUrl} 
+                    alt="Vista previa"
+                    className="rounded-circle shadow-sm"
+                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowCandidateModal(false)}>
+        <Modal.Footer className="bg-light">
+          <Button variant="secondary" onClick={() => setShowCandidateModal(false)} className="px-4">
+            <i className="bi bi-x-lg me-2"></i>
             Cancelar
           </Button>
           <Button 
             variant="navy"
             onClick={editingCandidate ? handleUpdateCandidate : handleCreateCandidate}
+            className="px-4 fw-bold"
           >
+            <i className={`bi bi-${editingCandidate ? 'check' : 'plus'}-circle-fill me-2`}></i>
             {editingCandidate ? 'Actualizar' : 'Agregar'} Candidato
           </Button>
         </Modal.Footer>
       </Modal>
 
       {/* Modal de Reporte */}
-      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} size="lg">
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} size="xl" centered>
         <Modal.Header closeButton className="bg-navy text-white">
-          <Modal.Title>
-            <i className="bi bi-file-earmark-bar-graph me-2"></i>
+          <Modal.Title className="fw-bold">
+            <i className="bi bi-file-earmark-bar-graph-fill me-2"></i>
             Reporte General de Votaciones
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }} className="p-4">
           {report && (
             <>
+              {/* Estadísticas generales */}
               <div className="mb-4">
-                <Row>
+                <h5 className="text-navy fw-bold mb-3">
+                  <i className="bi bi-graph-up me-2"></i>
+                  Resumen General
+                </h5>
+                <Row className="g-3">
                   <Col md={4}>
-                    <div className="stat-card yellow">
-                      <div className="stat-number">{report.totalVotosGeneral}</div>
-                      <div className="stat-label">Total de Votos</div>
-                    </div>
+                    <Card className="border-0 shadow-sm h-100">
+                      <Card.Body className="text-center p-4">
+                        <div className="d-flex align-items-center justify-content-center gap-3">
+                          <i className="bi bi-box-arrow-in-right text-warning" style={{ fontSize: '3rem' }}></i>
+                          <div className="text-start">
+                            <small className="text-muted d-block text-uppercase" style={{ fontSize: '0.75rem' }}>
+                              Total de Votos
+                            </small>
+                            <h2 className="mb-0 fw-bold text-navy">{report.totalVotosGeneral}</h2>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
                   </Col>
                   <Col md={4}>
-                    <div className="stat-card">
-                      <div className="stat-number">{report.totalCampañas}</div>
-                      <div className="stat-label">Total Campañas</div>
-                    </div>
+                    <Card className="border-0 shadow-sm h-100">
+                      <Card.Body className="text-center p-4">
+                        <div className="d-flex align-items-center justify-content-center gap-3">
+                          <i className="bi bi-trophy-fill text-primary" style={{ fontSize: '3rem' }}></i>
+                          <div className="text-start">
+                            <small className="text-muted d-block text-uppercase" style={{ fontSize: '0.75rem' }}>
+                              Total Campañas
+                            </small>
+                            <h2 className="mb-0 fw-bold text-navy">{report.totalCampañas}</h2>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
                   </Col>
                   <Col md={4}>
-                    <div className="stat-card success">
-                      <div className="stat-number">
-                        {report.campañas.filter((c: any) => c.estado === 'activa').length}
-                      </div>
-                      <div className="stat-label">Campañas Activas</div>
-                    </div>
+                    <Card className="border-0 shadow-sm h-100">
+                      <Card.Body className="text-center p-4">
+                        <div className="d-flex align-items-center justify-content-center gap-3">
+                          <i className="bi bi-check-circle-fill text-success" style={{ fontSize: '3rem' }}></i>
+                          <div className="text-start">
+                            <small className="text-muted d-block text-uppercase" style={{ fontSize: '0.75rem' }}>
+                              Campañas Activas
+                            </small>
+                            <h2 className="mb-0 fw-bold text-navy">
+                              {report.campañas.filter((c: any) => c.estado === 'activa').length}
+                            </h2>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
                   </Col>
                 </Row>
               </div>
 
-              <h5 className="text-navy mb-3">Detalle por Campaña</h5>
-              {report.campañas.map((campaign: any) => (
-                <Card key={campaign.campaignId} className="mb-3">
-                  <Card.Header className="bg-light">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <strong>{campaign.titulo}</strong>
-                      <Badge bg={
-                        campaign.estado === 'activa' ? 'success' :
-                        campaign.estado === 'finalizada' ? 'danger' : 'secondary'
-                      }>
-                        {campaign.estado}
-                      </Badge>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <p className="text-muted small mb-2">
-                      {formatDate(campaign.fechaInicio)} - {formatDate(campaign.fechaFin)}
-                    </p>
-                    <div className="mb-3">
-                      <strong>Total de votos: </strong>
-                      <Badge bg="primary">{campaign.totalVotos}</Badge>
-                    </div>
-                    <Table size="sm" bordered>
-                      <thead>
-                        <tr>
-                          <th>Candidato</th>
-                          <th className="text-center">Votos</th>
-                          <th className="text-center">Porcentaje</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {campaign.candidatos.map((candidato: any, idx: number) => (
-                          <tr key={idx}>
-                            <td>{candidato.nombre}</td>
-                            <td className="text-center">{candidato.votos}</td>
-                            <td className="text-center">
-                              <strong>{candidato.porcentaje}%</strong>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </Card.Body>
-                </Card>
-              ))}
+              {/* Detalle por campaña */}
+              <div>
+                <h5 className="text-navy fw-bold mb-3">
+                  <i className="bi bi-list-task me-2"></i>
+                  Detalle por Campaña
+                </h5>
+                <div className="d-flex flex-column gap-3">
+                  {report.campañas.map((campaign: any) => (
+                    <Card key={campaign.campaignId} className="border-0 shadow-sm">
+                      <Card.Header className="bg-light border-0 p-3">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 className="mb-1 fw-bold text-navy">{campaign.titulo}</h6>
+                            <small className="text-muted">
+                              <i className="bi bi-calendar-range me-1"></i>
+                              {formatDate(campaign.fechaInicio)} - {formatDate(campaign.fechaFin)}
+                            </small>
+                          </div>
+                          <div className="d-flex gap-2 align-items-center">
+                            <Badge 
+                              bg={
+                                campaign.estado === 'activa' ? 'success' :
+                                campaign.estado === 'finalizada' ? 'danger' : 'secondary'
+                              }
+                              className="px-3 py-2"
+                            >
+                              {campaign.estado}
+                            </Badge>
+                            <Badge bg="primary" className="px-3 py-2">
+                              <i className="bi bi-box-arrow-in-right me-1"></i>
+                              {campaign.totalVotos} votos
+                            </Badge>
+                          </div>
+                        </div>
+                      </Card.Header>
+                      <Card.Body className="p-3">
+                        {campaign.candidatos && campaign.candidatos.length > 0 ? (
+                          <div className="table-responsive">
+                            <Table hover className="align-middle mb-0">
+                              <thead className="table-light">
+                                <tr>
+                                  <th style={{ width: '50px' }} className="text-center">#</th>
+                                  <th>Candidato</th>
+                                  <th className="text-center" style={{ width: '100px' }}>Votos</th>
+                                  <th style={{ width: '300px' }}>Distribución</th>
+                                  <th className="text-center" style={{ width: '100px' }}>Porcentaje</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {campaign.candidatos.map((candidato: any, idx: number) => {
+                                  const porcentaje = parseFloat(candidato.porcentaje);
+                                  return (
+                                    <tr key={idx}>
+                                      <td className="text-center">
+                                        {idx === 0 && candidato.votos > 0 ? (
+                                          <i className="bi bi-trophy-fill text-warning fs-5"></i>
+                                        ) : (
+                                          <span className="fw-bold text-muted">{idx + 1}</span>
+                                        )}
+                                      </td>
+                                      <td>
+                                        <strong>{candidato.nombre}</strong>
+                                      </td>
+                                      <td className="text-center">
+                                        <Badge bg="light" text="dark" className="px-3 py-2 fw-bold">
+                                          {candidato.votos}
+                                        </Badge>
+                                      </td>
+                                      <td>
+                                        <ProgressBar 
+                                          now={porcentaje} 
+                                          style={{ height: '25px' }}
+                                          className="shadow-sm"
+                                        >
+                                          <ProgressBar 
+                                            now={porcentaje}
+                                            variant={idx === 0 ? 'warning' : 'primary'}
+                                            label={`${porcentaje.toFixed(1)}%`}
+                                          />
+                                        </ProgressBar>
+                                      </td>
+                                      <td className="text-center">
+                                        <strong className="text-navy fs-6">
+                                          {candidato.porcentaje}%
+                                        </strong>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </Table>
+                          </div>
+                        ) : (
+                          <div className="text-center py-3 text-muted">
+                            <i className="bi bi-inbox me-2"></i>
+                            No hay candidatos registrados
+                          </div>
+                        )}
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="success" onClick={handleDownloadReport}>
+        <Modal.Footer className="bg-light">
+          <Button 
+            variant="success" 
+            onClick={handleDownloadReport}
+            className="px-4 fw-bold"
+          >
             <i className="bi bi-download me-2"></i>
             Descargar JSON
           </Button>
-          <Button variant="secondary" onClick={() => setShowReportModal(false)}>
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowReportModal(false)}
+            className="px-4"
+          >
             Cerrar
           </Button>
         </Modal.Footer>
