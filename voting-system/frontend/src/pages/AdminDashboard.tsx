@@ -363,7 +363,7 @@ const AdminDashboard: React.FC = () => {
                   variant="yellow" 
                   onClick={openCreateCampaignModal}
                   className="fw-bold shadow"
-                  style={{ fontSize: '1rem', padding: '10px 25px' }}
+                  style={{ fontSize: '1rem', padding: '10px 25px'}}
                 >
                   <i className="bi bi-plus-circle-fill me-2"></i>
                   Nueva Campaña
