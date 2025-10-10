@@ -5,7 +5,8 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   //imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
+  imports: [RouterOutlet]
 })
 export class App {
   protected readonly title = signal('teslo-shop');
