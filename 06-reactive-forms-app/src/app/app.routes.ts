@@ -8,8 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    loadChildren: () =>
-      import('./auth/auth.routes'),
+    loadChildren: () => import('./auth/auth.routes'),
   },
   {
     path: 'country',
@@ -19,6 +18,5 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'reactive',
-  }
-
+  },
 ];
