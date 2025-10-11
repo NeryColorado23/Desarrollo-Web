@@ -27,7 +27,7 @@ const Register = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/register', {
+      const response = await fetch('https://desarrollo-web-1ahf.onrender.com/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
