@@ -3,3 +3,14 @@
 @plugin "daisyui" {
   themes: corporate;
 }
+
+
+
+/* 👇 Solo definimos la fuente, no la aplicamos globalmente */
+@layer base{
+  @font-face {
+    font-family: 'Monstserrat';
+    src: url('/assets/fonts/monstserrar-medium/Montserrat-Medium') format(truetype);
+  }
+}
+
