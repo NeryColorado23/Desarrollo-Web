@@ -27,7 +27,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await fetch('https://desarrollo-web-1ahf.onrender.com', {
+      const response = await fetch('https://desarrollo-web-1ahf.onrender.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
