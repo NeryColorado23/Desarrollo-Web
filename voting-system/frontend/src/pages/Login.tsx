@@ -1,6 +1,6 @@
 // src/pages/Login.tsx
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert, InputGroup, Card } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';

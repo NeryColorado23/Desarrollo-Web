@@ -11,11 +11,12 @@ dotenv.config();
 
 const app: Application = express();
 
+// 🌐 Conexión a MongoDB Atlas (Render o local)
 connectDB();
 
-// ✅ CAMBIO IMPORTANTE: Configuración específica de CORS
+// ✅ Configuración de CORS (Render y local)
 app.use(cors({
-  origin: 'http://localhost:3000',  // ← Frontend
+  origin: process.env.FRONTEND_URL || '*', // 🔹 Permite el dominio de tu frontend (puedes ajustar esto)
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -24,24 +25,27 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🔍 Middleware para debug (opcional, puedes comentarlo después)
+// 🧩 Middleware para depuración (opcional)
 app.use((req: Request, res: Response, next) => {
   console.log(`📥 ${req.method} ${req.path}`);
   next();
 });
 
+// 🚀 Rutas principales
 app.use('/api/auth', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/votes', voteRoutes);
 
+// 🏠 Ruta raíz
 app.get('/', (req: Request, res: Response) => {
   res.json({
     success: true,
-    message: 'API de Sistema de Votación - Colegio de Ingenieros',
+    message: 'API del Sistema de Votación - Colegio de Ingenieros',
     version: '1.0.0',
   });
 });
 
+// ❌ Ruta no encontrada
 app.use((req: Request, res: Response) => {
   res.status(404).json({
     success: false,
@@ -49,10 +53,11 @@ app.use((req: Request, res: Response) => {
   });
 });
 
+// ⚙️ Puerto dinámico (Render usa process.env.PORT)
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
-  console.log(`📍 Ambiente: ${process.env.NODE_ENV}`);
+  console.log(`📍 Ambiente: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 MongoDB conectado: ${process.env.MONGODB_URI ? 'Sí' : 'No'}`);
 });
