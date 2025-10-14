@@ -6,6 +6,8 @@ import connectDB from './config/database';
 import authRoutes from './routes/authRoutes';
 import campaignRoutes from './routes/campaignRoutes';
 import voteRoutes from './routes/voteRoutes';
+import User from './models/User';
+
 
 dotenv.config();
 
@@ -13,6 +15,31 @@ const app: Application = express();
 
 // 🌐 Conexión a MongoDB Atlas (Render o local)
 connectDB();
+
+// Función para crear admin si no existe
+const createAdminIfNotExists = async () => {
+  try {
+    const adminExists = await User.findOne({ rol: 'admin' });
+    
+    if (!adminExists) {
+      await User.create({
+        numeroColegiado: 'ADMIN001',
+        nombreCompleto: 'Administrador Principal',
+        correoElectronico: 'admin@cig.gt',
+        dpi: '1234567890101',
+        fechaNacimiento: new Date('1990-01-01'),
+        contraseña: 'Admin123!',
+        rol: 'admin',
+        activo: true,
+      });
+      console.log('✅ Usuario administrador creado automáticamente');
+    } else {
+      console.log('ℹ️  Usuario administrador ya existe');
+    }
+  } catch (error) {
+    console.error('⚠️  Error al verificar/crear admin:', error);
+  }
+};
 
 // ✅ Configuración de CORS (Render y local)
 app.use(cors({
