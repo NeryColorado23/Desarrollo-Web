@@ -22,45 +22,32 @@ app.get('/', (req, res) => {
     res.json({
         success: true,
         message: 'API REST con JWT funcionando correctamente.',
-        endpoints: {
-            auth: {
-                login: 'POST /api/auth/login',
-                register: 'POST /api/auth/register'
-            },
-            users: {
-                getAll: 'GET /api/users',
-                update: 'PUT /api/users/:id',
-                delete: 'DELETE /api/users/:id'
-            }
-        },
-        note: 'Las rutas de users requieren autenticación JWT'
+        environment: process.env.NODE_ENV || 'development'
     });
 });
 
-// Manejar rutas no encontradas - FORMA CORRECTA
+// Health check para Render
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'OK', 
+        message: 'API is running',
+        database: process.env.MONGODB_URI ? 'Connected' : 'Not configured'
+    });
+});
+
+// Manejar rutas no encontradas
 app.use((req, res) => {
     res.status(404).json({
         success: false,
-        message: 'Ruta no encontrada.',
-        path: req.path,
-        method: req.method
-    });
-});
-
-// Manejo de errores global
-app.use((error, req, res, next) => {
-    console.error('Error global:', error);
-    res.status(500).json({
-        success: false,
-        message: 'Error interno del servidor.'
+        message: 'Ruta no encontrada.'
     });
 });
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Servidor ejecutándose en puerto ${PORT}`);
     console.log(`🔗 URL: http://localhost:${PORT}`);
-    console.log(`🗄️  Base de datos: ${process.env.MONGODB_URI}`);
-    console.log(`🔐 JWT Expira en: ${process.env.JWT_EXPIRES_IN}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🗄️  Base de datos: ${process.env.MONGODB_URI ? 'Configurada' : 'NO CONFIGURADA'}`);
 });
