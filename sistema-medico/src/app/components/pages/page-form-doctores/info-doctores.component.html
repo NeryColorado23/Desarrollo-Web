@@ -420,9 +420,9 @@
   </div>
 </div>
 
-<!-- Modal de Ver Horarios -->
+<!-- Modal de Ver/Editar Horarios -->
 <div class="modal-backdrop" *ngIf="mostrarHorarios" (click)="cerrarHorarios()">
-  <div class="modal-dialog" (click)="$event.stopPropagation()">
+  <div class="modal-dialog modal-horarios" (click)="$event.stopPropagation()">
     <div class="modal-header-gradient">
       <div class="modal-title">
         <mat-icon>schedule</mat-icon>
@@ -434,42 +434,55 @@
     </div>
 
     <div class="modal-body" *ngIf="doctorSeleccionado">
-      <div class="horarios-semana">
-        <div *ngFor="let dia of diasSemana" class="dia-completo">
-          <div class="dia-header">
-            <h6>{{ dia.nombre }}</h6>
-          </div>
-          <div class="dia-content">
-            <div *ngIf="getHorarioDia(doctorSeleccionado, dia.key)?.activo" class="dia-activo">
-              <mat-icon class="check-icon">check_circle</mat-icon>
-              <span class="horario-texto">
-                {{ getHorarioDia(doctorSeleccionado, dia.key)?.inicio }} -
-                {{ getHorarioDia(doctorSeleccionado, dia.key)?.fin }}
-              </span>
+      <form [formGroup]="horarioForm">
+        <div class="horarios-edit-grid" formGroupName="horarios">
+          <div *ngFor="let dia of diasSemana" class="dia-edit-card" [formGroupName]="dia.key">
+            <div class="dia-edit-header" [class.activo]="getHorarioControl(dia.key, 'activo')?.value">
+              <mat-checkbox formControlName="activo" class="dia-checkbox">
+                <strong class="dia-titulo">{{ dia.nombre }}</strong>
+              </mat-checkbox>
             </div>
-            <div *ngIf="!getHorarioDia(doctorSeleccionado, dia.key)?.activo" class="dia-inactivo">
-              <mat-icon class="close-icon">cancel</mat-icon>
-              <span>No disponible</span>
+
+            <div class="dia-edit-body" *ngIf="getHorarioControl(dia.key, 'activo')?.value">
+              <div class="hora-inputs">
+                <mat-form-field appearance="outline" class="hora-input">
+                  <mat-label>Hora Inicio</mat-label>
+                  <input matInput type="time" formControlName="inicio">
+                  <mat-icon matPrefix class="time-icon">schedule</mat-icon>
+                </mat-form-field>
+
+                <span class="hora-separador">—</span>
+
+                <mat-form-field appearance="outline" class="hora-input">
+                  <mat-label>Hora Fin</mat-label>
+                  <input matInput type="time" formControlName="fin">
+                  <mat-icon matPrefix class="time-icon">schedule</mat-icon>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="dia-edit-body-inactive" *ngIf="!getHorarioControl(dia.key, 'activo')?.value">
+              <mat-icon class="inactive-icon">block</mat-icon>
+              <span class="inactive-text">No disponible</span>
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
 
     <div class="modal-footer-gradient">
       <button mat-stroked-button (click)="cerrarHorarios()" class="btn-cancel">
-        Cerrar
+        Cancelar
       </button>
-      <button mat-raised-button color="primary" (click)="cerrarHorarios(); abrirModalDoctor('editar', doctorSeleccionado)">
-        <mat-icon>edit</mat-icon>
-        Editar Horarios
+      <button mat-raised-button color="primary" (click)="guardarHorarios()" class="btn-save">
+        <mat-icon>save</mat-icon>
+        Guardar Horarios
       </button>
     </div>
   </div>
 </div>
 
-<!-- Los modales mantienen la misma estructura pero con clases mejoradas -->
-<!-- Modal de Crear/Editar Doctor -->
+<!-- Modal de Crear/Editar Doctor - COMPLETO -->
 <div class="modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()">
   <div class="modal-dialog modal-doctor" (click)="$event.stopPropagation()">
     <div class="modal-header-gradient">
@@ -482,9 +495,223 @@
       </button>
     </div>
 
-    <!-- El contenido del formulario permanece igual con las clases existentes -->
     <div class="modal-body">
-      <!-- Todo el contenido del formulario permanece igual -->
+      <form [formGroup]="doctorForm">
+        <!-- Información Personal -->
+        <div class="form-section">
+          <div class="section-title">
+            <mat-icon>person_outline</mat-icon>
+            <span>Información Personal</span>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Nombre Completo</mat-label>
+                <input matInput formControlName="nombreCompleto" placeholder="Dr. Juan Pérez">
+                <mat-icon matPrefix>person</mat-icon>
+                <mat-error *ngIf="doctorForm.get('nombreCompleto')?.hasError('required')">
+                  El nombre es requerido
+                </mat-error>
+                <mat-error *ngIf="doctorForm.get('nombreCompleto')?.hasError('minlength')">
+                  Mínimo 3 caracteres
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Cédula</mat-label>
+                <input matInput formControlName="cedula" placeholder="DOC001">
+                <mat-icon matPrefix>badge</mat-icon>
+                <mat-error *ngIf="doctorForm.get('cedula')?.hasError('required')">
+                  La cédula es requerida
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="doctor@hospital.com">
+                <mat-icon matPrefix>email</mat-icon>
+                <mat-error *ngIf="doctorForm.get('email')?.hasError('required')">
+                  El email es requerido
+                </mat-error>
+                <mat-error *ngIf="doctorForm.get('email')?.hasError('email')">
+                  Email inválido
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Teléfono</mat-label>
+                <input matInput formControlName="telefono" placeholder="555-1234">
+                <mat-icon matPrefix>phone</mat-icon>
+                <mat-error *ngIf="doctorForm.get('telefono')?.hasError('required')">
+                  El teléfono es requerido
+                </mat-error>
+                <mat-error *ngIf="doctorForm.get('telefono')?.hasError('pattern')">
+                  Formato: XXX-XXXX
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-12">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Dirección del Consultorio (Opcional)</mat-label>
+                <input matInput formControlName="direccionConsultorio" placeholder="Consultorio 201, Edificio Médico">
+                <mat-icon matPrefix>location_on</mat-icon>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información Profesional -->
+        <div class="form-section">
+          <div class="section-title">
+            <mat-icon>school</mat-icon>
+            <span>Información Profesional</span>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Especialidad</mat-label>
+                <mat-select formControlName="especialidad">
+                  <mat-option *ngFor="let esp of especialidades" [value]="esp">
+                    {{ esp }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>medical_services</mat-icon>
+                <mat-error *ngIf="doctorForm.get('especialidad')?.hasError('required')">
+                  La especialidad es requerida
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Subespecialidad (Opcional)</mat-label>
+                <input matInput formControlName="subespecialidad" placeholder="Cardiología Intervencionista">
+                <mat-icon matPrefix>medical_information</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Número de Licencia</mat-label>
+                <input matInput formControlName="numeroLicencia" placeholder="MED-12345">
+                <mat-icon matPrefix>verified_user</mat-icon>
+                <mat-error *ngIf="doctorForm.get('numeroLicencia')?.hasError('required')">
+                  La licencia es requerida
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Años de Experiencia</mat-label>
+                <input matInput type="number" formControlName="tiempoExperiencia" min="0" max="50">
+                <mat-icon matPrefix>work</mat-icon>
+                <mat-error *ngIf="doctorForm.get('tiempoExperiencia')?.hasError('required')">
+                  La experiencia es requerida
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Universidad</mat-label>
+                <input matInput formControlName="universidad" placeholder="Universidad Nacional">
+                <mat-icon matPrefix>school</mat-icon>
+                <mat-error *ngIf="doctorForm.get('universidad')?.hasError('required')">
+                  La universidad es requerida
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Fecha de Graduación</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="fechaGraduacion">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-icon matPrefix>event</mat-icon>
+    <mat-error *ngIf="doctorForm.get('fechaGraduacion')?.hasError('required')">
+      La fecha es requerida
+    </mat-error>
+  </mat-form-field>
+</div>
+
+            <div class="col-md-6">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Estado</mat-label>
+                <mat-select formControlName="estado">
+                  <mat-option value="activo">
+                    <mat-icon class="option-icon" style="color: #2dce89">check_circle</mat-icon>
+                    Activo
+                  </mat-option>
+                  <mat-option value="inactivo">
+                    <mat-icon class="option-icon" style="color: #f5365c">cancel</mat-icon>
+                    Inactivo
+                  </mat-option>
+                  <mat-option value="vacaciones">
+                    <mat-icon class="option-icon" style="color: #fb6340">beach_access</mat-icon>
+                    Vacaciones
+                  </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>toggle_on</mat-icon>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horarios de Atención -->
+        <div class="form-section" formGroupName="horarios">
+          <div class="section-title">
+            <mat-icon>schedule</mat-icon>
+            <span>Horarios de Atención</span>
+          </div>
+
+          <div class="horarios-grid">
+            <div *ngFor="let dia of diasSemana" class="horario-item" [formGroupName]="dia.key">
+              <div class="d-flex align-items-center mb-2">
+                <mat-checkbox formControlName="activo" class="me-2"></mat-checkbox>
+                <strong>{{ dia.nombre }}</strong>
+              </div>
+
+              <div class="d-flex gap-2" *ngIf="getDiaControl(dia.key, 'activo')?.value">
+                <mat-form-field appearance="fill" class="hora-field">
+                  <mat-label>Inicio</mat-label>
+                  <input matInput type="time" formControlName="inicio">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="hora-field">
+                  <mat-label>Fin</mat-label>
+                  <input matInput type="time" formControlName="fin">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="form-section">
+          <div class="section-title">
+            <mat-icon>notes</mat-icon>
+            <span>Observaciones (Opcional)</span>
+          </div>
+
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Observaciones adicionales</mat-label>
+            <textarea matInput formControlName="observaciones" rows="3"
+                      placeholder="Información adicional relevante..."></textarea>
+            <mat-icon matPrefix>comment</mat-icon>
+          </mat-form-field>
+        </div>
+      </form>
     </div>
 
     <div class="modal-footer-gradient">
@@ -498,3 +725,375 @@
     </div>
   </div>
 </div>
+
+<style>
+  /* Estilos adicionales para modal de horarios mejorado */
+  .modal-horarios {
+    max-width: 900px;
+  }
+
+  .horarios-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+  }
+
+  .dia-edit-card {
+    background: linear-gradient(135deg, #f8f9fe 0%, white 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .dia-edit-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .dia-edit-header {
+    background: white;
+    padding: 1rem 1.25rem;
+    border-bottom: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+
+  .dia-edit-header.activo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom-color: transparent;
+  }
+
+  .dia-edit-header.activo .dia-checkbox {
+    color: white;
+  }
+
+  .dia-edit-header.activo .dia-titulo {
+    color: white;
+  }
+
+  .dia-checkbox {
+    width: 100%;
+  }
+
+  .dia-titulo {
+    font-size: 15px;
+    font-weight: 600;
+    color: #32325d;
+    letter-spacing: 0.3px;
+  }
+
+  .dia-edit-body {
+    padding: 1.25rem;
+  }
+
+  .hora-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hora-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hora-separador {
+    color: #8898aa;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: -10px;
+  }
+
+  .time-icon {
+    color: #667eea;
+    font-size: 20px;
+  }
+
+  .dia-edit-body-inactive {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #adb5bd;
+  }
+
+  .inactive-icon {
+    font-size: 32px;
+    opacity: 0.5;
+  }
+
+  .inactive-text {
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  /* Estilos del formulario dentro del modal */
+  .form-section {
+    margin-bottom: 2rem;
+  }
+
+  .form-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    color: #667eea;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title mat-icon {
+    font-size: 22px;
+  }
+
+  .horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .horario-item {
+    background: #f8f9fe;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .horario-item:hover {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+  }
+
+  .d-flex {
+    display: flex;
+  }
+
+  .align-items-center {
+    align-items: center;
+  }
+
+  .gap-2 {
+    gap: 0.5rem;
+  }
+
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .me-2 {
+    margin-right: 0.5rem;
+  }
+
+  .hora-field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .w-100 {
+    width: 100%;
+  }
+
+  .mb-0 {
+    margin-bottom: 0;
+  }
+
+  .mb-1 {
+    margin-bottom: 0.25rem;
+  }
+
+  .text-muted {
+    color: #6c757d;
+  }
+
+  .ms-auto {
+    margin-left: auto;
+  }
+
+  /* Grid system */
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+  }
+
+  .col-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  @media (min-width: 768px) {
+    .col-md-6 {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+  }
+
+  .g-3 {
+    margin: 0 -0.5rem;
+  }
+
+  .g-3 > * {
+    padding: 0 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Horarios en modal de detalles */
+  .horarios-detalle {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .dia-horario-item {
+    background: linear-gradient(135deg, #f8f9fe 0%, white 100%);
+    padding: 0.75rem;
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+  }
+
+  .dia-nombre {
+    font-weight: 600;
+    color: #667eea;
+    margin-right: 0.5rem;
+  }
+
+  .dia-hora {
+    color: #495057;
+    font-size: 14px;
+  }
+
+  /* Modal doctor info group */
+  .doctor-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fe 0%, white 100%);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .avatar-large {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  }
+
+  .doctor-info {
+    flex: 1;
+  }
+
+  .doctor-info h4 {
+    margin: 0 0 0.5rem;
+    color: #32325d;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .doctor-info p {
+    margin: 0 0 0.5rem;
+    color: #667eea;
+  }
+
+  .info-group {
+    background: #f8f9fe;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .info-group h6 {
+    color: #667eea;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-item {
+    display: flex;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .info-item:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    font-weight: 500;
+    color: #6c757d;
+    min-width: 120px;
+  }
+
+  .info-value {
+    color: #32325d;
+    flex: 1;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .modal-dialog.modal-doctor,
+    .modal-dialog.modal-horarios {
+      max-width: 95%;
+    }
+
+    .horarios-edit-grid,
+    .horarios-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .section-title {
+      font-size: 1rem;
+    }
+
+    .horarios-detalle {
+      grid-template-columns: 1fr;
+    }
+
+    .doctor-header {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .ms-auto {
+      margin-left: 0;
+      margin-top: 1rem;
+    }
+  }
+</style>

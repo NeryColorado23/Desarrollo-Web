@@ -17,6 +17,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
+import { DoctorService } from '../../../services/doctor.service';
 
 // Definir interfaz local
 interface Doctor {
@@ -71,10 +72,12 @@ interface Doctor {
   templateUrl: './info-doctores.component.html',
   styleUrls: ['./info-doctores.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [MatDatepickerModule] // Agregado para el datepicker
 })
 export class InfoDoctoresComponent implements OnInit {
   // Formulario y estado de modales
   doctorForm!: FormGroup;
+  horarioForm!: FormGroup;
   mostrarModal = false;
   mostrarDetalles = false;
   mostrarHorarios = false;
@@ -91,28 +94,7 @@ export class InfoDoctoresComponent implements OnInit {
   doctoresFiltrados: Doctor[] = [];
 
   // Datos de referencia locales
-  especialidades = [
-    'Medicina General',
-    'Cardiología',
-    'Dermatología',
-    'Endocrinología',
-    'Gastroenterología',
-    'Ginecología',
-    'Neurología',
-    'Oftalmología',
-    'Ortopedia',
-    'Pediatría',
-    'Psiquiatría',
-    'Radiología',
-    'Traumatología',
-    'Urología',
-    'Anestesiología',
-    'Cirugía General',
-    'Medicina Interna',
-    'Neumología',
-    'Oncología',
-    'Otorrinolaringología'
-  ];
+  especialidades: string[] = [];
 
   diasSemana = [
     { key: 'lunes', nombre: 'Lunes' },
@@ -126,13 +108,19 @@ export class InfoDoctoresComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private doctorService: DoctorService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.cargarDoctoresEjemplo();
     this.filtrarDoctores();
+    this.cargarEspecialidades();
+  }
+
+  private cargarEspecialidades(): void {
+    this.especialidades = this.doctorService.getEspecialidades();
   }
 
   private initializeForm(): void {
@@ -150,7 +138,7 @@ export class InfoDoctoresComponent implements OnInit {
       numeroLicencia: ['', [Validators.required, Validators.minLength(3)]],
       universidad: ['', Validators.required],
       fechaGraduacion: ['', Validators.required],
-      estado: ['activo'],
+      estado: ['activo', Validators.required], // Agregado Validators.required
       direccionConsultorio: [''],
       observaciones: [''],
 
@@ -279,7 +267,19 @@ export class InfoDoctoresComponent implements OnInit {
       });
     } else {
       this.doctorForm.reset();
-      this.doctorForm.patchValue({ estado: 'activo' });
+      // Establecer valores por defecto correctamente
+      this.doctorForm.patchValue({
+        estado: 'activo',
+        horarios: {
+          lunes: { activo: false, inicio: '08:00', fin: '17:00' },
+          martes: { activo: false, inicio: '08:00', fin: '17:00' },
+          miercoles: { activo: false, inicio: '08:00', fin: '17:00' },
+          jueves: { activo: false, inicio: '08:00', fin: '17:00' },
+          viernes: { activo: false, inicio: '08:00', fin: '17:00' },
+          sabado: { activo: false, inicio: '08:00', fin: '12:00' },
+          domingo: { activo: false, inicio: '08:00', fin: '12:00' }
+        }
+      });
       this.doctorSeleccionado = null;
     }
 
@@ -316,12 +316,58 @@ export class InfoDoctoresComponent implements OnInit {
     this.mostrarHorarios = true;
     this.mostrarModal = false;
     this.mostrarDetalles = false;
+
+    // Inicializar el formulario de horarios con los datos del doctor
+    this.inicializarHorarioForm(doctor);
     this.cdr.detectChanges();
+  }
+
+  private inicializarHorarioForm(doctor: Doctor): void {
+    this.horarioForm = this.fb.group({
+      horarios: this.fb.group({
+        lunes: this.fb.group({
+          activo: [doctor.horarios.lunes.activo],
+          inicio: [doctor.horarios.lunes.inicio],
+          fin: [doctor.horarios.lunes.fin]
+        }),
+        martes: this.fb.group({
+          activo: [doctor.horarios.martes.activo],
+          inicio: [doctor.horarios.martes.inicio],
+          fin: [doctor.horarios.martes.fin]
+        }),
+        miercoles: this.fb.group({
+          activo: [doctor.horarios.miercoles.activo],
+          inicio: [doctor.horarios.miercoles.inicio],
+          fin: [doctor.horarios.miercoles.fin]
+        }),
+        jueves: this.fb.group({
+          activo: [doctor.horarios.jueves.activo],
+          inicio: [doctor.horarios.jueves.inicio],
+          fin: [doctor.horarios.jueves.fin]
+        }),
+        viernes: this.fb.group({
+          activo: [doctor.horarios.viernes.activo],
+          inicio: [doctor.horarios.viernes.inicio],
+          fin: [doctor.horarios.viernes.fin]
+        }),
+        sabado: this.fb.group({
+          activo: [doctor.horarios.sabado.activo],
+          inicio: [doctor.horarios.sabado.inicio],
+          fin: [doctor.horarios.sabado.fin]
+        }),
+        domingo: this.fb.group({
+          activo: [doctor.horarios.domingo.activo],
+          inicio: [doctor.horarios.domingo.inicio],
+          fin: [doctor.horarios.domingo.fin]
+        })
+      })
+    });
   }
 
   cerrarHorarios(): void {
     this.mostrarHorarios = false;
     this.doctorSeleccionado = null;
+    this.horarioForm.reset();
     this.cdr.detectChanges();
   }
 
@@ -455,6 +501,32 @@ export class InfoDoctoresComponent implements OnInit {
     if (!diaGroup) return null;
 
     return diaGroup.get(campo) as FormControl;
+  }
+
+  // Para el modal de horarios
+  getHorarioControl(dia: string, campo: string): FormControl | null {
+    if (!this.horarioForm) return null;
+
+    const horariosGroup = this.horarioForm.get('horarios') as FormGroup;
+    if (!horariosGroup) return null;
+
+    const diaGroup = horariosGroup.get(dia) as FormGroup;
+    if (!diaGroup) return null;
+
+    return diaGroup.get(campo) as FormControl;
+  }
+
+  guardarHorarios(): void {
+    if (this.horarioForm && this.horarioForm.valid && this.doctorSeleccionado) {
+      const horariosActualizados = this.horarioForm.value.horarios;
+      const index = this.doctores.findIndex(d => d.id === this.doctorSeleccionado!.id);
+      if (index !== -1) {
+        this.doctores[index].horarios = horariosActualizados;
+        this.filtrarDoctores();
+      }
+      this.cerrarHorarios();
+      this.cdr.detectChanges();
+    }
   }
 
   private generarHorasDisponibles(horarios: any): string[] {
