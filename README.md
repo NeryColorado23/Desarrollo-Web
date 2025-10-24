@@ -11,3 +11,8 @@ votaciones destinadas a la elección de la Junta DirecFva del Colegio de Ingenie
 Link Netlify: https://sistema-de-votos-ci.netlify.app/login
 Link Render: https://sistema-votacion-ywcu.onrender.com
 
+Esta rama de git contiene:
+1. Código Fuente
+2. Manual técnico
+3. Manual de usuario
+4. Enlace del siFo funcional en este README
