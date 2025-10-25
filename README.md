@@ -1,18 +1,34 @@
-**Proyecto Votación Colegio de Ingenierios**
+# 🗳️ Proyecto de Votación – Colegio de Ingenieros de Guatemala
 
-Integrantes: Nery Otoniel Colorado Menchú
-Carnet: 9490-22-4867
-Curso: Desarrollo Web
-Sección: B
+**Integrantes del equipo:**  
+- **Nery Otoniel Colorado Menchú**  
+  📘 *Carnet:* 9490-22-4867  
+- **Josué Sebastián Mancilla González**  
+  📘 *Carnet:* 9490-22-1157  
 
-El proyecto Fene como objetivo que los estudiantes diseñen y desarrollen una plataforma web completa para la gesFón y realización de 
-votaciones destinadas a la elección de la Junta DirecFva del Colegio de Ingenieros de Guatemala.
+**Curso:** Desarrollo Web  
+**Sección:** B  
 
-Link Netlify: https://sistema-de-votos-ci.netlify.app/login
-Link Render: https://sistema-votacion-ywcu.onrender.com
+---
 
-Esta rama de git contiene:
-1. Código Fuente
-2. Manual técnico
-3. Manual de usuario
-4. Enlace del siFo funcional en este README
+## 🎯 Descripción del Proyecto
+
+El presente proyecto tiene como objetivo que los estudiantes diseñen y desarrollen una **plataforma web completa** para la **gestión y realización de votaciones** destinadas a la elección de la **Junta Directiva del Colegio de Ingenieros de Guatemala**.
+
+---
+
+## 🌐 Enlaces del Proyecto
+
+- **Frontend (Netlify):** [https://sistema-de-votos-ci.netlify.app/login](https://sistema-de-votos-ci.netlify.app/login)  
+- **Backend (Render):** [https://sistema-votacion-ywcu.onrender.com](https://sistema-votacion-ywcu.onrender.com)
+
+---
+
+## 📂 Contenido de la Rama
+
+Esta rama de Git contiene los siguientes recursos:
+
+1. 🧩 **Código fuente del sistema**  
+2. 🧠 **Manual técnico**  
+3. 📖 **Manual de usuario**  
+4. 🔗 **Enlace del sistema funcional** incluido en este README  
