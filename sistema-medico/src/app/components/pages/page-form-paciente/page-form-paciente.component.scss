@@ -22,28 +22,186 @@
   }
 }
 
+// Selector de tipo de paciente
+.tipo-paciente-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+  mat-card-content {
+    padding: 20px !important;
+  }
+
+  .tipo-paciente-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+
+    .tipo-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 12px 24px;
+      min-width: 250px;
+      height: 56px;
+      transition: all 0.3s ease;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      &:not(.active) {
+        background-color: #f5f5f5;
+        color: #666;
+
+        &:hover {
+          background-color: #e0e0e0;
+          transform: translateY(-2px);
+        }
+      }
+
+      &.active {
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
 .paciente-form {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
+// Sección de búsqueda
+.busqueda-section {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 4px solid #1976d2;
+
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+.paciente-option {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+
+  .paciente-nombre {
+    font-weight: 500;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .paciente-cedula {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+  }
+}
+
+.paciente-info-seleccionado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  border: 1px solid #c8e6c9;
+
+  mat-icon {
+    color: #4caf50;
+  }
+
+  strong {
+    color: #1b5e20;
+  }
+}
+
 .form-section {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
 
   mat-card-header {
     background-color: #f5f5f5;
     margin: -16px -16px 16px -16px;
     padding: 16px;
     border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     mat-card-title {
       color: #1976d2;
       font-size: 18px;
       font-weight: 500;
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      .nueva-consulta-label {
+        font-size: 14px;
+        color: #4caf50;
+        font-weight: 400;
+        margin-left: 8px;
+      }
     }
+  }
+
+  &.datos-deshabilitados {
+    opacity: 0.8;
+    background-color: #fafafa;
+  }
+}
+
+.solo-lectura-badge {
+  background-color: #ff9800;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+// Secciones específicas con colores
+.signos-vitales-section {
+  border-left: 4px solid #4caf50;
+
+  mat-card-header {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  }
+}
+
+.motivo-consulta-section {
+  border-left: 4px solid #ff9800;
+
+  mat-card-header {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
   }
 }
 
@@ -113,16 +271,28 @@ textarea.mat-mdc-input-element {
   margin-top: 20px;
 
   button {
-    min-width: 140px;
+    min-width: 200px;
     height: 44px;
     font-size: 16px;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
 
     &[color="primary"] {
       background-color: #1976d2;
 
       &:hover:not([disabled]) {
         background-color: #1565c0;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
       }
 
       &[disabled] {
@@ -137,6 +307,7 @@ textarea.mat-mdc-input-element {
 
       &:hover {
         background-color: #616161;
+        transform: translateY(-1px);
       }
     }
   }
@@ -153,14 +324,64 @@ textarea.mat-mdc-input-element {
   border-radius: 8px;
   margin-top: 20px;
   border: 1px solid #c8e6c9;
+  animation: slideIn 0.5s ease-out;
 
   mat-icon {
     color: #4caf50;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
   }
 
   span {
     font-weight: 500;
+    font-size: 16px;
   }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Botón para regresar al inicio
+.boton-regreso-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  padding: 20px 0;
+
+  .boton-regreso {
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #1976d2;
+    color: #1976d2;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #1976d2;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+    }
+  }
+}
+
+// Estilo para campos de solo lectura
+input[readonly],
+input:disabled,
+textarea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #666;
 }
 
 // Responsive design
@@ -170,6 +391,16 @@ textarea.mat-mdc-input-element {
 
     .header h2 {
       font-size: 24px;
+    }
+  }
+
+  .tipo-paciente-group {
+    flex-direction: column;
+    gap: 12px !important;
+
+    .tipo-button {
+      justify-content: center;
+      width: 100%;
     }
   }
 
@@ -198,6 +429,10 @@ textarea.mat-mdc-input-element {
     mat-card-header {
       margin: -12px -12px 12px -12px;
       padding: 12px;
+
+      mat-card-title {
+        font-size: 16px;
+      }
     }
   }
 }
@@ -217,46 +452,6 @@ mat-form-field {
   }
 }
 
-// Mejoras visuales adicionales
-.form-section {
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-}
-
 mat-card-content {
   padding-top: 0 !important;
-}
-
-// Botón para regresar al inicio
-.boton-regreso-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-  padding: 20px 0;
-
-  .boton-regreso {
-    padding: 12px 30px;
-    font-size: 16px;
-    font-weight: 500;
-    border: 2px solid #1976d2;
-    color: #1976d2;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background-color: #1976d2;
-      color: white;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
-    }
-  }
-}
-
-// Estilo para campos de solo lectura (como IMC)
-input[readonly] {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
 }

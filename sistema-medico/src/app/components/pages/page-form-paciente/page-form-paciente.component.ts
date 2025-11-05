@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,7 +13,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PacienteService } from '../../../services/paciente.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { PacienteService, Paciente } from '../../../services/paciente.service';
+import { HistorialMedicoService, RegistroMedico } from '../../../services/historial-medico.service';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 export interface PacienteRegistro {
   // Datos Personales
@@ -55,7 +59,8 @@ export interface PacienteRegistro {
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatAutocompleteModule
   ],
   templateUrl: './page-form-paciente.component.html',
   styleUrls: ['./page-form-paciente.component.scss'],
@@ -65,19 +70,32 @@ export class PageFormPacienteComponent implements OnInit {
   pacienteForm!: FormGroup;
   mensajeExito: string = '';
 
+  // Nueva funcionalidad
+  tipoPaciente: 'nuevo' | 'existente' = 'nuevo';
+  pacientes: Paciente[] = [];
+  pacientesFiltrados!: Observable<Paciente[]>;
+  pacienteSeleccionado: Paciente | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private pacienteService: PacienteService
+    private pacienteService: PacienteService,
+    private historialService: HistorialMedicoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
+    this.cargarPacientes();
+    this.configurarAutocomplete();
   }
 
   private initializeForm(): void {
     this.pacienteForm = this.fb.group({
-      // Datos Personales - Requeridos
+      // Campo para buscar paciente existente
+      buscarPaciente: [''],
+
+      // Datos Personales
       nombreCompleto: ['', [Validators.required, Validators.minLength(2)]],
       cedula: ['', [Validators.required, Validators.minLength(6)]],
       fechaNacimiento: ['', Validators.required],
@@ -101,6 +119,106 @@ export class PageFormPacienteComponent implements OnInit {
       tipoConsulta: ['', Validators.required],
       prioridad: ['', Validators.required]
     });
+
+    // Actualizar validaciones según el tipo de paciente
+    this.actualizarValidaciones();
+  }
+
+  private cargarPacientes(): void {
+    this.pacientes = this.pacienteService.getPacientes();
+  }
+
+  private configurarAutocomplete(): void {
+    const buscarControl = this.pacienteForm.get('buscarPaciente');
+    if (buscarControl) {
+      this.pacientesFiltrados = buscarControl.valueChanges.pipe(
+        startWith(''),
+        map(value => {
+          const nombre = typeof value === 'string' ? value : value?.nombreCompleto;
+          return nombre ? this._filtrarPacientes(nombre) : this.pacientes.slice();
+        })
+      );
+    }
+  }
+
+  private _filtrarPacientes(valor: string): Paciente[] {
+    const filtro = valor.toLowerCase();
+    return this.pacientes.filter(paciente =>
+      paciente.nombreCompleto.toLowerCase().includes(filtro) ||
+      paciente.cedula.includes(valor)
+    );
+  }
+
+  displayPaciente(paciente: Paciente): string {
+    return paciente ? `${paciente.nombreCompleto} - ${paciente.cedula}` : '';
+  }
+
+  onTipoPacienteChange(tipo: 'nuevo' | 'existente'): void {
+    this.tipoPaciente = tipo;
+    this.pacienteSeleccionado = null;
+    this.pacienteForm.reset();
+    this.actualizarValidaciones();
+    this.cdr.markForCheck();
+  }
+
+  private actualizarValidaciones(): void {
+    const camposDatosPersonales = [
+      'nombreCompleto', 'cedula', 'fechaNacimiento',
+      'genero', 'telefono', 'email', 'direccion'
+    ];
+
+    if (this.tipoPaciente === 'existente') {
+      // Para pacientes existentes, solo requerir búsqueda y datos de consulta
+      camposDatosPersonales.forEach(campo => {
+        const control = this.pacienteForm.get(campo);
+        control?.clearValidators();
+        control?.updateValueAndValidity();
+      });
+    } else {
+      // Para pacientes nuevos, requerir todos los datos personales
+      this.pacienteForm.get('nombreCompleto')?.setValidators([Validators.required, Validators.minLength(2)]);
+      this.pacienteForm.get('cedula')?.setValidators([Validators.required, Validators.minLength(6)]);
+      this.pacienteForm.get('fechaNacimiento')?.setValidators(Validators.required);
+      this.pacienteForm.get('genero')?.setValidators(Validators.required);
+      this.pacienteForm.get('telefono')?.setValidators([Validators.required, Validators.pattern(/^\d{8,15}$/)]);
+      this.pacienteForm.get('email')?.setValidators([Validators.required, Validators.email]);
+      this.pacienteForm.get('direccion')?.setValidators([Validators.required, Validators.minLength(10)]);
+
+      camposDatosPersonales.forEach(campo => {
+        this.pacienteForm.get(campo)?.updateValueAndValidity();
+      });
+    }
+  }
+
+  onPacienteSeleccionado(paciente: Paciente): void {
+    this.pacienteSeleccionado = paciente;
+
+    // Llenar los datos personales (solo lectura)
+    this.pacienteForm.patchValue({
+      nombreCompleto: paciente.nombreCompleto,
+      cedula: paciente.cedula,
+      fechaNacimiento: paciente.fechaNacimiento,
+      genero: paciente.genero,
+      telefono: paciente.telefono,
+      email: paciente.email,
+      direccion: paciente.direccion
+    });
+
+    // Deshabilitar campos de datos personales
+    this.deshabilitarCamposDatosPersonales(true);
+    this.cdr.markForCheck();
+  }
+
+  private deshabilitarCamposDatosPersonales(deshabilitar: boolean): void {
+    const campos = ['nombreCompleto', 'cedula', 'fechaNacimiento', 'genero', 'telefono', 'email', 'direccion'];
+    campos.forEach(campo => {
+      const control = this.pacienteForm.get(campo);
+      if (deshabilitar) {
+        control?.disable();
+      } else {
+        control?.enable();
+      }
+    });
   }
 
   calcularIMC(): string {
@@ -117,42 +235,110 @@ export class PageFormPacienteComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.tipoPaciente === 'nuevo') {
+      this.registrarPacienteNuevo();
+    } else {
+      this.registrarNuevaConsulta();
+    }
+  }
+
+  private registrarPacienteNuevo(): void {
     if (this.pacienteForm.valid) {
       const pacienteData: PacienteRegistro = this.pacienteForm.value;
 
-      // Aquí normalmente harías la llamada a tu servicio para guardar
-      console.log('Datos del paciente a registrar:', pacienteData);
+      // Agregar el paciente
+      this.pacienteService.agregarPaciente(pacienteData);
 
-      // Simular guardado exitoso
-      this.guardarPaciente(pacienteData);
+      // Obtener el último paciente agregado (el que acabamos de crear)
+      const pacientes = this.pacienteService.getPacientes();
+      const pacienteCreado = pacientes[pacientes.length - 1];
+
+      // Crear el primer registro médico
+      this.crearRegistroMedico(pacienteCreado.id, pacienteData);
+
+      this.mensajeExito = 'Paciente registrado exitosamente con su primera consulta';
+      this.cdr.markForCheck();
+
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 2000);
     } else {
-      // Marcar todos los campos como tocados para mostrar errores
       this.marcarCamposComoTocados();
     }
   }
 
-  private guardarPaciente(data: PacienteRegistro): void {
-    // Usar el servicio para guardar el paciente
-    this.pacienteService.agregarPaciente(data);
+  private registrarNuevaConsulta(): void {
+    if (!this.pacienteSeleccionado) {
+      alert('Por favor, seleccione un paciente de la lista');
+      return;
+    }
 
-    this.mensajeExito = 'Paciente registrado exitosamente';
+    // Validar solo los campos de signos vitales y motivo de consulta
+    const motivoConsulta = this.pacienteForm.get('motivoConsulta');
+    const tipoConsulta = this.pacienteForm.get('tipoConsulta');
+    const prioridad = this.pacienteForm.get('prioridad');
 
-    // Opcional: Redirigir después de un tiempo
+    if (!motivoConsulta?.valid || !tipoConsulta?.valid || !prioridad?.valid) {
+      this.marcarCamposComoTocados();
+      alert('Por favor, complete los campos requeridos de la consulta');
+      return;
+    }
+
+    const consultaData = {
+      temperatura: this.pacienteForm.get('temperatura')?.value,
+      peso: this.pacienteForm.get('peso')?.value,
+      altura: this.pacienteForm.get('altura')?.value,
+      presionSistolica: this.pacienteForm.get('presionSistolica')?.value,
+      presionDiastolica: this.pacienteForm.get('presionDiastolica')?.value,
+      frecuenciaCardiaca: this.pacienteForm.get('frecuenciaCardiaca')?.value,
+      frecuenciaRespiratoria: this.pacienteForm.get('frecuenciaRespiratoria')?.value,
+      motivoConsulta: motivoConsulta?.value,
+      sintomasAdicionales: this.pacienteForm.get('sintomasAdicionales')?.value,
+      tipoConsulta: tipoConsulta?.value,
+      prioridad: prioridad?.value
+    };
+
+    // Crear nuevo registro médico
+    this.crearRegistroMedico(this.pacienteSeleccionado.id, consultaData);
+
+    this.mensajeExito = `Nueva consulta registrada para ${this.pacienteSeleccionado.nombreCompleto}`;
+    this.cdr.markForCheck();
+
     setTimeout(() => {
       this.router.navigate(['/']);
     }, 2000);
   }
 
+  private crearRegistroMedico(pacienteId: string, data: any): void {
+    const nuevoRegistro: Omit<RegistroMedico, 'id'> = {
+      pacienteId: pacienteId,
+      fecha: new Date(),
+      motivo: data.motivoConsulta,
+      diagnostico: 'Pendiente de evaluación médica',
+      tratamiento: 'A determinar',
+      observaciones: data.sintomasAdicionales || 'Sin observaciones adicionales',
+      doctorNombre: 'Dr. Sistema', // Aquí podrías obtener el doctor actual
+      temperatura: data.temperatura,
+      peso: data.peso,
+      altura: data.altura,
+      presionSistolica: data.presionSistolica,
+      presionDiastolica: data.presionDiastolica,
+      frecuenciaCardiaca: data.frecuenciaCardiaca,
+      frecuenciaRespiratoria: data.frecuenciaRespiratoria
+    };
+
+    this.historialService.agregarRegistro(nuevoRegistro);
+  }
+
   private marcarCamposComoTocados(): void {
     Object.keys(this.pacienteForm.controls).forEach(key => {
       const control = this.pacienteForm.get(key);
-      if (control) {
+      if (control && control.enabled) {
         control.markAsTouched();
       }
     });
   }
 
-  // Método para obtener mensaje de error específico
   getErrorMessage(fieldName: string): string {
     const control = this.pacienteForm.get(fieldName);
 
