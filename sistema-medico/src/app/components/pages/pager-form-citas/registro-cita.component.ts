@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 // Importar servicios
 import { PacienteService, Paciente } from '../../../services/paciente.service';
@@ -38,7 +39,8 @@ import { CitaService, Cita } from '../../../services/cita.service';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSnackBarModule
   ],
   templateUrl: './registro-cita.component.html',
   styleUrls: ['./registro-cita.component.scss'],
@@ -70,13 +72,15 @@ export class RegistroCitaComponent implements OnInit {
   }
 
   horasDisponibles: string[] = [];
+  horasOcupadas: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private pacienteService: PacienteService,
     private doctorService: DoctorService,
-    private citaService: CitaService
+    private citaService: CitaService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -112,6 +116,16 @@ export class RegistroCitaComponent implements OnInit {
       motivoConsulta: [''],
       observaciones: ['']
     });
+
+    // Escuchar cambios en la fecha para actualizar horas disponibles
+    this.citaForm.get('fecha')?.valueChanges.subscribe(() => {
+      this.actualizarHorasDisponiblesConValidacion();
+    });
+
+    // Escuchar cambios en el doctor para actualizar horas disponibles
+    this.citaForm.get('doctor')?.valueChanges.subscribe(() => {
+      this.actualizarHorasDisponiblesConValidacion();
+    });
   }
 
   // Gestión del modal
@@ -137,11 +151,14 @@ export class RegistroCitaComponent implements OnInit {
       const doctor = this.doctorService.getDoctorPorNombre(cita.doctor);
       if (doctor) {
         this.actualizarHorasDisponibles(doctor);
+        this.actualizarHorasDisponiblesConValidacion();
       }
     } else {
       this.citaForm.reset();
       this.citaForm.patchValue({ estado: 'pendiente' });
       this.citaSeleccionada = null;
+      this.horasDisponibles = [];
+      this.horasOcupadas = [];
     }
 
     this.mostrarDetalles = false;
@@ -152,6 +169,8 @@ export class RegistroCitaComponent implements OnInit {
     this.mostrarModal = false;
     this.citaForm.reset();
     this.citaSeleccionada = null;
+    this.horasDisponibles = [];
+    this.horasOcupadas = [];
     this.cdr.detectChanges();
   }
 
@@ -176,8 +195,8 @@ export class RegistroCitaComponent implements OnInit {
       const pacienteSeleccionado = this.pacienteService.getPacientePorNombre(formData.paciente);
 
       if (this.modalTipo === 'crear') {
-        // Usar el servicio centralizado para agregar la cita
-        this.citaService.agregarCita({
+        // Usar el servicio centralizado para agregar la cita CON VALIDACIÓN
+        const resultado = this.citaService.agregarCita({
           pacienteId: pacienteSeleccionado?.id || '',
           paciente: formData.paciente,
           doctor: formData.doctor,
@@ -189,9 +208,16 @@ export class RegistroCitaComponent implements OnInit {
           motivoConsulta: formData.motivoConsulta,
           observaciones: formData.observaciones
         });
+
+        if (resultado.exito) {
+          this.mostrarNotificacion('✅ ' + resultado.mensaje, 'success');
+          this.cerrarModal();
+        } else {
+          this.mostrarNotificacion('❌ ' + resultado.mensaje, 'error');
+        }
       } else if (this.modalTipo === 'editar' && this.citaSeleccionada) {
-        // Usar el servicio centralizado para actualizar la cita
-        this.citaService.actualizarCita(this.citaSeleccionada.id, {
+        // Usar el servicio centralizado para actualizar la cita CON VALIDACIÓN
+        const resultado = this.citaService.actualizarCita(this.citaSeleccionada.id, {
           pacienteId: pacienteSeleccionado?.id || this.citaSeleccionada.pacienteId,
           paciente: formData.paciente,
           doctor: formData.doctor,
@@ -203,15 +229,23 @@ export class RegistroCitaComponent implements OnInit {
           motivoConsulta: formData.motivoConsulta,
           observaciones: formData.observaciones
         });
-      }
 
-      this.cerrarModal();
+        if (resultado.exito) {
+          this.mostrarNotificacion('✅ ' + resultado.mensaje, 'success');
+          this.cerrarModal();
+        } else {
+          this.mostrarNotificacion('❌ ' + resultado.mensaje, 'error');
+        }
+      }
+    } else {
+      this.mostrarNotificacion('⚠️ Por favor complete todos los campos requeridos', 'warning');
     }
   }
 
   cancelarCita(cita: Cita): void {
     if (confirm(`¿Está seguro de que desea cancelar la cita de ${cita.paciente}?`)) {
       this.citaService.cancelarCita(cita.id, 'Cancelada por el usuario');
+      this.mostrarNotificacion('Cita cancelada exitosamente', 'success');
     }
   }
 
@@ -250,12 +284,34 @@ export class RegistroCitaComponent implements OnInit {
     if (doctor) {
       this.citaForm.patchValue({ especialidad: doctor.especialidad });
       this.actualizarHorasDisponibles(doctor);
+      this.actualizarHorasDisponiblesConValidacion();
     }
   }
 
   private actualizarHorasDisponibles(doctor: Doctor): void {
     this.horasDisponibles = doctor.horasDisponibles || [];
     this.cdr.detectChanges();
+  }
+
+  private actualizarHorasDisponiblesConValidacion(): void {
+    const fecha = this.citaForm.get('fecha')?.value;
+    const doctor = this.citaForm.get('doctor')?.value;
+
+    if (fecha && doctor) {
+      // Obtener las horas ocupadas para este doctor en esta fecha
+      this.horasOcupadas = this.citaService.getHorasOcupadas(
+        fecha,
+        doctor,
+        this.citaSeleccionada?.id // Excluir la cita actual si estamos editando
+      );
+      this.cdr.detectChanges();
+    } else {
+      this.horasOcupadas = [];
+    }
+  }
+
+  isHoraOcupada(hora: string): boolean {
+    return this.horasOcupadas.includes(hora);
   }
 
   // Utilidades
@@ -291,5 +347,16 @@ export class RegistroCitaComponent implements OnInit {
       'cancelada': 'cancel'
     };
     return iconos[estado] || 'help';
+  }
+
+  private mostrarNotificacion(mensaje: string, tipo: 'success' | 'error' | 'warning'): void {
+    const config = {
+      duration: 5000,
+      horizontalPosition: 'center' as const,
+      verticalPosition: 'top' as const,
+      panelClass: [`snackbar-${tipo}`]
+    };
+
+    this.snackBar.open(mensaje, 'Cerrar', config);
   }
 }

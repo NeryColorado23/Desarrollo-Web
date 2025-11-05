@@ -16,6 +16,11 @@ export interface Cita {
   fechaCreacion: Date;
 }
 
+export interface ValidacionCita {
+  valido: boolean;
+  mensaje?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -116,7 +121,69 @@ export class CitaService {
     });
   }
 
-  agregarCita(cita: Omit<Cita, 'id' | 'fechaCreacion'>): Cita {
+  /**
+   * Valida si se puede agendar una cita en la fecha, hora y doctor especificados
+   * @param fecha Fecha de la cita
+   * @param hora Hora de la cita
+   * @param doctor Nombre del doctor
+   * @param citaIdExcluir ID de cita a excluir (útil para edición)
+   * @returns Objeto con validación y mensaje de error si aplica
+   */
+  validarDisponibilidadCita(
+    fecha: Date,
+    hora: string,
+    doctor: string,
+    citaIdExcluir?: string
+  ): ValidacionCita {
+    // Obtener citas activas (no canceladas) del doctor en esa fecha
+    const citasEnFecha = this.getCitasPorFecha(fecha).filter(
+      (c: Cita) =>
+        c.doctor === doctor &&
+        c.estado !== 'cancelada' &&
+        c.id !== citaIdExcluir // Excluir la cita actual si estamos editando
+    );
+
+    // Verificar si ya existe una cita a esa hora
+    const citaConflicto = citasEnFecha.find((c: Cita) => c.hora === hora);
+
+    if (citaConflicto) {
+      return {
+        valido: false,
+        mensaje: `El doctor ${doctor} ya tiene una cita agendada el ${this.formatearFechaCorta(fecha)} a las ${hora} con ${citaConflicto.paciente}. Por favor, seleccione otro horario.`
+      };
+    }
+
+    // Validar que la fecha no sea en el pasado
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const fechaCita = new Date(fecha);
+    fechaCita.setHours(0, 0, 0, 0);
+
+    if (fechaCita < hoy) {
+      return {
+        valido: false,
+        mensaje: 'No se pueden agendar citas en fechas pasadas.'
+      };
+    }
+
+    return { valido: true };
+  }
+
+  agregarCita(cita: Omit<Cita, 'id' | 'fechaCreacion'>): { exito: boolean; mensaje: string; cita?: Cita } {
+    // Validar disponibilidad antes de agregar
+    const validacion = this.validarDisponibilidadCita(
+      cita.fecha,
+      cita.hora,
+      cita.doctor
+    );
+
+    if (!validacion.valido) {
+      return {
+        exito: false,
+        mensaje: validacion.mensaje || 'No se puede agendar la cita'
+      };
+    }
+
     const nuevaCita: Cita = {
       ...cita,
       id: this.generateId(),
@@ -126,17 +193,54 @@ export class CitaService {
     const citasActuales = this.citasSubject.value;
     this.citasSubject.next([...citasActuales, nuevaCita]);
 
-    return nuevaCita;
+    return {
+      exito: true,
+      mensaje: 'Cita agendada exitosamente',
+      cita: nuevaCita
+    };
   }
 
-  actualizarCita(id: string, citaActualizada: Partial<Cita>): void {
+  actualizarCita(id: string, citaActualizada: Partial<Cita>): { exito: boolean; mensaje: string } {
     const citas = this.citasSubject.value;
     const index = citas.findIndex((c: Cita) => c.id === id);
 
-    if (index !== -1) {
-      citas[index] = { ...citas[index], ...citaActualizada };
-      this.citasSubject.next([...citas]);
+    if (index === -1) {
+      return {
+        exito: false,
+        mensaje: 'Cita no encontrada'
+      };
     }
+
+    const citaOriginal = citas[index];
+
+    // Si se está cambiando la fecha, hora o doctor, validar disponibilidad
+    if (citaActualizada.fecha || citaActualizada.hora || citaActualizada.doctor) {
+      const fechaFinal = citaActualizada.fecha || citaOriginal.fecha;
+      const horaFinal = citaActualizada.hora || citaOriginal.hora;
+      const doctorFinal = citaActualizada.doctor || citaOriginal.doctor;
+
+      const validacion = this.validarDisponibilidadCita(
+        fechaFinal,
+        horaFinal,
+        doctorFinal,
+        id // Excluir la cita actual de la validación
+      );
+
+      if (!validacion.valido) {
+        return {
+          exito: false,
+          mensaje: validacion.mensaje || 'No se puede actualizar la cita'
+        };
+      }
+    }
+
+    citas[index] = { ...citaOriginal, ...citaActualizada };
+    this.citasSubject.next([...citas]);
+
+    return {
+      exito: true,
+      mensaje: 'Cita actualizada exitosamente'
+    };
   }
 
   cancelarCita(id: string, observacion?: string): void {
@@ -171,15 +275,37 @@ export class CitaService {
     return this.citasSubject.value.filter((c: Cita) => c.estado === estado).length;
   }
 
-  isHorarioDisponible(fecha: Date, hora: string, doctor: string): boolean {
-    const citasEnFecha = this.getCitasPorFecha(fecha);
-    return !citasEnFecha.some((c: Cita) => c.hora === hora && c.doctor === doctor);
+  isHorarioDisponible(fecha: Date, hora: string, doctor: string, citaIdExcluir?: string): boolean {
+    const validacion = this.validarDisponibilidadCita(fecha, hora, doctor, citaIdExcluir);
+    return validacion.valido;
+  }
+
+  /**
+   * Obtiene las horas ocupadas para un doctor en una fecha específica
+   */
+  getHorasOcupadas(fecha: Date, doctor: string, citaIdExcluir?: string): string[] {
+    const citasEnFecha = this.getCitasPorFecha(fecha).filter(
+      (c: Cita) =>
+        c.doctor === doctor &&
+        c.estado !== 'cancelada' &&
+        c.id !== citaIdExcluir
+    );
+
+    return citasEnFecha.map((c: Cita) => c.hora);
   }
 
   private isSameDay(date1: Date, date2: Date): boolean {
     return date1.getDate() === date2.getDate() &&
            date1.getMonth() === date2.getMonth() &&
            date1.getFullYear() === date2.getFullYear();
+  }
+
+  private formatearFechaCorta(fecha: Date): string {
+    return new Date(fecha).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
   }
 
   private generateId(): string {

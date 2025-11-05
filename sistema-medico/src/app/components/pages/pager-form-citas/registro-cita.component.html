@@ -11,6 +11,12 @@
       Nueva Cita
     </button>
 
+    <!-- BOTÓN PARA EL CALENDARIO -->
+    <button mat-stroked-button color="accent" [routerLink]="['/calendar']" class="calendar-button">
+      <mat-icon>calendar_view_month</mat-icon>
+      Ver Calendario
+    </button>
+
     <mat-form-field appearance="fill" class="filtro-busqueda">
       <mat-label>Buscar cita</mat-label>
       <input matInput [(ngModel)]="filtro" (input)="filtrarCitas()" placeholder="Paciente, doctor o fecha...">
@@ -148,6 +154,7 @@
         </mat-form-field>
       </div>
 
+      <!-- SECCIÓN ACTUALIZADA CON VALIDACIÓN DE HORARIOS -->
       <div class="form-row">
         <mat-form-field appearance="fill" class="half-width">
           <mat-label>Fecha</mat-label>
@@ -162,13 +169,20 @@
         <mat-form-field appearance="fill" class="half-width">
           <mat-label>Hora</mat-label>
           <mat-select formControlName="hora">
-            <mat-option *ngFor="let hora of horasDisponibles" [value]="hora">
+            <mat-option *ngFor="let hora of horasDisponibles"
+                        [value]="hora"
+                        [disabled]="isHoraOcupada(hora)"
+                        [class.hora-ocupada]="isHoraOcupada(hora)">
               {{ hora }}
+              <span *ngIf="isHoraOcupada(hora)" class="ocupada-badge">⛔ Ocupada</span>
             </mat-option>
           </mat-select>
           <mat-error *ngIf="citaForm.get('hora')?.hasError('required')">
             Seleccione una hora
           </mat-error>
+          <mat-hint *ngIf="horasOcupadas.length > 0">
+            ⚠️ Hay {{ horasOcupadas.length }} hora(s) ocupada(s) para este doctor en esta fecha
+          </mat-hint>
         </mat-form-field>
       </div>
 
@@ -300,36 +314,4 @@
       </button>
     </div>
   </div>
-</div>
-
-
-<!-- Agregar este botón en la barra de acciones principales, después del botón "Nueva Cita" -->
-<div class="actions-bar">
-  <button mat-raised-button color="primary" (click)="abrirModalCita('crear')">
-    <mat-icon>add</mat-icon>
-    Nueva Cita
-  </button>
-
-  <!-- NUEVO BOTÓN PARA EL CALENDARIO -->
-  <button mat-stroked-button color="accent" [routerLink]="['/calendar']" class="calendar-button">
-    <mat-icon>calendar_view_month</mat-icon>
-    Ver Calendario
-  </button>
-
-  <mat-form-field appearance="fill" class="filtro-busqueda">
-    <mat-label>Buscar cita</mat-label>
-    <input matInput [(ngModel)]="filtro" (input)="filtrarCitas()" placeholder="Paciente, doctor o fecha...">
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill" class="filtro-estado">
-    <mat-label>Filtrar por estado</mat-label>
-    <mat-select [(ngModel)]="filtroEstado" (selectionChange)="filtrarCitas()">
-      <mat-option value="">Todos</mat-option>
-      <mat-option value="pendiente">Pendiente</mat-option>
-      <mat-option value="confirmada">Confirmada</mat-option>
-      <mat-option value="completada">Completada</mat-option>
-      <mat-option value="cancelada">Cancelada</mat-option>
-    </mat-select>
-  </mat-form-field>
 </div>

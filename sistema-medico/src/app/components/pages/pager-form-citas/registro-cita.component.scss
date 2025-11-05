@@ -43,6 +43,26 @@
     }
   }
 
+  .calendar-button {
+    min-width: 160px;
+    height: 44px;
+    border: 2px solid #ff9800;
+    color: #ff9800;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background-color: #ff9800;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+    }
+  }
+
   .filtro-busqueda {
     flex: 1;
     min-width: 250px;
@@ -348,6 +368,93 @@ mat-chip {
   }
 }
 
+// NUEVOS ESTILOS PARA VALIDACIÓN DE HORARIOS
+// Estilos para horas ocupadas
+::ng-deep .hora-ocupada {
+  opacity: 0.5;
+  text-decoration: line-through;
+  color: #f44336 !important;
+
+  .mat-mdc-option-text {
+    color: #f44336 !important;
+  }
+
+  .ocupada-badge {
+    margin-left: 8px;
+    font-size: 11px;
+    color: #f44336;
+    font-weight: 600;
+  }
+}
+
+// Estilos para el hint de horas ocupadas
+mat-hint {
+  color: #ff9800 !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  margin-top: 4px;
+}
+
+// Estilos globales para snackbar
+::ng-deep {
+  .snackbar-success {
+    background-color: #4caf50 !important;
+    color: white !important;
+
+    .mat-mdc-snack-bar-label {
+      color: white !important;
+    }
+
+    .mat-mdc-button {
+      color: white !important;
+    }
+  }
+
+  .snackbar-error {
+    background-color: #f44336 !important;
+    color: white !important;
+
+    .mat-mdc-snack-bar-label {
+      color: white !important;
+    }
+
+    .mat-mdc-button {
+      color: white !important;
+    }
+  }
+
+  .snackbar-warning {
+    background-color: #ff9800 !important;
+    color: white !important;
+
+    .mat-mdc-snack-bar-label {
+      color: white !important;
+    }
+
+    .mat-mdc-button {
+      color: white !important;
+    }
+  }
+
+  .mat-mdc-snack-bar-container {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+  }
+}
+
+// Animación para el modal de error
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.modal-content.error-shake {
+  animation: shake 0.5s;
+}
+
 // Responsive design
 @media (max-width: 768px) {
   .citas-container {
@@ -358,7 +465,8 @@ mat-chip {
     flex-direction: column;
     align-items: stretch;
 
-    button[color="primary"] {
+    button[color="primary"],
+    .calendar-button {
       width: 100%;
     }
 
